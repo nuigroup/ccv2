@@ -1,0 +1,178 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Types">
+      <UniqueIdentifier>{0e014839-b7be-4dfa-b1fc-580ea755f58d}</UniqueIdentifier>
+      <Extensions>h;cpp;c;cxx;rc;def;r;odl;idl;hpj;bat</Extensions>
+    </Filter>
+    <Filter Include="Public Headers">
+      <UniqueIdentifier>{a1ea342d-2dc0-461a-8bcb-79f6e52818fc}</UniqueIdentifier>
+      <Extensions>h;hpp;hxx;hm;inl</Extensions>
+    </Filter>
+    <Filter Include="Streams">
+      <UniqueIdentifier>{ed7a2caf-a6e1-4000-a11b-1c040199768c}</UniqueIdentifier>
+      <Extensions>h;cpp;c;cxx;rc;def;r;odl;idl;hpj;bat</Extensions>
+    </Filter>
+    <Filter Include="Inet">
+      <UniqueIdentifier>{ab2ef224-efa7-40dd-aa78-c01025ee344c}</UniqueIdentifier>
+      <Extensions>h;cpp;c;cxx;rc;def;r;odl;idl;hpj;bat</Extensions>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\src\patomic.cxx">
+      <Filter>Types</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\pcomponent.cxx">
+      <Filter>Types</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\pcset.cxx">
+      <Filter>Types</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\pcsetdbg.cxx">
+      <Filter>Types</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\pexcept.cxx">
+      <Filter>Types</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\pfatal.cxx">
+      <Filter>Types</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\pmem.cxx">
+      <Filter>Types</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\pobjlist.cxx">
+      <Filter>Types</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\ppodlist.cxx">
+      <Filter>Types</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\pstrcase.cxx">
+      <Filter>Types</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\pstrconv.cxx">
+      <Filter>Types</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\pstring.cxx">
+      <Filter>Types</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\pstrlist.cxx">
+      <Filter>Types</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\pstrmanip.cxx">
+      <Filter>Types</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\pstrtoi.cxx">
+      <Filter>Types</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\pstrutils.cxx">
+      <Filter>Types</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\ptextmap.cxx">
+      <Filter>Types</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\ptime.cxx">
+      <Filter>Types</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\punknown.cxx">
+      <Filter>Types</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\pvariant.cxx">
+      <Filter>Types</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\pversion.cxx">
+      <Filter>Types</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\pfdxstm.cxx">
+      <Filter>Streams</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\pinfile.cxx">
+      <Filter>Streams</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\pinfilter.cxx">
+      <Filter>Streams</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\pinmem.cxx">
+      <Filter>Streams</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\pinstm.cxx">
+      <Filter>Streams</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\pintee.cxx">
+      <Filter>Streams</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\piobase.cxx">
+      <Filter>Streams</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\pmd5.cxx">
+      <Filter>Streams</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\pnpipe.cxx">
+      <Filter>Streams</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\pnpserver.cxx">
+      <Filter>Streams</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\poutfile.cxx">
+      <Filter>Streams</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\poutfilter.cxx">
+      <Filter>Streams</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\poutmem.cxx">
+      <Filter>Streams</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\poutstm.cxx">
+      <Filter>Streams</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\ppipe.cxx">
+      <Filter>Streams</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\pputf.cxx">
+      <Filter>Streams</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\pstdio.cxx">
+      <Filter>Streams</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\pipbase.cxx">
+      <Filter>Inet</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\pipmsg.cxx">
+      <Filter>Inet</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\pipmsgsv.cxx">
+      <Filter>Inet</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\pipstm.cxx">
+      <Filter>Inet</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\pipstmsv.cxx">
+      <Filter>Inet</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\pipsvbase.cxx">
+      <Filter>Inet</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\include\pasync.h">
+      <Filter>Public Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\pinet.h">
+      <Filter>Public Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\pport.h">
+      <Filter>Public Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\pstreams.h">
+      <Filter>Public Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\ptime.h">
+      <Filter>Public Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\ptypes.h">
+      <Filter>Public Headers</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\LICENSE" />
+  </ItemGroup>
+</Project>

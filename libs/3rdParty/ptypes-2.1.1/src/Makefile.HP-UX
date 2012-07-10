@@ -1,0 +1,32 @@
+#
+#
+#  C++ Portable Types Library (PTypes)
+#  Version 2.1.1  Released 27-Jun-2007
+#
+#  Copyright (C) 2001-2007 Hovik Melikyan
+#
+#  http://www.melikyan.com/ptypes/
+#
+#
+#
+# Makefile for HP-UX, called from ../Makefile
+#
+
+CXX = aCC
+
+OS_CXXOPTS_ST = -z -ext -D_HPUX_SOURCE -D_FILE_OFFSET_BITS=64
+OS_CXXOPTS = $(OS_CXXOPTS_ST) -mt +z
+
+# OS_LDLIBS_ST
+OS_LDLIBS = -lrt
+
+LIBTOOL = $(CXX) -b -mt
+SOSTRIP = strip
+
+SOEXT = sl
+SOINSTOPT = -Wl,+h,$(SOREALNAME)
+
+PREFIX = /usr/local
+
+include Makefile.common
+

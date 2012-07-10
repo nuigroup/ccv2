@@ -1,0 +1,27 @@
+This is English Voxforge acoustic model for CMUSphinx decoders -
+pocketsphinx and sphinx4 version 0.1.3. It was trained with SphinxTrain.
+The process of training is described in SphinxTrain tutorial.
+
+This is 8kHz model, it could be used both for desktop and telephone
+recordings.
+
+To setup the files use build.sh script as a base. It should download
+required files from Voxforge, setup structure and extract features.
+Scripts are located in scripts subfolder.
+
+Testing is performed with sphinx3. Language model for testing is built
+from test prompts with SRILM. Result of the testing should be similar to
+
+TOTAL Words: 44025 Correct: 40336 Errors: 4388
+TOTAL Percent correct = 91.62% Error = 9.97% Accuracy = 90.03%
+TOTAL Insertions: 699 Deletions: 930 Substitutions: 2759
+
+To use this model with pocketsphinx, just provide it's location with
+-hmm pocketsphinx option.For information on how to use this model with
+sphinx4 see the documentation
+
+http://cmusphinx.sourceforge.net/sphinx4/doc/UsingSphinxTrainModels.html
+
+Remember that this model uses MLLT and it requires both frontend
+modification. You need to use transform with LDA component and you need
+to adjust melfilter parameters.

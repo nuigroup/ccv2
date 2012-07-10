@@ -1,0 +1,35 @@
+pipeline create DebugGesture Gesture
+pipeline create SpiritParser Parser
+pipeline create SphinxASR ASR
+pipeline create AudioOutput Audio
+pipeline create TemporalFusion Fusion
+pipeline create JSONInteraction Interaction
+
+pipeline set Audio x 73
+pipeline set Audio y 33
+
+pipeline set ASR x 117
+pipeline set ASR y 362
+
+pipeline set Parser x 383
+pipeline set Parser y 72
+
+pipeline set Interaction x 655
+pipeline set Interaction y 193
+
+pipeline set Fusion x 619
+pipeline set Fusion y 385
+
+pipeline set Gesture x 386
+pipeline set Gesture y 444
+
+pipeline set ASR acoustic_model configs/ballworld/sphinxmodel/.
+pipeline set ASR language_model configs/ballworld/sphinxmodel/voxforge_en_sphinx.lm.DMP
+pipeline set ASR dictionary configs/ballworld/sphinxmodel/cmudict.0.7a
+pipeline set ASR noise_dictionary configs/ballworld/sphinxmodel/noisedict
+
+pipeline connect Audio 0 ASR 0
+pipeline connect ASR 0 Parser 0
+pipeline connect Parser 0 Fusion 0
+pipeline connect Fusion 0 Interaction 0
+pipeline connect Gesture 0 Fusion 1

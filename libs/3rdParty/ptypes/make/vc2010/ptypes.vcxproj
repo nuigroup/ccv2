@@ -1,0 +1,138 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{A6F3D524-2274-4117-BF4B-3155232CE0FC}</ProjectGuid>
+    <RootNamespace>ptypes</RootNamespace>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <OutDir>$(SolutionDir)\lib\</OutDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <OutDir>$(SolutionDir)\lib\</OutDir>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>_LIB;NDEBUG;PTYPES_ST;WIN32;EPFNOSUPPORT=10046L;EHOSTDOWN=10064L;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>..\..\..\ptypes-2.1.1\wshare;..\..\..\ptypes-2.1.1\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>_LIB;NDEBUG;PTYPES_ST;WIN32;EPFNOSUPPORT=10046L;EHOSTDOWN=10064L;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>..\..\..\ptypes-2.1.1\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\..\ptypes-2.1.1\src\pasync.cxx" />
+    <ClCompile Include="..\..\..\ptypes-2.1.1\src\patomic.cxx" />
+    <ClCompile Include="..\..\..\ptypes-2.1.1\src\pcomponent.cxx" />
+    <ClCompile Include="..\..\..\ptypes-2.1.1\src\pcset.cxx" />
+    <ClCompile Include="..\..\..\ptypes-2.1.1\src\pcsetdbg.cxx" />
+    <ClCompile Include="..\..\..\ptypes-2.1.1\src\pexcept.cxx" />
+    <ClCompile Include="..\..\..\ptypes-2.1.1\src\pfatal.cxx" />
+    <ClCompile Include="..\..\..\ptypes-2.1.1\src\pfdxstm.cxx" />
+    <ClCompile Include="..\..\..\ptypes-2.1.1\src\pinfile.cxx" />
+    <ClCompile Include="..\..\..\ptypes-2.1.1\src\pinfilter.cxx" />
+    <ClCompile Include="..\..\..\ptypes-2.1.1\src\pinmem.cxx" />
+    <ClCompile Include="..\..\..\ptypes-2.1.1\src\pinstm.cxx" />
+    <ClCompile Include="..\..\..\ptypes-2.1.1\src\pintee.cxx" />
+    <ClCompile Include="..\..\..\ptypes-2.1.1\src\piobase.cxx" />
+    <ClCompile Include="..\..\..\ptypes-2.1.1\src\pipbase.cxx" />
+    <ClCompile Include="..\..\..\ptypes-2.1.1\src\pipmsg.cxx" />
+    <ClCompile Include="..\..\..\ptypes-2.1.1\src\pipmsgsv.cxx" />
+    <ClCompile Include="..\..\..\ptypes-2.1.1\src\pipstm.cxx" />
+    <ClCompile Include="..\..\..\ptypes-2.1.1\src\pipstmsv.cxx" />
+    <ClCompile Include="..\..\..\ptypes-2.1.1\src\pipsvbase.cxx" />
+    <ClCompile Include="..\..\..\ptypes-2.1.1\src\pmd5.cxx" />
+    <ClCompile Include="..\..\..\ptypes-2.1.1\src\pmem.cxx" />
+    <ClCompile Include="..\..\..\ptypes-2.1.1\src\pmsgq.cxx" />
+    <ClCompile Include="..\..\..\ptypes-2.1.1\src\pmtxtable.cxx" />
+    <ClCompile Include="..\..\..\ptypes-2.1.1\src\pnpipe.cxx" />
+    <ClCompile Include="..\..\..\ptypes-2.1.1\src\pnpserver.cxx" />
+    <ClCompile Include="..\..\..\ptypes-2.1.1\src\pobjlist.cxx" />
+    <ClCompile Include="..\..\..\ptypes-2.1.1\src\poutfile.cxx" />
+    <ClCompile Include="..\..\..\ptypes-2.1.1\src\poutfilter.cxx" />
+    <ClCompile Include="..\..\..\ptypes-2.1.1\src\poutmem.cxx" />
+    <ClCompile Include="..\..\..\ptypes-2.1.1\src\poutstm.cxx" />
+    <ClCompile Include="..\..\..\ptypes-2.1.1\src\ppipe.cxx" />
+    <ClCompile Include="..\..\..\ptypes-2.1.1\src\ppodlist.cxx" />
+    <ClCompile Include="..\..\..\ptypes-2.1.1\src\pputf.cxx" />
+    <ClCompile Include="..\..\..\ptypes-2.1.1\src\prwlock.cxx" />
+    <ClCompile Include="..\..\..\ptypes-2.1.1\src\psemaphore.cxx" />
+    <ClCompile Include="..\..\..\ptypes-2.1.1\src\pstdio.cxx" />
+    <ClCompile Include="..\..\..\ptypes-2.1.1\src\pstrcase.cxx" />
+    <ClCompile Include="..\..\..\ptypes-2.1.1\src\pstrconv.cxx" />
+    <ClCompile Include="..\..\..\ptypes-2.1.1\src\pstring.cxx" />
+    <ClCompile Include="..\..\..\ptypes-2.1.1\src\pstrlist.cxx" />
+    <ClCompile Include="..\..\..\ptypes-2.1.1\src\pstrmanip.cxx" />
+    <ClCompile Include="..\..\..\ptypes-2.1.1\src\pstrtoi.cxx" />
+    <ClCompile Include="..\..\..\ptypes-2.1.1\src\pstrutils.cxx" />
+    <ClCompile Include="..\..\..\ptypes-2.1.1\src\ptextmap.cxx" />
+    <ClCompile Include="..\..\..\ptypes-2.1.1\src\pthread.cxx" />
+    <ClCompile Include="..\..\..\ptypes-2.1.1\src\ptime.cxx" />
+    <ClCompile Include="..\..\..\ptypes-2.1.1\src\ptimedsem.cxx" />
+    <ClCompile Include="..\..\..\ptypes-2.1.1\src\ptrigger.cxx" />
+    <ClCompile Include="..\..\..\ptypes-2.1.1\src\ptypes_test.cxx" />
+    <ClCompile Include="..\..\..\ptypes-2.1.1\src\punit.cxx" />
+    <ClCompile Include="..\..\..\ptypes-2.1.1\src\punknown.cxx" />
+    <ClCompile Include="..\..\..\ptypes-2.1.1\src\pvariant.cxx" />
+    <ClCompile Include="..\..\..\ptypes-2.1.1\src\pversion.cxx" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\..\ptypes-2.1.1\include\pasync.h" />
+    <ClInclude Include="..\..\..\ptypes-2.1.1\include\pinet.h" />
+    <ClInclude Include="..\..\..\ptypes-2.1.1\include\pport.h" />
+    <ClInclude Include="..\..\..\ptypes-2.1.1\include\pstreams.h" />
+    <ClInclude Include="..\..\..\ptypes-2.1.1\include\ptime.h" />
+    <ClInclude Include="..\..\..\ptypes-2.1.1\include\ptypes.h" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

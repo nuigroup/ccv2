@@ -1,0 +1,32 @@
+#JSGF V1.0;
+
+grammar ballworld;
+
+public <interaction> = <moveInteraction> | <colorInteraction> | <createInteraction> | <destroyInteraction>;
+
+<moveInteraction> = <moveCommand> <movePredicate>;
+<colorInteraction> = <colorCommand> <colorPredicate>;
+<createInteraction> = <createCommand> <createPredicate>;
+<destroyInteraction> = <destroyCommand> <destroyPredicate>;
+
+<moveCommand> = move | put;
+<colorCommand> = color;
+<createCommand> = make | create;
+<destroyCommand> = delete | remove | destroy;
+
+<movePredicate> = <ball> <point>;
+<colorPredicate> = <ball> <color>;
+<createPredicate> = <newBall> <point>;
+<destroyPredicate> = <ball>;
+
+<ball> = <ballSelectorMultimodal> | <ballSelectorUnimodal>;
+<ballSelectorUnimodal> = the <color> (ball | one);
+<ballSelectorMultimodal> = (this | that) ([ball | one]);
+
+<point> = <pointSelectorMultimodal>;
+<pointSelectorMultimodal> = here | there;
+
+<newBall> = (an | a [new]) <color> (ball | one);
+
+<color> = <colorSelectorUnimodal>;
+<colorSelectorUnimodal> = red | green | blue | yellow | orange | white | purple;

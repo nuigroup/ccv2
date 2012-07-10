@@ -1,0 +1,195 @@
+<!--
+/***********************************************************************
+ ** Copyright (C) 2010 Movid Authors.  All rights reserved.
+ **
+ ** This file is part of the Movid Software.
+ **
+ ** This file may be distributed under the terms of the Q Public License
+ ** as defined by Trolltech AS of Norway and appearing in the file
+ ** LICENSE included in the packaging of this file.
+ **
+ ** This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+ ** WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+ **
+ ** Contact info@movid.org if any conditions of this licensing are
+ ** not clear to you.
+ **
+ **********************************************************************/
+-->
+<html>
+<head>
+	<title>Community Core Fusion Web Admin</title>
+	<script type="text/javascript" src="js/processing.js"></script>
+	<script type="text/javascript" src="js/jquery-1.4.2.min.js"></script>
+	<script type="text/javascript" src="js/jquery-ui-1.8rc3.custom.min.js"></script>
+	<script type="text/javascript" src="js/jquery.cookies.2.2.0.js"></script>
+	<script type="text/javascript" src="js/jquery.class.js"></script>
+	<script type="text/javascript" src="js/fusion.js"></script>
+	<script type="text/javascript" src="js/fusion-draw.js"></script>
+	<script type="text/javascript" src="js/fg.menu.js"></script>
+	<link rel="stylesheet" type="text/css" href="css/ui-darkness/jquery-ui-1.8rc3.custom.css"/>
+	<link rel="stylesheet" type="text/css" href="css/gui.css"/>
+	<link rel="stylesheet" type="text/css" href="css/fg.menu.css"/>
+</head>
+<body>
+
+<div class="fg-toolbar ui-widget-header ui-corner-bottom ui-helper-clearfix">
+	<div class="fg-buttonset">
+		<div class="fg-button ui-fake">Community Core Fusion <span id="version">??</span></div>
+	</div>
+	<div class="fg-buttonset">
+		<a class="fg-button ui-state-default ui-corner-all ccf-action" id="btn-stop">
+			<span class="ui-icon ui-icon-stop">&nbsp;</span>&nbsp;
+		</a>
+		<a class="fg-button ui-state-default ui-corner-all ccf-action" id="btn-start">
+			<span class="ui-icon ui-icon-play">&nbsp;</span>&nbsp;
+		</a>
+	</div>
+	<div class="fg-buttonset">
+		<a class="fg-button ui-state-default ui-corner-left fg-nomargin ccf-menu" id="menu-pipeline">Pipeline</a>
+		<a class="fg-button ui-state-default ui-corner-right fg-nomargin ccf-menu" id="menu-windows">Windows</a>
+	</div>
+	<div class="fg-buttonset">
+		<div class="fg-button ui-fake" id="toolbareport"></div>
+	</div>
+</div>
+
+<div class="hidden" id="menu-pipeline-content">
+	<ul>
+		<li><a href="#" class="ccf-action" id="pipeline-download">Download</a></li>
+		<li><a href="#" class="ccf-action" id="pipeline-text">Show as text</a></li>
+		<li class="horizontal-divider"><hr/></li>
+		<li><a href="#" class="ccf-action" id="pipeline-slot-load">Load from slot</a></li>
+		<li><a href="#" class="ccf-action" id="pipeline-slot-save">Save to slot</a></li>
+	</ul>
+</div>
+<div class="hidden" id="menu-windows-content">
+	<ul>
+		<li><a href="#" class="ccf-action" id="btn-create">Create</a></li>
+		<li><a href="#" class="ccf-action" id="btn-module">Module</a></li>
+		<li><a href="#" class="ccf-action" id="btn-preview">Preview</a></li>
+		<li><a href="#" class="ccf-action" id="btn-properties">Properties</a></li>
+	</ul>
+</div>
+
+<div class="hidden" id="pipeline-slot-content">
+	<ul class="ui-widget ui-state-default ui-corner-top ccf-list" id="pipeline-slot-select">
+		<li class="ui-widget-content ccf-action" id="slot-1">
+			<span class="title">Slot 1</span>
+			<span class="details">Never used.</span>
+		</li>
+		<li class="ui-widget-content ccf-action" id="slot-2">
+			<span class="title">Slot 2</span>
+			<span class="details">Never used.</span>
+		</li>
+		<li class="ui-widget-content ccf-action" id="slot-3">
+			<span class="title">Slot 3</span>
+			<span class="details">Never used.</span>
+		</li>
+		<li class="ui-widget-content ccf-action" id="slot-4">
+			<span class="title">Slot 4</span>
+			<span class="details">Never used.</span>
+		</li>
+		<li class="ui-widget-content ccf-action" id="slot-5">
+			<span class="title">Slot 5</span>
+			<span class="details">Never used.</span>
+		</li>
+		<li class="ui-widget-content ccf-action" id="slot-6">
+			<span class="title">Slot 6</span>
+			<span class="details">Never used.</span>
+		</li>
+		<li class="ui-widget-content ccf-action" id="slot-7">
+			<span class="title">Slot 7</span>
+			<span class="details">Never used.</span>
+		</li>
+		<li class="ui-widget-content ccf-action" id="slot-8">
+			<span class="title">Slot 8</span>
+			<span class="details">Never used.</span>
+		</li>
+		<li class="ui-widget-content ccf-action" id="slot-9">
+			<span class="title">Slot 9</span>
+			<span class="details">Never used.</span>
+		</li>
+		<li class="ui-widget-content ccf-action" id="slot-10">
+			<span class="title">Slot 10</span>
+			<span class="details">Never used.</span>
+		</li>
+	</ul>
+</div>
+
+<div id="wrapper">
+
+<div id="leftcolumn">
+	<div class="ui-widget ui-widget-sidebar" id="container-create">
+		<div class="ui-widget-header ui-state-default ui-corner-top"><a href="#" onclick="$('#modules').slideToggle('fast')">Create</a></div>
+		<div id="modules" class="ui-widget-content ui-corner-bottom">
+		</div>
+	</div>
+
+</div>
+
+<div id="content" class="ui-widget ui-widget-sidebar">
+
+<div class="ui-widget-header ui-state-default ui-corner-top">
+	<a href="#">Playground</a> &nbsp; &nbsp;
+	<a href="#" id="btn-autolayout" class="fg-button ui-state-default ui-corner-all ccf-action" title="Auto layout">
+		<span class="ui-icon ui-icon-refresh">&nbsp;</span>
+	</a>
+
+</div>
+<div id="pipeline-content-text">
+	<textarea id="pipeline-content-textarea" readonly="true"></textarea>
+</div>
+<div class="ui-widget-content">
+	<div id="pipeline-content-canvas">
+	<script id="ccfpjs" type="application/processing" target="ccfcanvas">
+	void setup() {
+		frameRate(5);
+	}
+
+	void draw() {
+		gui_draw();
+	}
+
+	void mouseReleased() {
+		gui_mouseReleased();
+	}
+
+	void mousePressed() {
+		gui_mousePressed();
+	}
+
+	void mouseDragged() {
+		gui_mouseDragged();
+	}
+	</script><canvas id="ccfcanvas" width="100" height="100">You need HTML5 canvas support.</canvas>
+	</div>
+	</div>
+</div>
+
+<div id="rightcolumn">
+	<div class="ui-widget ui-widget-sidebar" id="container-preview">
+		<div class="ui-widget-header ui-state-default ui-corner-top"><a href="#" onclick="$('#video').slideToggle('fast')">Preview</a></div>
+		<div id="video" class="ui-widget-content ui-corner-bottom">
+			<p id="streamid">No video</p>
+			<img src="/gui/nostream.png" id="streamimg"/>
+		</div>
+	</div>
+	<div class="ui-widget ui-widget-sidebar" id="container-module">
+		<div class="ui-widget-header ui-state-default ui-corner-top"><a onclick="$('#module').slideToggle('fast')">Module</a></div>
+		<div id="module" class="ui-widget-content ui-corner-bottom">
+		</div>
+	</div>
+	<div class="ui-widget ui-widget-sidebar" id="container-properties">
+		<div class="ui-widget-header ui-state-default ui-corner-top"><a onclick="$('#properties').slideToggle('fast')">Properties</a></div>
+		<div id="properties" class="ui-widget-content ui-corner-bottom">
+		</div>
+	</div>
+</div>
+
+</div>
+<div id="footer">
+	framecount:<span id="framecount">0</span>
+</div>
+</body>
+</html>

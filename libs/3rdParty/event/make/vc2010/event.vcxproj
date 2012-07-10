@@ -1,0 +1,117 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\..\libevent-1.4.13-stable\buffer.c" />
+    <ClCompile Include="..\..\..\libevent-1.4.13-stable\evbuffer.c" />
+    <ClCompile Include="..\..\..\libevent-1.4.13-stable\evdns.c" />
+    <ClCompile Include="..\..\..\libevent-1.4.13-stable\event.c" />
+    <ClCompile Include="..\..\..\libevent-1.4.13-stable\event_tagging.c" />
+    <ClCompile Include="..\..\..\libevent-1.4.13-stable\evrpc.c" />
+    <ClCompile Include="..\..\..\libevent-1.4.13-stable\evutil.c" />
+    <ClCompile Include="..\..\..\libevent-1.4.13-stable\http.c">
+      <ForcedIncludeFiles Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Ws2tcpip.h</ForcedIncludeFiles>
+      <ForcedIncludeFiles Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Ws2tcpip.h</ForcedIncludeFiles>
+    </ClCompile>
+    <ClCompile Include="..\..\..\libevent-1.4.13-stable\log.c" />
+    <ClCompile Include="..\..\..\libevent-1.4.13-stable\signal.c" />
+    <ClCompile Include="..\..\..\libevent-1.4.13-stable\strlcpy.c" />
+    <ClCompile Include="..\..\..\libevent-1.4.13-stable\WIN32-Code\win32.c" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\..\libevent-1.4.13-stable\evdns.h" />
+    <ClInclude Include="..\..\..\libevent-1.4.13-stable\event-internal.h" />
+    <ClInclude Include="..\..\..\libevent-1.4.13-stable\event.h" />
+    <ClInclude Include="..\..\..\libevent-1.4.13-stable\evhttp.h" />
+    <ClInclude Include="..\..\..\libevent-1.4.13-stable\evrpc-internal.h" />
+    <ClInclude Include="..\..\..\libevent-1.4.13-stable\evrpc.h" />
+    <ClInclude Include="..\..\..\libevent-1.4.13-stable\evsignal.h" />
+    <ClInclude Include="..\..\..\libevent-1.4.13-stable\evutil.h" />
+    <ClInclude Include="..\..\..\libevent-1.4.13-stable\http-internal.h" />
+    <ClInclude Include="..\..\..\libevent-1.4.13-stable\min_heap.h" />
+    <ClInclude Include="..\..\..\libevent-1.4.13-stable\strlcpy-internal.h" />
+    <ClInclude Include="..\..\..\libevent-1.4.13-stable\WIN32-Code\config.h" />
+    <ClInclude Include="..\..\..\libevent-1.4.13-stable\WIN32-Code\event-config.h" />
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{98A30164-1955-4C8A-B8EB-AC94D7E64499}</ProjectGuid>
+    <RootNamespace>event</RootNamespace>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>MultiByte</CharacterSet>
+    <UseOfMfc>Static</UseOfMfc>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <OutDir>$(SolutionDir)\lib</OutDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <OutDir>$(SolutionDir)\lib</OutDir>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <AdditionalIncludeDirectories>..\..\..\libevent-1.4.13-stable\;..\..\..\libevent-1.4.13-stable\compat;..\..\..\libevent-1.4.13-stable\WIN32-Code</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;HAVE_CONFIG_H;_CRT_SECURE_NO_DEPRECATE;HAVE_GETADDRINFO;EAI_SYSTEM=-11</PreprocessorDefinitions>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <AdditionalIncludeDirectories>..\..\..\libevent-1.4.13-stable\;..\..\..\libevent-1.4.13-stable\compat;..\..\..\libevent-1.4.13-stable\WIN32-Code</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;HAVE_CONFIG_H;_CRT_SECURE_NO_DEPRECATE;HAVE_GETADDRINFO;EAI_SYSTEM=-11</PreprocessorDefinitions>
+      <ForcedIncludeFiles>
+      </ForcedIncludeFiles>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+    </Link>
+    <Lib>
+      <AdditionalDependencies>
+      </AdditionalDependencies>
+    </Lib>
+    <ProjectReference>
+      <LinkLibraryDependencies>false</LinkLibraryDependencies>
+    </ProjectReference>
+  </ItemDefinitionGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

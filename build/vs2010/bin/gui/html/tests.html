@@ -1,0 +1,88 @@
+<html>
+<head> 
+<script type="text/javascript" src="scripts/jquery-1.7.1.min.js"></script> 
+<script type="text/javascript" src="scripts/jquery.periodicalupdater.js"></script> 
+<style>body{font-family:Helventica, Arial; font-size:11px;}.textbox{border:solid 1px #EEe;width:100%;height:100px;overflow:auto;}</style>
+</head>
+<h2>Fusion API Tests - <small>Status: </small><img id="status" src="grey.png"/></h2>
+<div id="results"></div>
+<label>Request:</label>
+<select id="requests">
+  <option value="notset">Please select a request.</option>
+  <option value="null">---- List -----</option>
+  <option value="/list/dynamic">/list/dynamic</option>
+  <option value="/list/pipelines?hostername=pipeline1">/list/pipelines</option>
+  <option value="null">---- Create -----</option>
+  <option value="/create/pipeline?pipeline=pipelineName">/create/pipeline</option>
+  <option value="/create/module?pipeline=pipelineName&module=audioModule">/create/module</option>
+  <option value="/create/connection?pipeline=pipelineName&source=1&sourcePort=0&destination=3&destinationPort=0">/create/connection</option>
+  <option value="null">---- Update -----</option>
+  <option value="/update/pipeline?pipeline=pipelineName&name=newName&description=newDescription">/update/pipeline</option>
+  <option value="/update/pipelineProperty?pipeline=pipelineName&key=isAsync&value=0&description=property" disabled>/update/pipelineProperty</option>
+  <option value="/update/moduleProperty?pipeline=pipelineName&module=3&key=isAsync&value=0" disabled>/update/moduleProperty</option>  
+  <option value="/update/endpoint?type=input&index=3&newDescriptor=”video”&newIndex=2">/update/endpoint</option> 
+  <option value="/update/connection?pipeline=pipelineName&source=1&sourcePort=0&destination=3&destinationPort=0&deepCopy=0&asyncMode=0">/update/connection</option>
+  <option value="/update/endpointCount?pipeline=pipeline1type=input&count=1">/update/endpointCount</option>
+  <option value="null">---- Delete -----</option>
+  <option value="/delete/pipeline?pipeline=pipelineName">/delete/pipeline</option>
+  <option value="/delete/module?pipeline=pipelineName&moduleId=3">/delete/module</option>
+  <option value="/delete/endpoint?pipeline=pipelineName&type=output&index=3">/delete/endpoint</option>
+  <option value="/delete/connection?pipeline=pipelineName&source=1&sourcePort=0&destination=0&destinationPort=0">/delete/connection</option>  
+  <option value="null">---- Get -----</option>
+  <option value="/get/pipeline?pipeline=pipelineName">/get/pipeline</option>
+  <option value="/get/module?pipeline=pipelineName&module=1">/get/module</option>  
+  <option value="/get/connection?pipeline=pipelineName&connectionIndex=4">/get/connection</option>
+  <option value="null">---- Save -----</option>
+  <option value="/save/pipeline?pipeline=root&file=test.xml&download=1">/save/pipeline</option>  
+  <option value="null">---- Workflow -----</option>
+  <option value="/workflow/start">/workflow/start</option>
+  <option value="/workflow/stop">/workflow/stop</option>
+  <option value="/workflow/quit">/workflow/quit</option>
+</select>
+<p></p>
+
+<label>Repsonse:</label>
+<textarea class="textbox" id="divDataRaw"></textarea>
+<p></p>
+<label>Expected:</label>
+<textarea class="textbox" id="divDataExpected"></textarea>
+
+<script>
+URL_BASE = "http://localhost:7500/"; 
+
+//$('#status').attr("src", "green.png");
+
+//$('#requests').change(function() {
+
+if(this.value == "null")
+{ 
+$('#divDataRaw').empty(); 
+return;
+}
+
+if(this.value == "/workflow/quit"){
+	if(confirm('Are you sure you want to quit?')) {continue;}else{ return;}
+}
+
+$.getJSON(URL_BASE+this.value,
+  function(data) {
+    $('#divDataRaw').empty();
+    $('#divDataRaw').append(''+JSON.stringify(data)+'');
+    if($('#divDataRaw').val() == "") { $('#status').attr("src", "red.png");}
+    else { $('#status').attr("src", "green.png");}
+   });
+});
+
+var jsonRequest = {"method": "web-list-dynamic",
+					"params": [
+								{
+								"hostername" : "blah"
+								}
+								],
+					"id" : 123
+};
+
+
+</script>
+</body>
+</html>

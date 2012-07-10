@@ -1,0 +1,93 @@
+{
+	type: "interaction"
+	val: "move"
+	children: [
+	{
+		type: "ball"
+		val: "22"
+	},
+	{
+		type: "loc"
+		val: "21,55"
+	}
+	]
+}
+
+{
+	type: "interaction"
+	val: "move"
+	children: [
+	{
+		type: "ball"
+		val: "null"
+		children: [
+		{
+			type: "color"
+			val: "yellow"
+		}
+		]
+	},
+	{
+		type: "loc"
+		val: "12,55"
+	}
+	]
+}
+
+{
+	type: "interaction"
+	val: "color"
+	attributes: [
+	{
+		type: "color"
+		val: "yellow"
+	},
+	{
+		type: "color"
+		val: "blue"
+	}
+	]
+}
+
+void interactionHandler(JSON interaction) {
+	// do attribute resolution
+
+	foreach(attributes as attr) {
+		if(attr.type == "color") {
+			Ball result = colorDomain.getParentByValue(attr.val);
+		}
+		else if(attr.type = "loc")
+			
+	}
+
+	// then look at what interaction it is and call the proper function
+}
+
+void colorInteraction(int ballID, color target) {
+	colorDomain.getObjectByValue(selector).setColor(target);
+}
+
+void colorInteraction(int ballID, color target) {
+	locDomain.getObjectByValue(selector).setColor(target);
+}
+
+void moveInteraction(int ballID, lot target) {
+	locDomain.getObjectByValue(selector).setLoc(target);
+}
+
+void moveInteraction(int ballID, lot target) {
+	colorDomain.getObjectByValue(selector).setLoc(target);
+}
+
+void createInteraction(color newColor, loc newLoc) {
+	Ball newBall = new Ball(newColor, newLoc);
+	masterList.add(newBall);
+	colorDomain.add(newBall);
+	locDomain.add(newBall);
+}
+
+void destroyInteraction(color selector) {
+	
+}
+
+basically, domains and identifiers.  if not identified in the domain, then not terminal.

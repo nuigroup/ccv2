@@ -1,0 +1,7 @@
+# multimodal grammar example
+
+ball = {speech}objectDiectic:(time~T) + {mouse}ball:(time~T);
+
+# this should be from the speech grammar
+{speech}objectDiectic:(time~T) = {speech}"this":(time~T) | {speech}"that":(time~T);
+{speech}pointDiectic:(time~T) = {speech}"here":(time~T) | {speech}"there":(time~T);

@@ -1,0 +1,307 @@
+/***********************************************************************
+ ** Copyright (C) 2010 Movid Authors.  All rights reserved.
+ **
+ ** This file is part of the Movid Software.
+ **
+ ** This file may be distributed under the terms of the Q Public License
+ ** as defined by Trolltech AS of Norway and appearing in the file
+ ** LICENSE included in the packaging of this file.
+ **
+ ** This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+ ** WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+ **
+ ** Contact info@movid.org if any conditions of this licensing are
+ ** not clear to you.
+ **
+ **********************************************************************/
+
+html, body {
+	font-family: Lucida, sans-serif;
+	font-size: 90%;
+	margin: 0px 10px;
+	padding: 0px;
+	background: #eeeeee;
+}
+
+.hidden {
+	display: none;
+}
+
+/* toolbar top
+ */
+
+.fg-button {
+	outline: 0;
+	margin:0 4px 0 0;
+	padding: .4em 1em;
+	text-decoration:none !important;
+	cursor:pointer;
+	position: relative;
+	text-align: center;
+	zoom: 1;
+}
+
+.fg-nomargin {
+	margin: 0;
+}
+
+.fg-button .ui-icon {
+    position: absolute;
+    top: 50%;
+    margin-top: -8px;
+    left: 50%;
+    margin-left: -8px;
+}
+
+a.fg-button {
+    float:left;
+}
+
+/* remove extra button width in IE */
+button.fg-button {
+    width:auto;
+    overflow:visible;
+}
+
+.fg-button-icon-solo {
+	display:block;
+    width:8px;
+    text-indent: -9999px;
+}	/* solo icon buttons must have block properties for the text-indent to work */	
+
+.fg-buttonset {
+	float:left;
+}
+
+.fg-buttonset .fg-button {
+	float: left;
+}
+
+.fg-buttonset-single .fg-button, 
+.fg-buttonset-multi .fg-button {
+	margin-right: -1px;
+}
+
+.fg-toolbar {
+	padding: .2em;
+	margin: 0 0px;
+}
+
+.fg-toolbar .fg-buttonset {
+	margin-right:1.5em;
+	padding-left: 1px;
+}
+
+.fg-toolbar .fg-button {
+	font-size: 1em;
+}
+
+.fg-button {
+	font-weight: normal;
+}
+
+
+/* left and right column layout
+ */
+#leftcolumn .ui-widget,
+#rightcolumn .ui-widget {
+	 margin-bottom: 10px !important;
+}
+
+#leftcolumn .ui-widget-sidebar {
+	width: 195px;
+}
+
+#rightcolumn .ui-widget-sidebar {
+	width: 270px;
+}
+
+
+/* widget in sidebar
+ */
+.ui-widget-sidebar .ui-widget-header {
+	font-weight: normal;
+	padding: .4em;
+}
+
+.ui-widget-sidebar {
+	font-size: 95%;
+}
+
+#content .ui-widget-content {
+	background-color: rgb(51, 51, 51);
+	background-image: none !important;
+}
+
+
+/* global layout (wraper[left + content + right])
+ */
+#wrapper {
+	width: 100%;
+}
+
+#leftcolumn { 
+	display: inline;
+	color: #333;
+	margin: 10px 0px 10px 0px;
+	padding: 0px;
+	float: left;
+}
+
+#content { 
+	float: left;
+	color: red;
+	margin: 10px 20px;
+	padding: 0px;
+	display: inline;
+	position: relative;
+	overflow: hidden;
+}
+
+#rightcolumn { 
+	display: inline;
+	position: relative;
+	color: #333;
+	margin: 10px 0px 10px 0px;
+	padding: 0px;
+	float: right;
+}
+
+#footer {
+	clear: both;
+	display: none;
+}
+
+/* modules (create screen)
+ */
+#modules a {
+	text-decoration: none;
+	display: block;
+	padding: 2px 0.5em;
+	color: #dddddd;
+}
+
+#modules a:hover {
+	background-color: rgb(0, 102, 204);
+}
+
+#modules a.highlight {
+	color: #ffffff;
+	background-color: rgb(50, 90, 2);
+}
+
+/* properties (properties screen)
+ */
+#properties table {
+	width: 100%;
+	border-collapse: collapse;
+	border: none;
+	font-family: Lucida, sans-serif;
+	font-size: 90%;
+}
+
+#properties table td {
+	font-size: 100%;
+	padding: 2px 4px;
+	height: 2.5em;
+	vertical-align: middle;
+}
+
+#properties table td.label {
+	text-align: right;
+	width: 50%;
+	color: white;
+}
+
+#properties table td .ui-widget {
+	width: 100% !important;
+}
+
+#properties input {
+	padding: 2px 4px;
+}
+
+.ui-slider-handle,
+.ui-button {
+	font-weight: normal;
+}
+
+/* preview
+ */
+#video img {
+	width: 100%;
+}
+
+
+/* module
+ */
+
+#module h1 {
+	margin: 0;
+	padding: 1em 5px;
+	font-size: 100%;
+	background-color: #242424;
+}
+
+#module h2 {
+	margin: 1px 0;
+	padding: 5px;
+	font-size: 100%;
+	font-weight: normal;
+	background-color: #242424;
+}
+
+#module .ioindex {
+	color: #999999;
+}
+
+#module .iotype {
+	color: #999999;
+}
+
+#pipeline-content-text textarea {
+	width: 100%;
+	border: 0;
+	font-family: monospace;
+	background: rgb(51, 51, 51);
+	font-size: 12px;
+	color: #cccccc;
+	padding-left: 4px;
+	margin: 0px;
+}
+
+#content a.fg-button {
+	float: none;
+}
+
+/* selectable
+ */
+.feedback {
+	font-size: 1.4em;
+}
+
+.ccf-list {
+	list-style-type: none;
+	margin: 0;
+	padding: 0;
+}
+
+.ccf-list li {
+	margin: 3px;
+	padding: 0.4em;
+	cursor: pointer;
+}
+
+.ccf-list li.ui-state-hover {
+	border-color: transparent;
+	background: #f39814;
+	color: white;
+}
+
+.ccf-list .title {
+}
+
+.ccf-list .details {
+	font-weight: normal;
+	color: #888888;
+}
