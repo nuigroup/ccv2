@@ -190,6 +190,10 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "PluginTest", "..\..\tests\P
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DynamicLib", "..\..\tests\DynamicLib\DynamicLib.vcxproj", "{8206F035-303C-4417-968A-2201A2AC340D}"
+	ProjectSection(ProjectDependencies) = postProject
+		{70A18341-3B6E-460D-B9A6-4F583D786C69} = {70A18341-3B6E-460D-B9A6-4F583D786C69}
+		{2D5C91FF-2601-4134-A3E1-3D6A50B9B24C} = {2D5C91FF-2601-4134-A3E1-3D6A50B9B24C}
+	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "boost", "boost", "{EBFC76BD-5856-44E4-A23E-51433C3D2B0D}"
 EndProject
@@ -209,6 +213,10 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "json-rpc", "..\..\libs\3rdParty\json-rpc\make\vs2010\json-rpc\json-rpc.vcxproj", "{7D404C9F-03D5-4E7F-A9C0-2792104C603F}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "JsonTCPTest", "..\..\tests\JsonTCPTest\JsonTCPTest.vcxproj", "{942FDE24-C86B-4CD4-9702-9D57AADAEA2F}"
+	ProjectSection(ProjectDependencies) = postProject
+		{70A18341-3B6E-460D-B9A6-4F583D786C69} = {70A18341-3B6E-460D-B9A6-4F583D786C69}
+		{2D5C91FF-2601-4134-A3E1-3D6A50B9B24C} = {2D5C91FF-2601-4134-A3E1-3D6A50B9B24C}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
