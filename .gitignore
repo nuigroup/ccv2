@@ -18,8 +18,8 @@ tmp/
 *.sln.docstates
 
 # Build results
-[D]ebug/
-[R]elease/
+[Dd]ebug/
+[Rr]elease/
 *_i.c
 *_p.c
 *.ilk
@@ -38,6 +38,7 @@ tmp/
 *.vspscc
 .builds
 *.dotCover
+*.lib
 
 ## TODO: If you have NuGet Package Restore enabled, uncomment this
 #packages/
@@ -112,6 +113,7 @@ Desktop.ini
 *.egg
 *.egg-info
 dist
+bin
 eggs
 parts
 var
