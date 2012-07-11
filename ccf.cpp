@@ -35,7 +35,7 @@ int main(int argc, char **argv)
 	nuiFrameworkManager::getInstance()->initializeFrameworkManager("configs/presets/test.xml");
 	nuiFrameworkManager::getInstance()->workflowStart();
 
-	nuiJsonRpcApi::getInstance()->init("127.0.0.1", 7500);
+	if(!nuiJsonRpcApi::getInstance()->init("127.0.0.1", 7500)) goto exit_critical;
 
 	server = nuiJsonRpcApi::getInstance();
 	server->startApi();
