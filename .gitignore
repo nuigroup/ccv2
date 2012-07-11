@@ -20,6 +20,9 @@ tmp/
 # Build results
 [Dd]ebug/
 [Rr]elease/
+*.exe
+*.dll
+*.exp
 *_i.c
 *_p.c
 *.ilk
