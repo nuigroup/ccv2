@@ -91,7 +91,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <Lib>
-      <AdditionalDependencies>ptypes.lib;libboost_filesystem-vc100-mt-gd-1_48.lib;libboost_filesystem-vc100-mt-gd-1_48.lib;libboost_system-vc100-mt-gd-1_48.lib</AdditionalDependencies>
+      <AdditionalDependencies>ptypes.lib;libboost_filesystem-vc100-mt-gd-1_48.lib;libboost_system-vc100-mt-gd-1_48.lib</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(SolutionDir)\lib\</AdditionalLibraryDirectories>
     </Lib>
   </ItemDefinitionGroup>
@@ -113,7 +113,7 @@
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
     <Lib>
-      <AdditionalDependencies>ptypes.lib;libboost_filesystem-vc100-mt-gd-1_48.lib;libboost_filesystem-vc100-mt-gd-1_48.lib;libboost_system-vc100-mt-gd-1_48.lib</AdditionalDependencies>
+      <AdditionalDependencies>ptypes.lib;libboost_filesystem-vc100-mt-1_48.lib;libboost_system-vc100-mt-1_48.lib</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(SolutionDir)\lib\</AdditionalLibraryDirectories>
     </Lib>
   </ItemDefinitionGroup>
