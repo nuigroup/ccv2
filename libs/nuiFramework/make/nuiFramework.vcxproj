@@ -86,7 +86,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <Lib>
-      <AdditionalDependencies>nuiSystem.lib;nuiModule.lib;cJSON.lib; json-cpp.lib; json-rpc.lib</AdditionalDependencies>
+      <AdditionalDependencies>nuiModule.lib; json-cpp.lib; json-rpc.lib</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(SolutionDir)\lib</AdditionalLibraryDirectories>
     </Lib>
   </ItemDefinitionGroup>
