@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Community Core Fusion", "Community Core Fusion.vcxproj", "{6EFD0DFD-EF69-4D51-B1BE-8F6D0AF5B6A7}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Community Core Vision", "Community Core Vision.vcxproj", "{6EFD0DFD-EF69-4D51-B1BE-8F6D0AF5B6A7}"
 	ProjectSection(ProjectDependencies) = postProject
 		{C3D46B05-A742-462E-B541-2FDD35FED25E} = {C3D46B05-A742-462E-B541-2FDD35FED25E}
 		{3315C307-AABC-4DEE-9B94-8E0876DD15A5} = {3315C307-AABC-4DEE-9B94-8E0876DD15A5}
