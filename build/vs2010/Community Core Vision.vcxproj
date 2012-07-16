@@ -81,6 +81,10 @@
       <Command>xcopy "$(SolutionDir)$(TargetFileName)" "$(SolutionDir)\..\bin" /s /i /y
 xcopy "$(SolutionDir)\modules\*.dll" "$(SolutionDir)\..\bin\modules" /s /i /y</Command>
     </PostBuildEvent>
+    <PreBuildEvent>
+      <Command>if not exist "$(ProjectDir)\bin" md "$(ProjectDir)\bin"
+xcopy /d /s "$(SolutionDir)..\bin\*.*" "$(ProjectDir)\bin"</Command>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
