@@ -99,7 +99,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_USRDLL;NUIFRAMEWORK_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\..\..\libs\3rdParty\boost\;..\..\..\libs\nuiModule\inc;..\..\..\libs\nuiSystem\inc;..\..\..\libs\3rdParty\cJSON;..\inc;..\..\..\libs\3rdParty\ptypes-2.1.1\include;..\..\..\libs\3rdParty\ptypes-2.1.1\include\WIN32-Code\</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\..\libs\3rdParty\boost\;..\..\..\libs\nuiModule\inc;..\..\..\libs\nuiSystem\inc;..\..\..\libs\3rdParty\json-cpp\include;..\inc;..\..\..\libs\3rdParty\ptypes-2.1.1\include;..\..\..\libs\3rdParty\ptypes-2.1.1\include\WIN32-Code\;..\..\..\libs\3rdParty\json-rpc\src</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -108,7 +108,7 @@
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
     <Lib>
-      <AdditionalDependencies>nuiSystem.lib;nuiModule.lib;cJSON.lib</AdditionalDependencies>
+      <AdditionalDependencies>nuiModule.lib;json-cpp.lib;json-rpc.lib</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(SolutionDir)\lib</AdditionalLibraryDirectories>
     </Lib>
   </ItemDefinitionGroup>

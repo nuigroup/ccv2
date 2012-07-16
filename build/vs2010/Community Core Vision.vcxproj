@@ -54,6 +54,7 @@
     <IncludePath Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IncludePath)</IncludePath>
     <LibraryPath Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">.\lib;$(LibraryPath)</LibraryPath>
     <GenerateManifest Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</GenerateManifest>
+    <GenerateManifest Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</GenerateManifest>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -98,7 +99,7 @@
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>
       </DebugInformationFormat>
-      <AdditionalIncludeDirectories>..\..\libs\3rdParty\XgetOpt\;..\..\libs\nuiSystem\inc;..\..\libs\nuiFramework\inc;..\..\libs\nuiModule\inc;..\..\libs\3rdParty\boost\;..\..\libs\3rdParty\cJSON;..\inc;..\..\libs\3rdParty\ptypes-2.1.1\include;..\..\libs\3rdParty\ptypes-2.1.1\include\WIN32-Code\;..\..\libs\3rdParty\libevent-1.4.13-stable\compat\;..\..\libs\3rdParty\libevent-1.4.13-stable;..\..\libs\3rdParty\libevent-1.4.13-stable\WIN32-Code\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\libs\3rdParty\XgetOpt\;..\..\libs\nuiSystem\inc;..\..\libs\nuiFramework\inc;..\..\libs\nuiModule\inc;..\..\libs\3rdParty\boost\;..\..\libs\3rdParty\cJSON;..\inc;..\..\libs\3rdParty\ptypes-2.1.1\include;..\..\libs\3rdParty\ptypes-2.1.1\include\WIN32-Code\;..\..\libs\3rdParty\libevent-1.4.13-stable\compat\;..\..\libs\3rdParty\libevent-1.4.13-stable;..\..\libs\3rdParty\libevent-1.4.13-stable\WIN32-Code\;..\..\libs\3rdParty\json-cpp\include;..\..\libs\3rdParty\json-rpc\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -107,10 +108,11 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <TargetMachine>MachineX86</TargetMachine>
       <AdditionalLibraryDirectories>.\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>ws2_32.lib;user32.lib;event.lib;ptypes.lib;s3decoder.lib;sphinxbase.lib;dsound.lib;XgetOpt.lib;rtaudio.lib;nuiSystem.lib;nuiFramework.lib;nuiModule.lib;libresample.lib;cJSON.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>ws2_32.lib;user32.lib;event.lib;ptypes.lib;dsound.lib;XgetOpt.lib;rtaudio.lib;nuiFramework.lib;nuiModule.lib;nuiSystem.lib;libresample.lib;cJSON.lib;json-rpc.lib;json-cpp.lib</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
-      <Command>xcopy "$(SolutionDir)$(TargetFileName)" "$(SolutionDir)\..\bin" /s /i /y</Command>
+      <Command>xcopy "$(SolutionDir)$(TargetFileName)" "$(SolutionDir)\..\bin" /s /i /y
+xcopy "$(SolutionDir)\modules\*.dll" "$(SolutionDir)\..\bin\modules" /s /i /y</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
