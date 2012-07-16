@@ -31,7 +31,7 @@ int main(int argc, char **argv)
 	// initialize daemon (network...)
 	nuiDaemon::init();
 	
-	nuiFrameworkManager::getInstance()->loadAddonsAtPath("addons");
+	nuiFrameworkManager::getInstance()->loadAddonsAtPath("modules");
 	nuiFrameworkManager::getInstance()->initializeFrameworkManager("configs/presets/test.xml");
 	nuiFrameworkManager::getInstance()->workflowStart();
 
