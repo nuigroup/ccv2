@@ -108,7 +108,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <TargetMachine>MachineX86</TargetMachine>
       <AdditionalLibraryDirectories>.\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>ws2_32.lib;user32.lib;event.lib;ptypes.lib;dsound.lib;XgetOpt.lib;rtaudio.lib;nuiFramework.lib;nuiModule.lib;nuiSystem.lib;libresample.lib;cJSON.lib;json-rpc.lib;json-cpp.lib</AdditionalDependencies>
+      <AdditionalDependencies>ws2_32.lib;user32.lib;event.lib;ptypes.lib;dsound.lib;XgetOpt.lib;rtaudio.lib;nuiFramework.lib;nuiModule.lib;libresample.lib;cJSON.lib;json-rpc.lib;json-cpp.lib</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
       <Command>xcopy "$(SolutionDir)$(TargetFileName)" "$(SolutionDir)\..\bin" /s /i /y

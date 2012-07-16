@@ -48,7 +48,7 @@
     <OutDir>..\..\..\..\..\..\build\vs2010\lib\</OutDir>
     <IncludePath>$(IncludePath)</IncludePath>
     <LibraryPath>$(LibraryPath)</LibraryPath>
-    <TargetName>$(ProjectName)</TargetName>
+    <TargetName>libboost_filesystem-vc100-mt-1_48</TargetName>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
