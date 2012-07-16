@@ -18,7 +18,7 @@
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{6EFD0DFD-EF69-4D51-B1BE-8F6D0AF5B6A7}</ProjectGuid>
-    <RootNamespace>CommunityCoreFusion</RootNamespace>
+    <RootNamespace>CommunityCoreVision</RootNamespace>
     <Keyword>Win32Proj</Keyword>
     <ProjectName>Community Core Vision</ProjectName>
   </PropertyGroup>
@@ -78,8 +78,8 @@
       <AdditionalDependencies>ws2_32.lib;user32.lib;event.lib;ptypes.lib;dsound.lib;XgetOpt.lib;rtaudio.lib;nuiFramework.lib;nuiModule.lib;nuiSystem.lib;libresample.lib;cJSON.lib;json-rpc.lib;json-cpp.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
-      <Command>xcopy "$(SolutionDir)$(TargetFileName)" "$(SolutionDir)\..\bin" /s /i /y
-xcopy "$(SolutionDir)\modules\*.dll" "$(SolutionDir)\..\bin\modules" /s /i /y</Command>
+      <Command>
+      </Command>
     </PostBuildEvent>
     <PreBuildEvent>
       <Command>xcopy /d /i /e "$(ProjectDir)\..\bin\configs" "$(ProjectDir)\configs"</Command>
