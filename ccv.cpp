@@ -2,16 +2,13 @@
 
 LOG_DECLARE("App");
 
-static bool want_quit = false;
 static bool config_syslog = false;
-static nuiJsonRpcApi *server = NULL;
 int g_config_delay = 20;
-
-bool want_quit_soon = false;
 
 static void signal_term(int signal) 
 {
-	want_quit = true;
+	printf("ahhhhhhhh");
+	nuiJsonRpcApi::getInstance()->stopApi();
 }
 
 int main(int argc, char **argv) 
@@ -33,33 +30,17 @@ int main(int argc, char **argv)
 	
 	nuiFrameworkManager::getInstance()->loadAddonsAtPath("modules");
 	nuiFrameworkManager::getInstance()->initializeFrameworkManager("configs/presets/test.xml");
-	nuiFrameworkManager::getInstance()->workflowStart();
 
 	if(!nuiJsonRpcApi::getInstance()->init("127.0.0.1", 7500)) goto exit_critical;
 
-	server = nuiJsonRpcApi::getInstance();
-	server->startApi();
+	nuiJsonRpcApi::getInstance()->startApi();
 
-	nuiTreeNode<int, int>* node = new nuiTreeNode<int, int>(0,0);
-	node->addChildNode(new nuiTreeNode<int, int>(1,1));
-	node->addChildNode(new nuiTreeNode<int, int>(2,2));
-	node->addChildNode(new nuiTreeNode<int, int>(3,3));
-	node->getChild(1)->addChildNode(new nuiTreeNode<int, int>(4,4));
-	node->getChild(1)->addChildNode(new nuiTreeNode<int, int>(5,5));
-	node->getChild(3)->addChildNode(new nuiTreeNode<int, int>(6,6));
-	node->getChild(3)->addChildNode(new nuiTreeNode<int, int>(7,7));
-	nuiTree<int,int>* tree = new nuiTree<int,int>(node);
-
-	for (nuiTree<int,int>::iterator iter = tree->begin();iter!=tree->end();iter++)
-	{
-		printf("%i ", (*(iter))->getKey());
-	}
-
+	nuiFrameworkManager::getInstance()->workflowStart();
 
 do
     {
 		SLEEP(g_config_delay);
-	} while ( server->isFinished() == false );
+	} while ( nuiJsonRpcApi::getInstance()->isFinished() == false );
 
 	nuiFrameworkManager::getInstance()->workflowStop();
 	nuiFrameworkManager::getInstance()->workflowQuit();
