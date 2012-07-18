@@ -17,6 +17,7 @@ public:
 	static nuiJsonRpcApi *getInstance();
 	bool init(std::string address, int port);
 	void startApi();
+	void stopApi();
 	bool isInitialized();
 	bool isFinished();
 protected:
