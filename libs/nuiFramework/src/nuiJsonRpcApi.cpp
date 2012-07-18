@@ -69,16 +69,28 @@ void nuiJsonRpcApi::startApi()
 		start();
 };
 
+void nuiJsonRpcApi::stopApi()
+{
+	this->want_quit = true;
+	this->cleanup();
+};
+
 void nuiJsonRpcApi::execute()
 {
 	while(!want_quit)
 	{
-		server->WaitMessage(0);	
+		server->WaitMessage(0);
 	}
 	finished = true;
+	this->cleanup();
 }
 
-void nuiJsonRpcApi::cleanup() { };
+void nuiJsonRpcApi::cleanup() {
+	if (this->server != NULL)
+		server->Close();
+	this->signal();
+	//delete server;
+};
 
 nuiJsonRpcApi::nuiJsonRpcApi() : pt::thread(false) 
 {
