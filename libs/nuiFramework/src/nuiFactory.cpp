@@ -164,19 +164,17 @@ nuiModule *nuiFactory::createPipeline(nuiModuleDescriptor* descriptor)
 	pipeline->setInputEndpointCount(descriptor->getInputEndpointsCount());
 	for (int i=0;i<descriptor->getInputEndpointsCount();i++)
 	{
-		nuiEndpoint* newEndpoint = new nuiEndpoint();
+		nuiEndpoint* newEndpoint = new nuiEndpoint(pipeline);
 		nuiEndpointDescriptor* endpointDescriptor = descriptor->getInputEndpointDescriptor(i);
 		newEndpoint->setTypeDescriptor(endpointDescriptor->getDescriptor());
-		newEndpoint->setModuleHoster(pipeline);
 		pipeline->setInputEndpoint(endpointDescriptor->getIndex(),newEndpoint);
 	}
 	pipeline->setOutputEndpointCount(descriptor->getOutputEndpointsCount());
 	for (int i=0;i<descriptor->getOutputEndpointsCount();i++)
 	{
-		nuiEndpoint* newEndpoint = new nuiEndpoint();
+		nuiEndpoint* newEndpoint = new nuiEndpoint(pipeline);
 		nuiEndpointDescriptor* endpointDescriptor = descriptor->getOutputEndpointDescriptor(i);
 		newEndpoint->setTypeDescriptor(endpointDescriptor->getDescriptor());
-		newEndpoint->setModuleHoster(pipeline);
 		pipeline->setOutputEndpoint(endpointDescriptor->getIndex(),newEndpoint);
 	}
 	printf("Processing pipeline %s connecitons:\n",descriptor->getName().c_str());

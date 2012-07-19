@@ -72,18 +72,16 @@ nuiAudioOutputModule::nuiAudioOutputModule() : nuiModule()
     audioBufSize = 0;
     
 
-	this->output = new nuiEndpoint();
+	this->output = new nuiEndpoint(this);
 	this->output->setTypeDescriptor(std::string("AudioDataStream"));
 	this->setOutputEndpointCount(1);
 	this->setOutputEndpoint(0,this->output);
-	this->output->setModuleHoster(this);
 	//this->declareOutput(0, &this->output, new nuiDataStreamInfo("AudioDataStream", "audiodatastream_8000", "AudioDataStream (samplerate: 8000, format: 16-bit/short)"));
     
-	this->input = new nuiEndpoint();
+	this->input = new nuiEndpoint(this);
 	this->input->setTypeDescriptor(std::string("AudioTriggers"));
 	this->setInputEndpointCount(1);
 	this->setInputEndpoint(0,this->input);
-	this->input->setModuleHoster(this);
 
 	inputDataPaket = NULL;
 	outputDataPaket = new nuiAudioOutputModuleDataPacket();

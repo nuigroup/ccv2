@@ -69,19 +69,17 @@ nuiDebugGestureModule::nuiDebugGestureModule() :
     //this->output = new nuiDataStream("vector<unimodalLeaf>");
 	//this->declareOutput(0, &this->output, new nuiDataStreamInfo(
 	//		"tactiles", "vector<unimodalLeaf>", "Vector of tactile GUI events"));
-    this->output = new nuiEndpoint();
+    this->output = new nuiEndpoint(this);
     this->output->setTypeDescriptor(std::string("tactiles"));
     this->setOutputEndpointCount(1);
     this->setOutputEndpoint(0,this->output);
-    this->output->setModuleHoster(this);
 
     //this->input = new nuiDataStream("vector<unimodalLeaf");
     //this->declareInput(0, &this->input, new nuiDataStreamInfo("debugtactiles", "vector<unimodalLeaf>", "Vector of tactile GUI events"));
-    this->input = new nuiEndpoint();
+    this->input = new nuiEndpoint(this);
     this->input->setTypeDescriptor(std::string("debugtactiles"));
     this->setInputEndpointCount(1);
     this->setInputEndpoint(0,this->input);
-    this->input->setModuleHoster(this);
 
     inputDataPacket = NULL;
     outputDataPacket = new nuiDebugGestureModuleDataPacket();
@@ -103,6 +101,6 @@ void nuiDebugGestureModule::update() {
 }
 
 void nuiDebugGestureModule::start() {
-	LOG(NUI_DEBUG, "passing through");
+	LOG(NUI_DEBUG, "passing go");
     nuiModule::start();
 }

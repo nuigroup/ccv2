@@ -71,17 +71,15 @@ nuiSphinxASRModule::nuiSphinxASRModule() : nuiModule() {
     this->input = new nuiDataStream("audiodatastream_8000");
     this->declareInput(0, &this->input, new nuiDataStreamInfo("AudioDataStream", "audiodatastream_8000", "AudioDataStream (samplerate: 8000, format: 16-bit/short)"));*/
     
-    this->output = new nuiEndpoint();
+    this->output = new nuiEndpoint(this);
     this->output->setTypeDescriptor(std::string("CCAHypothesis"));
     this->setOutputEndpointCount(1);
     this->setOutputEndpoint(0,this->output);
-    this->output->setModuleHoster(this);
 
-    this->input = new nuiEndpoint();
+    this->input = new nuiEndpoint(this);
     this->input->setTypeDescriptor(std::string("AudioDataStream"));
     this->setInputEndpointCount(1);
     this->setInputEndpoint(0,this->input);
-    this->input->setModuleHoster(this);
 
 
 

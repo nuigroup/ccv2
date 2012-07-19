@@ -1,13 +1,13 @@
 #include "ccv.h"
 
-LOG_DECLARE("App");
+LOG_DECLARE("CCV");
 
 static bool config_syslog = false;
-int g_config_delay = 20;
+int g_config_delay = 200;
 
 static void signal_term(int signal) 
 {
-	printf("ahhhhhhhh");
+	LOG(NUI_TRACE, "ahhhhhhhh");
 	nuiJsonRpcApi::getInstance()->stopApi();
 }
 
@@ -25,13 +25,15 @@ int main(int argc, char **argv)
 	// initialize log
 	nuiDebugLogger::init(config_syslog);
 
-	// initialize daemon (network...)
-	nuiDaemon::init();
-	
-	nuiFrameworkManager::getInstance()->loadAddonsAtPath("modules");
-	nuiFrameworkManager::getInstance()->initializeFrameworkManager("configs/presets/test.xml");
-
+	// initialize JSON RPC daemon and network
 	if(!nuiJsonRpcApi::getInstance()->init("127.0.0.1", 7500)) goto exit_critical;
+	
+	bool frameworkInitStatus = nuiFrameworkManager::getInstance()->init();
+	if(frameworkInitStatus != NUI_FRAMEWORK_MANAGER_OK)
+		if(frameworkInitStatus == NUI_FRAMEWORK_ROOT_INITIALIZATION_FAILED) LOG(NUI_CRITICAL, "Failed to initialize framework root");
+
+	nuiFrameworkManager::getInstance()->loadAddonsAtPath("modules");
+	//nuiFrameworkManager::getInstance()->initializeFrameworkManager("configs/presets/test.xml");
 
 	nuiJsonRpcApi::getInstance()->startApi();
 

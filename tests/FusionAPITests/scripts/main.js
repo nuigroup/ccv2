@@ -1,15 +1,37 @@
 var host = '127.0.0.1';
 var port = 7500;
 
+function syntaxHighlight(json) {
+    if (typeof json != 'string') {
+         json = JSON.stringify(json, undefined, 2);
+    }
+    json = json.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    return json.replace(/("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g, function (match) {
+        var cls = 'number';
+        if (/^"/.test(match)) {
+            if (/:$/.test(match)) {
+                cls = 'key';
+            } else {
+                cls = 'string';
+            }
+        } else if (/true|false/.test(match)) {
+            cls = 'boolean';
+        } else if (/null/.test(match)) {
+            cls = 'null';
+        }
+        return '<span class="' + cls + '">' + match + '</span>';
+    });
+}
+
 function connect(host, port) {
-	$('#status').attr("src", "grey.png");
 	tcpClient = new TcpClient(host, port);
 	tcpClient.connect(function() {
+	  $('#status').attr("src", "grey.png");
 	  tcpClient.addResponseListener(function(data) {
 		$('#divDataRaw').empty();
-		$('#divDataRaw').text(data);
-		if($('#divDataRaw').val() == "") { $('#status').attr("src", "red.png");}
-		else { $('#status').attr("src", "green.png");}
+		document.getElementById('divDataRaw').innerHTML = syntaxHighlight(data);
+		$('#status').attr("src", "green.png");
+		//$('#reload').attr("disabled", "disabled");
 		});
 	});
 }
@@ -39,6 +61,7 @@ $(document).ready(function () {
 
 	$('#send').click(function() {
 		tcpClient.sendMessage(document.getElementById("divDataSent").value, function() {$('#divDataRaw').empty(); $('#status').attr("src", "orange.png");});
+		setTimeout(function() {if($('#divDataRaw').html() == "") { $('#status').attr("src", "red.png");$("#reload").removeAttr('disabled');}}, 1000);
 	});
 	$('#requests').change(updateJSON);
 	var content = $('#requests').val();
@@ -49,9 +72,9 @@ $(document).ready(function () {
 			updateJSON();
         }
     });
+	
+	$('#reload').click(function(){connect(host, port);$("#reload").attr('disabled', 'disabled');})
 });
-
-$('#reload').click(function(){connect(host, port);})
 
 /*
 

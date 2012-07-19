@@ -6,15 +6,23 @@
 <title>Fusion API Tests</title>
 <link rel="chrome-application-definition" href="manifest.json">
 <script type="text/javascript" src="scripts/jquery-1.7.1.min.js"></script> 
-<style>body{font-family:Helventica, Arial; font-size:11px;}.textbox{border:solid 1px #EEe;width:100%;height:100px;overflow:auto;}#send{background-color:#228822;border:0;}#send:hover{background-color:#22DD22;}</style>
+<style>body{font-family:Helventica, Arial; font-size:11px;}.clear:{clear:left;}#logo{float:left;padding-top:0px;margin-top:-55px;margin-left:-10px;margin-right:20px;}.textblob{border:solid 1px #EEe;width:100%;height:100px;}.textbox{border:solid 1px #EEe;width:100%;height:100px;overflow:auto;}#send{color:#FFF;background-color:#228822;border:1px solid black;}#send:hover{background-color:#22AA22;}#reload{color:#FFF;background-color:#888822;border:1px solid black;}#reload:hover{background-color:#AAAA22;}#reload:disabled{background-color:#CCC;border:1px solid grey;}
+pre {outline: 1px solid #ccc; padding: 5px; margin: 5px; }
+.string { color: green; }
+.number { color: darkorange; }
+.boolean { color: blue; }
+.null { color: magenta; }
+.key { color: red; }
+</style>
 </head>
 <body>
-
+<img id="logo" src="~.png" />
 <h2>Fusion API Tests - <small>Status: </small><img id="status" src="grey.png"/></h2>
-<button id="reload">Reconnect</button>
 <button id="send">Send request</button>
+<button id="reload" disabled="disabled">Reconnect</button>
+<br /><br />
 <div id="results"></div>
-<label>Requst method:</label>
+<label for="requests">Requst method:</label>
 <select id="requests">
   <option value="notset">Please select a request.</option>
   <option value="null">---- List -----</option>
@@ -45,13 +53,14 @@
   <option value="nui_navigate_push">/navigate/push</option>
   <option value="nui_navigate_pop">/navigate/pop</option>
   <option value="null">---- Save -----</option>
-  <option value="nui_save_pipeline">/save/pipeline</option>  
+  <option value="nui_save_workflow">/save/workflow</option>  
   <option value="null">---- Workflow -----</option>
   <option value="nui_workflow_start">/workflow/start</option>
   <option value="nui_workflow_stop">/workflow/stop</option>
   <option value="nui_workflow_quit">/workflow/quit</option>
 </select>
-<label>Request parameters</label>
+<br /><br /><br /><br />
+<label class="clear" for="params">Request parameters</label>
 <textarea class="textbox" id="params">
 {"pipeline" : "root",
 	"module" : "nuiAudioOutputModule",
@@ -62,7 +71,7 @@
 <textarea class="textbox" id="divDataSent"></textarea>
 <p></p>
 <label>Repsonse:</label>
-<textarea class="textbox" id="divDataRaw"></textarea>
+<div class="textblob" id="divDataRaw"></div>
 
 <script src="scripts/tcp-client.js"></script>
 <script src="scripts/ansi-converter.js"></script>
