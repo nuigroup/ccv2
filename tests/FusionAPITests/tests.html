@@ -61,11 +61,18 @@ pre {outline: 1px solid #ccc; padding: 5px; margin: 5px; }
 </select>
 <br /><br /><br /><br />
 <label class="clear" for="params">Request parameters</label>
-<textarea class="textbox" id="params">
+<div id="nui_create_pipeline">
+<form action="" method="post">
+New pipeline name:<input type="text" name="pipeline" maxlength="16" size="16"/>
+Module name:<input type="text" name="module" maxlength="16" size="16"/>
+Index:<input type="text" name="index" maxlength="16" size="16"/>
+</form>
+</div>
+<!--textarea class="textbox" id="params">
 {"pipeline" : "root",
 	"module" : "nuiAudioOutputModule",
 	"moduleId" : 1}
-</textarea>
+</textarea-->
 <p></p>
 <label>Request JSON:</label>
 <textarea class="textbox" id="divDataSent"></textarea>

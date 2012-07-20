@@ -1,6 +1,27 @@
 var host = '127.0.0.1';
 var port = 7500;
 
+var id = 0;
+
+$.fn.serializeObject = function()
+{
+    var o = {};
+    var a = this.serializeArray();
+	var cur;
+    $.each(a, function() {
+		cur = (isNaN(this.value))?this.value:parseInt(this.value);
+        if (o[this.name] !== undefined) {
+            if (!o[this.name].push) {
+                o[this.name] = [o[this.name]];
+            }
+            o[this.name].push(cur || 'error');
+        } else {
+            o[this.name] = cur || 'error';
+        }
+    });
+    return o;
+};
+
 function syntaxHighlight(json) {
     if (typeof json != 'string') {
          json = JSON.stringify(json, undefined, 2);
@@ -48,8 +69,9 @@ function updateJSON() {
 	}
 	var jsonRequest = {"jsonrpc": "2.0", 
 		"method": document.getElementById("requests").value,
-		"id" : 123,
-		"params" : JSON.parse(document.getElementById("params").value)
+		"id" : id++,
+		//"params" : JSON.parse(document.getElementById("params").value),
+		"params" : $('form').serializeObject()
 	};
 	var stringreq = JSON.stringify(jsonRequest);
 	$('#divDataSent').append(stringreq);
@@ -65,36 +87,22 @@ $(document).ready(function () {
 	});
 	$('#requests').change(updateJSON);
 	var content = $('#requests').val();
-
     $('#params').keyup(function() { 
         if ($('#params').val() != content) {
             content = $('#params').val();
 			updateJSON();
         }
     });
-	
+
+	$('.formy').change(updateJSON);
+	$.each($('form').children(), function(index, value) {
+		var orig = value.value;
+		value.onkeyup = function() { 
+			if (value.value != orig) {
+				orig = value.value;
+				updateJSON();
+			}
+		};
+	});
 	$('#reload').click(function(){connect(host, port);$("#reload").attr('disabled', 'disabled');})
 });
-
-/*
-
-var tcp2 = new TcpClient('127.0.0.1', 7500);
-
-tcp2.connect(function() {
-      tcp2.addResponseListener(function(data) {
-        $('#divDataRaw').empty();
-		$('#divDataRaw').append(data);
-		if($('#divDataRaw').val() == "") { $('#status').attr("src", "red.png");}
-		else { $('#status').attr("src", "green.png");}
-     });
-});
-	
-tcp2.sendMessage(JSON.stringify({"jsonrpc": "2.0", 
-	"method": "nui_list_dynamic",
-	"params": {
-		"hostername" : "blah"
-	},
-	"id" : 123
-}), function() {$('#status').attr("src", "red.png");});
-
-*/
