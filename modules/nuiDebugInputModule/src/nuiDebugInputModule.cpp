@@ -60,11 +60,10 @@ nuiDebugInputModule::nuiDebugInputModule() : nuiModule() {
 //	this->declareInput(0, &this->stream, new nuiDataStreamInfo(
 //			"data", "mAST", "Show any stream that conforms to GenericList in text format"));
 
-    this->input = new nuiEndpoint();
+    this->input = new nuiEndpoint(this);
     this->input->setTypeDescriptor(std::string("mAST"));
     this->setInputEndpointCount(1);
     this->setInputEndpoint(0,this->input);
-    this->input->setModuleHoster(this);
 }
 
 nuiDebugInputModule::~nuiDebugInputModule() {

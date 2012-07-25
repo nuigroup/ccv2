@@ -6,9 +6,11 @@
 #include "jsonrpc.h"
 #include "jsonrpc_tcpserver.h"
 
+#include "nuiFrameworkManager.h"
 #include "nuiModule.h"
 #include "nuiDataStream.h"
 #include "nuiEndpoint.h"
+#include "nuiDebugLogger.h"
 
 //! TODO : optional arguments methods
 class nuiJsonRpcApi : public pt::thread
@@ -33,6 +35,7 @@ private:
 	void execute();
 	void cleanup();
 
+	Json::Value serialize_workflow(nuiModuleDescriptor* descriptor);
 	Json::Value serialize_pipeline(nuiModuleDescriptor* descriptor);
 	Json::Value serialize_module(nuiModuleDescriptor* descriptor);
 	Json::Value serialize_endpoint(nuiEndpointDescriptor *descriptor);
@@ -62,5 +65,5 @@ private:
 	bool nui_get_connection(const Json::Value& root, Json::Value& response);
 	bool nui_navigate_push(const Json::Value& root, Json::Value& response);
 	bool nui_navigate_pop(const Json::Value& root, Json::Value& response);
-	bool nui_save_pipeline(const Json::Value& root, Json::Value& response);
+	bool nui_save_workflow(const Json::Value& root, Json::Value& response);
 };

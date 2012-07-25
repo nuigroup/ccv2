@@ -1,10 +1,10 @@
 #include "nuiEndpoint.h"
 #include "nuiModule.h"
 
-nuiEndpoint::nuiEndpoint() 
+nuiEndpoint::nuiEndpoint(nuiModule *hostModule) 
 {
 	mtx = new pt::mutex();
-	moduleHoster = NULL;
+	moduleHoster = hostModule;
 }
 
 nuiEndpoint::~nuiEndpoint() 

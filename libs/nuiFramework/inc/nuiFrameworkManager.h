@@ -13,6 +13,7 @@
 #include "nuiThread.h"
 #include "nuiEndpoint.h"
 #include "nuiTree.h"
+#include "nuiDebugLogger.h"
 
 
 
@@ -56,6 +57,7 @@ public:
 private:
 	nuiFrameworkManager();
 public:
+	nuiFrameworkManagerErrorCode init();
 	nuiFrameworkManagerErrorCode initializeFrameworkManager(const char *fileName);
 	nuiFrameworkManagerErrorCode loadAddonsAtPath(const char *addonsPath);
 	std::vector<std::string> *listDynamicModules();
@@ -84,6 +86,7 @@ public:
 	int setOutputEndpointCount(std::string &pipelineName,int count);
 public:
     nuiModuleDescriptor *getCurrentPipeline();
+	nuiModuleDescriptor *getRootPipeline();
 	nuiModuleDescriptor *getPipeline(std::string &pipelineName);
 	nuiModuleDescriptor *getModule(std::string &pipelineName, int index);
 	nuiModuleDescriptor *getModule(std::string &moduleName);

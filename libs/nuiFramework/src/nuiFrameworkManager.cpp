@@ -5,6 +5,8 @@
 #include "nuiFactory.h"
 #include "nuiUtils.h"
 
+LOG_DECLARE("FrameworkManager");
+
 nuiFrameworkManager::nuiFrameworkManager()
 {
 	rootPipeline = NULL;
@@ -26,10 +28,29 @@ nuiFrameworkManager *nuiFrameworkManager::getInstance()
 	return instance;
 }
 
+nuiFrameworkManagerErrorCode nuiFrameworkManager::init() {
+	nuiFactory::getInstance()->init();
+	nuiModuleDescriptor* rootDescriptor = new nuiModuleDescriptor();
+	rootDescriptor->setAuthor("Scott Halstvedt");
+	rootDescriptor->setDescription("This is the root pipeline initialized within the workflow");
+	rootDescriptor->setName("root");
+	this->rootPipeline = dynamic_cast<nuiPipelineModule*>(nuiFactory::getInstance()->createPipeline(rootDescriptor));
+	nuiTreeNode<int, nuiModule*> *temp;
+	if(rootPipeline != NULL) 
+		temp = new nuiTreeNode<int, nuiModule*>(rootPipeline->property("id").asInteger(), rootPipeline);
+	else {
+		return NUI_FRAMEWORK_ROOT_INITIALIZATION_FAILED;
+	}
+	if(temp != NULL)
+		this->dataObjectTree = new nuiTree<int, nuiModule*>(temp);
+	else return NUI_FRAMEWORK_ROOT_INITIALIZATION_FAILED;
+	return NUI_FRAMEWORK_MANAGER_OK;
+}
+
 nuiFrameworkManagerErrorCode nuiFrameworkManager::initializeFrameworkManager(const char *fileName)
 {
 	nuiFrameworkManagerErrorCode returnCode = loadSettingsFromXml(fileName);
-    this->rootPipeline = (nuiPipelineModule*)(nuiFactory::getInstance()->create("root"));
+    //this->rootPipeline = (nuiPipelineModule*)(nuiFactory::getInstance()->create("root"));
 	if(rootPipeline != NULL) {
 		nuiTreeNode<int, nuiModule*> *temp = new nuiTreeNode<int, nuiModule*>(rootPipeline->property("id").asInteger(), rootPipeline);
 		for (int i=0; i<rootPipeline->getChildModuleCount(); i++) {
@@ -762,6 +783,11 @@ int nuiFrameworkManager::setOutputEndpointCount(std::string &pipelineName,int co
 nuiModuleDescriptor * nuiFrameworkManager::getCurrentPipeline()
 {
     return nuiFactory::getInstance()->getDescriptor(getCurrent()->getName());
+}
+
+nuiModuleDescriptor *nuiFrameworkManager::getRootPipeline()
+{
+	return nuiFactory::getInstance()->getDescriptor(this->rootPipeline->getName());
 }
 
 nuiModuleDescriptor *nuiFrameworkManager::getPipeline(std::string &pipelineName)

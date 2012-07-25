@@ -11,12 +11,12 @@
 
 int main()
 {
-	nuiEndpoint* sourceEndpoint = new nuiEndpoint();
+	nuiEndpoint* sourceEndpoint = new nuiEndpoint(NULL);
 	sourceEndpoint->setTypeDescriptor(std::string("string"));
 	std::vector<nuiEndpoint*> destinationEndpoint;
 	for (int i=0;i<4;i++)
 	{
-		destinationEndpoint.push_back(new nuiEndpoint());
+		destinationEndpoint.push_back(new nuiEndpoint(this));
 		destinationEndpoint[i]->setTypeDescriptor(std::string("string2"));
 		nuiDataStream *dataStream = sourceEndpoint->addConnection(destinationEndpoint[i]);
 		if (dataStream!=NULL)

@@ -1,5 +1,6 @@
 #include "nuiJsonRpcApi.h"
-#include "nuiFrameworkManager.h"
+
+LOG_DECLARE("RPC");
 
 nuiJsonRpcApi *nuiJsonRpcApi::getInstance()
 {
@@ -11,21 +12,36 @@ nuiJsonRpcApi *nuiJsonRpcApi::getInstance()
 
 bool nuiJsonRpcApi::init(std::string address, int port)
 {
+
+#ifdef WIN32
+	// initialize network for Win32 platform
+	{
+		WSADATA wsaData;
+		if ( WSAStartup(MAKEWORD(2, 2), &wsaData) == -1 ) {
+			LOG(NUI_CRITICAL, "unable to initialize WinSock (v2.2)");
+			return false;
+		}
+	}
+#endif
+
 	if(server == NULL)
 		server = new Json::Rpc::TcpServer(std::string("127.0.0.1"), 7500);
 
 	if(!server->Bind())
 	{
 		delete server;
+		LOG(NUI_CRITICAL, "unable to bind the JSON RPC daemon");
 		return false;
 	}
 	if(!server->Listen())
 	{
 		delete server;
+		LOG(NUI_CRITICAL, "unable to open the socket for listening");
 		return false;
 	}
 
 	this->finished = false;
+	LOG(NUI_DEBUG, "running");
 
 	server->AddMethod(new Json::Rpc::RpcMethod<nuiJsonRpcApi>(*this, &nuiJsonRpcApi::nui_list_dynamic,std::string("nui_list_dynamic")));
 	server->AddMethod(new Json::Rpc::RpcMethod<nuiJsonRpcApi>(*this, &nuiJsonRpcApi::nui_list_pipelines,std::string("nui_list_pipelines")));
@@ -51,7 +67,7 @@ bool nuiJsonRpcApi::init(std::string address, int port)
 	server->AddMethod(new Json::Rpc::RpcMethod<nuiJsonRpcApi>(*this, &nuiJsonRpcApi::nui_get_connection,std::string("nui_get_connection")));
 	server->AddMethod(new Json::Rpc::RpcMethod<nuiJsonRpcApi>(*this, &nuiJsonRpcApi::nui_navigate_push,std::string("nui_navigate_push")));
 	server->AddMethod(new Json::Rpc::RpcMethod<nuiJsonRpcApi>(*this, &nuiJsonRpcApi::nui_navigate_pop,std::string("nui_navigate_pop")));
-	server->AddMethod(new Json::Rpc::RpcMethod<nuiJsonRpcApi>(*this, &nuiJsonRpcApi::nui_save_pipeline,std::string("nui_save_pipeline")));
+	server->AddMethod(new Json::Rpc::RpcMethod<nuiJsonRpcApi>(*this, &nuiJsonRpcApi::nui_save_workflow,std::string("nui_save_workflow")));
 
 	return true;
 };
@@ -72,24 +88,25 @@ void nuiJsonRpcApi::startApi()
 void nuiJsonRpcApi::stopApi()
 {
 	this->want_quit = true;
-	this->cleanup();
 };
 
 void nuiJsonRpcApi::execute()
 {
 	while(!want_quit)
 	{
-		server->WaitMessage(0);
+		server->WaitMessage(200);
 	}
-	finished = true;
-	this->cleanup();
 }
 
 void nuiJsonRpcApi::cleanup() {
+	printf("agh");
 	if (this->server != NULL)
 		server->Close();
-	this->signal();
-	//delete server;
+	delete server;
+	finished = true;
+#ifdef _WIN32
+	WSACleanup();
+#endif
 };
 
 nuiJsonRpcApi::nuiJsonRpcApi() : pt::thread(false) 
@@ -169,12 +186,9 @@ bool nuiJsonRpcApi::nui_workflow_stop( const Json::Value& root, Json::Value& res
 bool nuiJsonRpcApi::nui_workflow_quit( const Json::Value& root, Json::Value& response )
 {
 	response["id"] = root["id"];
-	this->want_quit = true;
-
+	this->stopApi();
 	setSuccess(response);
-
 	return true;
-
 }
 
 bool nuiJsonRpcApi::nui_create_pipeline( const Json::Value& root, Json::Value& response )
@@ -674,10 +688,27 @@ bool nuiJsonRpcApi::nui_navigate_pop( const Json::Value& root, Json::Value& resp
 	}
 }
 
-bool nuiJsonRpcApi::nui_save_pipeline( const Json::Value& root, Json::Value& response )
+bool nuiJsonRpcApi::nui_save_workflow( const Json::Value& root, Json::Value& response )
 {
-	// TODO : ? still needed ?
+	response["id"] = root["id"];
+	response = serialize_workflow(nuiFrameworkManager::getInstance()->getRootPipeline());
+	setSuccess(response);
 	return true;
+}
+
+Json::Value nuiJsonRpcApi::serialize_workflow( nuiModuleDescriptor* descriptor )
+{
+	Json::Value jWorkflow;
+	jWorkflow["name"] = descriptor->getName();
+	jWorkflow["author"] = descriptor->getAuthor();
+	jWorkflow["description"] = descriptor->getDescription();
+
+	Json::Value* jPipelines = new Json::Value();
+	for(int i = 0; i<descriptor->getChildModulesCount(); i++)
+		jPipelines->append(serialize_pipeline(descriptor->getChildModuleDescriptor(i)));
+	jWorkflow["pipelines"] = *jPipelines;
+
+	return jWorkflow;
 }
 
 Json::Value nuiJsonRpcApi::serialize_pipeline( nuiModuleDescriptor* descriptor )

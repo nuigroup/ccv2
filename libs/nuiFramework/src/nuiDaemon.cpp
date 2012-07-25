@@ -33,17 +33,7 @@
 LOG_DECLARE("Daemon");
 
 void nuiDaemon::init() {
-	nuiFactory::getInstance()->init();
-	
-#ifdef WIN32
-	// initialize network for Win32 platform
-	{
-		WSADATA wsaData;
-		if ( WSAStartup(MAKEWORD(2, 2), &wsaData) == -1 )
-			LOG(NUI_CRITICAL, "unable to initialize WinSock (v2.2)");
-	}
-#endif
-	
+	//nuiFactory::getInstance()->init();
 }
 
 bool nuiDaemon::detach(std::string pidfilename) {

@@ -40,7 +40,7 @@ private:
 class nuiEndpoint
 {
 public:
-	nuiEndpoint();
+	nuiEndpoint(nuiModule *hostModule);
 	virtual ~nuiEndpoint();
 public:
 	void transmitData();

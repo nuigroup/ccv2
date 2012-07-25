@@ -60,26 +60,19 @@ nuiTemporalFusionModule::nuiTemporalFusionModule() : nuiModule() {
     this->declareInput(0, &this->audioInput, new nuiDataStreamInfo("audio", "mAST", "Multimodal abstract syntax tree (from audio utterance)"));
     this->declareInput(1, &this->tactileInput, new nuiDataStreamInfo("tactile", "vector<unimodalLeaf>", "Series of unimodal actions from the GUI"));
     this->declareOutput(0, &this->output, new nuiDataStreamInfo("fused", "mAST", "Multimodal abstract syntax tree (fused)"));*/
-    this->output = new nuiEndpoint();
-    this->audioInput = new nuiEndpoint();
-    this->tactileInput = new nuiEndpoint();
+    this->output = new nuiEndpoint(this);
+    this->audioInput = new nuiEndpoint(this);
+    this->tactileInput = new nuiEndpoint(this);
 
     this->setOutputEndpointCount(1);
-    this->output = new nuiEndpoint();
     this->output->setTypeDescriptor(std::string("mAST"));
     this->setOutputEndpoint(0,this->output);
-    this->output->setModuleHoster(this);
 
     this->setInputEndpointCount(2);
-    this->audioInput = new nuiEndpoint();
     this->audioInput->setTypeDescriptor(std::string("mAST"));
     this->setInputEndpoint(0,this->audioInput);
-    this->audioInput->setModuleHoster(this);
-
-    this->tactileInput = new nuiEndpoint();
     this->tactileInput->setTypeDescriptor(std::string("tactiles"));
     this->setInputEndpoint(1,this->tactileInput);
-    this->tactileInput->setModuleHoster(this);
 
     this->tactileInputDataPacket = NULL;
     this->audioInputDataPacket = NULL;
