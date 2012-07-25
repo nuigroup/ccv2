@@ -84,9 +84,8 @@ void nuiPipelineModule::setOutputEndpoint(int n, nuiEndpoint *endpoint)
 	mtx->lock();
 	if ((inputInternalEndpoints!=NULL) && (inputInternalEndpoints[n] != NULL))
 		delete inputInternalEndpoints[n];
-	inputInternalEndpoints[n] = new nuiEndpoint();
+	inputInternalEndpoints[n] = new nuiEndpoint(this);
 	inputInternalEndpoints[n]->setTypeDescriptor(endpoint->getTypeDescriptor());
-	inputInternalEndpoints[n]->setModuleHoster(this);
 	mtx->unlock();
 }
 
@@ -98,9 +97,8 @@ void nuiPipelineModule::setInputEndpoint(int n, nuiEndpoint *endpoint)
 	mtx->lock();
 	if ((inputInternalEndpoints!=NULL) && (inputInternalEndpoints[n] != NULL))
 		delete outputInternalEndpoints[n];
-	outputInternalEndpoints[n] = new nuiEndpoint();
+	outputInternalEndpoints[n] = new nuiEndpoint(this);
 	outputInternalEndpoints[n]->setTypeDescriptor(endpoint->getTypeDescriptor());
-	outputInternalEndpoints[n]->setModuleHoster(this);
 	mtx->unlock();
 }
 
@@ -119,8 +117,7 @@ void nuiPipelineModule::setOutputEndpointCount(int n)
 			memcpy(newInternalInputEndpoints,inputInternalEndpoints, oldCount * sizeof(nuiEndpoint*));
 		for (int i=oldCount;i<n;i++)
 		{
-			newInternalInputEndpoints[i] = new nuiEndpoint();
-			newInternalInputEndpoints[i]->setModuleHoster(this);
+			newInternalInputEndpoints[i] = new nuiEndpoint(this);
 			newInternalInputEndpoints[i]->setTypeDescriptor("*");
 		}
 	}
@@ -152,8 +149,7 @@ void nuiPipelineModule::setInputEndpointCount(int n)
 			memcpy(newInternalOutputEndpoints,outputInternalEndpoints, oldCount * sizeof(nuiEndpoint*));
 		for (int i=oldCount;i<n;i++)
 		{
-			newInternalOutputEndpoints[i] = new nuiEndpoint();
-			newInternalOutputEndpoints[i]->setModuleHoster(this);
+			newInternalOutputEndpoints[i] = new nuiEndpoint(this);
 			newInternalOutputEndpoints[i]->setTypeDescriptor("*");
 		}
 	}

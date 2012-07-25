@@ -59,11 +59,10 @@ nuiDebugGestureOutputModule::nuiDebugGestureOutputModule() : nuiModule() {
 //    this->stream = new nuiDataStream("vector<unimodalLeaf>");
 //	this->declareOutput(0, &this->stream, new nuiDataStreamInfo(
 //			"tactiles", "vector<unimodalLeaf>", "Vector of tactile GUI events"));
-    this->output = new nuiEndpoint();
+    this->output = new nuiEndpoint(this);
     this->output->setTypeDescriptor(std::string("tactiles"));
     this->setOutputEndpointCount(1);
     this->setOutputEndpoint(0,this->output);
-    this->output->setModuleHoster(this);
     //! TODO no information transmited here. WTF?
 
     this->alreadySent = false;

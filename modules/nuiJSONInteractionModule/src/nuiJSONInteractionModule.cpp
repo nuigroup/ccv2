@@ -75,17 +75,15 @@ nuiJSONInteractionModule::nuiJSONInteractionModule() : nuiModule() {
 			"data", "mAST", "Multimodal abstract syntax tree"));
     this->output = new nuiDataStream("JSON");
     this->declareOutput(0, &this->output, new nuiDataStreamInfo("cJSON", "JSON", "JSON interaction"));*/
-    this->output = new nuiEndpoint();
+    this->output = new nuiEndpoint(this);
     this->output->setTypeDescriptor(std::string("cJSON"));
     this->setOutputEndpointCount(1);
     this->setOutputEndpoint(0,this->output);
-    this->output->setModuleHoster(this);
 
-    this->input = new nuiEndpoint();
+    this->input = new nuiEndpoint(this);
     this->input->setTypeDescriptor(std::string("mAST"));
     this->setInputEndpointCount(1);
     this->setInputEndpoint(0,this->input);
-    this->input->setModuleHoster(this);
 
     this->inputDataPacket = NULL;
     this->outputDataPacket = new nuiJSONInteractionModuleDataPacket();
