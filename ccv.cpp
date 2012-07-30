@@ -37,7 +37,9 @@ int main(int argc, char **argv)
 
 	nuiJsonRpcApi::getInstance()->startApi();
 
-	nuiFrameworkManager::getInstance()->workflowStart();
+	//nuiFrameworkManager::getInstance()->workflowStart();
+
+
 
 do
     {

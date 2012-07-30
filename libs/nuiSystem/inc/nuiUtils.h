@@ -35,6 +35,7 @@ public:
 	static double degToRad(double deg);
 	static double radToDeg(double rad);
 	static int getRandomNumber();
+	template<class Iterator, class Function> static Function for_each(Iterator first, Iterator last, Function f);
 private:
 	static bool isRandInitialized;
 };

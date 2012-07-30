@@ -49,7 +49,7 @@ nuiFrameworkManagerErrorCode nuiFrameworkManager::init() {
 
 nuiFrameworkManagerErrorCode nuiFrameworkManager::initializeFrameworkManager(const char *fileName)
 {
-	nuiFrameworkManagerErrorCode returnCode = loadSettingsFromXml(fileName);
+	nuiFrameworkManagerErrorCode returnCode = loadSettingsFromJson(fileName);
     //this->rootPipeline = (nuiPipelineModule*)(nuiFactory::getInstance()->create("root"));
 	if(rootPipeline != NULL) {
 		nuiTreeNode<int, nuiModule*> *temp = new nuiTreeNode<int, nuiModule*>(rootPipeline->property("id").asInteger(), rootPipeline);
@@ -61,231 +61,67 @@ nuiFrameworkManagerErrorCode nuiFrameworkManager::initializeFrameworkManager(con
 	return (rootPipeline != NULL) ? NUI_FRAMEWORK_MANAGER_OK : NUI_FRAMEWORK_ROOT_INITIALIZATION_FAILED;
 }
 
-nuiFrameworkManagerErrorCode nuiFrameworkManager::saveSettingsToXml(const char *fileName, std::list<nuiModuleDescriptor*>* descriptors)
+nuiFrameworkManagerErrorCode nuiFrameworkManager::saveSettingsToJson(const char *fileName, std::list<nuiModuleDescriptor*>* descriptors)
 {
-    ofxXmlSettings* xmlSettings = new ofxXmlSettings();
-    saveSettingsToXml(xmlSettings, descriptors);
-    if(!xmlSettings->saveFile(fileName))
-        return NUI_FRAMEWORK_ERROR_SAVING_FILE;
-	return NUI_FRAMEWORK_MANAGER_OK;
+	Json::Value *root = new Json::Value();
+	nuiFrameworkManagerErrorCode error = saveSettingsToJson(root, descriptors);
+	// write the file
+	bool written = false;
+	return (error == NUI_FRAMEWORK_MANAGER_OK && written) ? NUI_FRAMEWORK_MANAGER_OK : NUI_FRAMEWORK_ERROR_SAVING_FILE;
 }
 
-nuiFrameworkManagerErrorCode nuiFrameworkManager::loadSettingsFromXml(const char *fileName)
+nuiFrameworkManagerErrorCode nuiFrameworkManager::saveSettingsToJson(Json::Value *root, std::list<nuiModuleDescriptor*>* descriptors)
 {
-	ofxXmlSettings* xmlSettings = new ofxXmlSettings();
-	if (!xmlSettings->loadFile(fileName))
-		return NUI_FRAMEWORK_WRONG_FILE;
-	return loadSettingsFromXml(xmlSettings);
-}
-
-nuiFrameworkManagerErrorCode nuiFrameworkManager::saveSettingsToXml(ofxXmlSettings *xmlSettings,std::list<nuiModuleDescriptor*>* descriptors)
-{
-    std::list<nuiModuleDescriptor*> descriptions = *descriptors;
-
-    xmlSettings->addTag("PIPELINES");
-    xmlSettings->pushTag("PIPELINES");
-    
-    std::list<nuiModuleDescriptor*>::iterator it;
-    int pipeline = 0;
-    for (it = descriptions.begin() ; it != descriptions.end() ; it++)
-    {
-        xmlSettings->addTag("PIPELINE");
-        xmlSettings->pushTag("PIPELINE");
-
-        xmlSettings->addTag("TYPE");
-        xmlSettings->setValue("TYPE",(*it)->getName(),pipeline);
-        xmlSettings->addTag("AUTHOR");
-        xmlSettings->setValue("AUTHOR",(*it)->getAuthor(),pipeline);
-        xmlSettings->addTag("DESCRIPTION");
-        xmlSettings->setValue("DESCRIPTION",(*it)->getDescription(),pipeline);
- 
-        xmlSettings->addTag("PROPERTIES");
-        xmlSettings->pushTag("PROPERTIES");
-        std::map<std::string, nuiProperty*> props = (*it)->getProperties();
-        std::map<std::string, nuiProperty*>::iterator propIter;
-        int pr = 0;
-        for (propIter = props.begin() ; propIter != props.end() ; propIter++)
-        {
-            if(propIter->first == "id")
-                continue;
-            xmlSettings->addTag("PROPERTY");
-            xmlSettings->pushTag("PROPERTY", pr++);
-
-            xmlSettings->addTag("KEY");
-            xmlSettings->setValue("KEY",propIter->first);
-            
-            xmlSettings->addTag("VALUE");
-            xmlSettings->setValue("VALUE",propIter->second->asString());
-
-            xmlSettings->popTag();
-        }
-        xmlSettings->popTag();
-        
-        xmlSettings->addTag("ENDPOINTS");
-        xmlSettings->pushTag("ENDPOINTS",pipeline);
-        xmlSettings->addTag("INPUT");
-        xmlSettings->pushTag("INPUT",0);
-        for (int i=0; i<(*it)->getInputEndpointsCount() ; i++)
-        {
-            xmlSettings->addTag("ENDPOINT");
-            xmlSettings->pushTag("ENDPOINT",i);
-            nuiEndpointDescriptor* descriptor = (*it)->getInputEndpointDescriptor(i);
-            xmlSettings->addTag("ID");
-            xmlSettings->setValue("ID",descriptor->getIndex(),i);
-            xmlSettings->addTag("TYPE");
-            xmlSettings->setValue("TYPE", descriptor->getDescriptor(), i);
-            xmlSettings->popTag();
-        }
-        xmlSettings->popTag();
-
-        xmlSettings->addTag("OUTPUT");
-        xmlSettings->pushTag("OUTPUT",0);
-        for (int i=0; i<(*it)->getOutputEndpointsCount() ; i++)
-        {
-            xmlSettings->addTag("ENDPOINT");
-            xmlSettings->pushTag("ENDPOINT",i);
-            nuiEndpointDescriptor* descriptor = (*it)->getOutputEndpointDescriptor(i);
-            xmlSettings->addTag("ID");
-            xmlSettings->setValue("ID",descriptor->getIndex(),i);
-            xmlSettings->addTag("TYPE");
-            xmlSettings->setValue("TYPE", descriptor->getDescriptor(), i);
-            xmlSettings->popTag();
-        }
-        xmlSettings->popTag();
-        xmlSettings->popTag();
-
-        xmlSettings->addTag("MODULES");
-        xmlSettings->pushTag("MODULES");
-        
-        for(int i=0 ; i<(*it)->getChildModulesCount() ; i++)
-        {
-            nuiModuleDescriptor* descriptor = (*it)->getChildModuleDescriptor(i);
-            xmlSettings->addTag("MODULE");
-            xmlSettings->pushTag("MODULE", i);
-
-            xmlSettings->addTag("ID");
-            xmlSettings->setValue("ID", descriptor->getProperties().find("id")->second->asInteger());
-            xmlSettings->addTag("TYPE");
-            xmlSettings->setValue("TYPE", descriptor->getName() );
-
-            xmlSettings->addTag("PROPERTIES");
-            xmlSettings->pushTag("PROPERTIES",0);
-            std::map<std::string, nuiProperty*> props = descriptor->getProperties();
-            std::map<std::string, nuiProperty*>::iterator propIter;
-            int prop = 0;
-            for( propIter = props.begin() ; propIter != props.end() ; propIter++)
-            {
-                if(propIter->first == "id")
-                    continue;
-                xmlSettings->addTag("PROPERTY");
-                xmlSettings->pushTag("PROPERTY", prop++);
-                xmlSettings->addTag("KEY");
-                xmlSettings->setValue("KEY",propIter->first);
-            
-                xmlSettings->addTag("VALUE");
-                xmlSettings->setValue("VALUE",propIter->second->asString());
-
-                xmlSettings->popTag();
-            }
-            xmlSettings->popTag();
-            
-            xmlSettings->popTag();
-        }
-
-        xmlSettings->popTag();
-        xmlSettings->addTag("CONNECTIONS");
-        xmlSettings->pushTag("CONNECTIONS");
-        
-        for (int cnc = 0 ;cnc<(*it)->getDataStreamDescriptorCount() ; cnc++)
-        {
-            nuiDataStreamDescriptor* descriptor = (*it)->getDataStreamDescriptor(cnc);
-            xmlSettings->addTag("CONNECTION");
-            xmlSettings->pushTag("CONNECTION", cnc);
-            xmlSettings->addTag("PROPERTIES");
-            xmlSettings->pushTag("PROPERTIES");
-
-            xmlSettings->addTag("ASYNC");
-            xmlSettings->setValue("ASYNC",descriptor->asyncMode ? 1 : 0 );
-
-            xmlSettings->addTag("BUFFERED");
-            xmlSettings->setValue("BUFFERED",descriptor->buffered ? 1 : 0 );
-
-            xmlSettings->addTag("BUFFERSIZE");
-            xmlSettings->setValue("BUFFERSIZE",descriptor->bufferSize );
-
-            xmlSettings->addTag("DEEPCOPY");
-            xmlSettings->setValue("DEEPCOPY",descriptor->deepCopy ? 1 : 0 );
-
-            xmlSettings->addTag("LASTPACKET");
-            xmlSettings->setValue("LASTPACKET",descriptor->lastPacket ? 1 : 0 );
-
-            xmlSettings->addTag("OVERFLOW");
-            xmlSettings->setValue("OVERFLOW",descriptor->overflow ? 1 : 0 );
-            xmlSettings->popTag();
-
-            xmlSettings->addTag("SOURCE");
-            xmlSettings->pushTag("SOURCE",0);
-            xmlSettings->addTag("ID");
-            xmlSettings->setValue("ID",descriptor->sourceModuleID);
-            xmlSettings->addTag("PORT");
-            xmlSettings->setValue("PORT",descriptor->sourcePort);
-            xmlSettings->popTag();//pop source
-
-			xmlSettings->addTag("DESTINATION");
-            xmlSettings->pushTag("DESTINATION",0);
-            xmlSettings->addTag("ID");
-            xmlSettings->setValue("ID",descriptor->destinationModuleID);
-            xmlSettings->addTag("PORT");
-            xmlSettings->setValue("PORT",descriptor->destinationPort);
-            xmlSettings->popTag();
-            xmlSettings->popTag();
-        }
-
-        xmlSettings->popTag();
-    }
-
-    
-	return NUI_FRAMEWORK_MANAGER_OK;
-}
-
-nuiFrameworkManagerErrorCode nuiFrameworkManager::saveSettingsAsXml( const char* fileName, std::string& pipelineName )
-{
-    std::list<nuiModuleDescriptor*> descriptors;
-    nuiModuleDescriptor *pipeline = nuiFrameworkManager::getInstance()->getPipeline(pipelineName);
-    descriptors.push_back(pipeline);
-    saveSettingsToXml(fileName, &descriptors);
-	return NUI_FRAMEWORK_MANAGER_OK;
-}
-
-nuiFrameworkManagerErrorCode nuiFrameworkManager::loadSettingsFromXml(ofxXmlSettings *xmlSettings)
-{
- 	xmlSettings->pushTag("PIPELINES",0);
-	std::map<std::string,nuiModuleDescriptor*> pipelineDescriptionsMap;
+	/*
+	Json::Value pipelines = new Json::Value();
+	(*root)["pipelines"] = pipelines;
 	
-	int numPipelines = xmlSettings->getNumTags("PIPELINE");
-
-	for (int i=0;i<numPipelines;i++)
+	std::list<nuiModuleDescriptor*>::iterator it;
+	int pipeline = 0;
+	for (it = descriptors->begin(); it != descriptors->end(); it++)
 	{
-		xmlSettings->pushTag("PIPELINE",i);
-		nuiModuleDescriptor *parsedDescriptor = parseModuleDescriptor(xmlSettings);
-		xmlSettings->popTag();
-		if (parsedDescriptor != NULL)
-		{
-			std::map<std::string,nuiModuleDescriptor*>::iterator pipelineSearch = pipelineDescriptionsMap.find(parsedDescriptor->getName());
-			//only first occurence of pipeline with specified is added to dictionary
-			if (pipelineSearch == pipelineDescriptionsMap.end())
-				pipelineDescriptionsMap[parsedDescriptor->getName()] = parsedDescriptor;
-		}
-	}	
+		Json::Value pipeline = serialize_pipeline(*it);
+	}
+	*/
+	root = &nuiJsonRpcApi::serialize_workflow(this->getWorkflowRoot());
+	return NUI_FRAMEWORK_MANAGER_OK;
+}
 
-	xmlSettings->popTag();
-	for (std::map<std::string,nuiModuleDescriptor*>::iterator iter = pipelineDescriptionsMap.begin(); iter != pipelineDescriptionsMap.end(); iter++)
+nuiFrameworkManagerErrorCode nuiFrameworkManager::saveSettingsToJson( const char* fileName, std::string& pipelineName )
+{
+	std::list<nuiModuleDescriptor*> descriptors;
+	nuiModuleDescriptor *pipeline = nuiFrameworkManager::getInstance()->getPipeline(pipelineName);
+	descriptors.push_back(pipeline);
+	return saveSettingsToJson(fileName, &descriptors);
+}
+
+nuiFrameworkManagerErrorCode nuiFrameworkManager::saveSettingsToJson( Json::Value *root, std::string& pipelineName )
+{
+	std::list<nuiModuleDescriptor*> descriptors;
+	nuiModuleDescriptor *pipeline = nuiFrameworkManager::getInstance()->getPipeline(pipelineName);
+	descriptors.push_back(pipeline);
+	return saveSettingsToJson(root, &descriptors);
+}
+
+nuiFrameworkManagerErrorCode nuiFrameworkManager::loadSettingsFromJson(Json::Value *root) {
+	Json::Value pipelines = root->get("pipelines", new Json::Value());
+	std::map<std::string,nuiModuleDescriptor*> pipelineDescriptorsMap;
+	for(Json::Value::iterator i = pipelines.begin(); i != pipelines.end(); i++) {
+		nuiModuleDescriptor *parsedDescriptor = parseModuleDescriptor(&*i);
+		if(parsedDescriptor != NULL)
+		{
+			std::map<std::string,nuiModuleDescriptor*>::iterator pipelineSearch = pipelineDescriptorsMap.find(parsedDescriptor->getName());
+			//if the pipeline is already in the dictionary, ignore it
+			if(pipelineSearch == pipelineDescriptorsMap.end())
+				pipelineDescriptorsMap[parsedDescriptor->getName()] = parsedDescriptor;
+		}
+	}
+
+	for(std::map<std::string,nuiModuleDescriptor*>::iterator iter = pipelineDescriptorsMap.begin(); iter != pipelineDescriptorsMap.end(); iter++)
 	{
 		nuiFactory::getInstance()->pipelineDescriptors[iter->first] = iter->second;
-        nuiModuleDescriptor* descr = nuiFactory::getInstance()->pipelineDescriptors[iter->first];
-        int k = descr->getDataStreamDescriptorCount();
 	}
-	nuiFrameworkManagerErrorCode isGraphCorrect = NUI_FRAMEWORK_MANAGER_OK;// checkPipelineGraphForLoop(pipelineDescriptionsMap); todo
+	nuiFrameworkManagerErrorCode isGraphCorrect = NUI_FRAMEWORK_MANAGER_OK; // in the future, implement checkPipelineGraphForLoop(pipelineDescriptorsMap);
 	return isGraphCorrect ? NUI_FRAMEWORK_MANAGER_OK : NUI_FRAMEWORK_PIPELINE_STRUCTURE_LOOP;
 }
 
@@ -295,125 +131,51 @@ nuiFrameworkManagerErrorCode nuiFrameworkManager::loadAddonsAtPath(const char *a
 	return NUI_FRAMEWORK_MANAGER_OK;
 }
 
-nuiModuleDescriptor *nuiFrameworkManager::parseModuleDescriptor(ofxXmlSettings *xmlSettings)
-{
-	nuiModuleDescriptor* moduleDescriptor = new	nuiModuleDescriptor();
-	moduleDescriptor->setName(xmlSettings->getValue("TYPE", "NULL"));
-	moduleDescriptor->setAuthor(xmlSettings->getValue("AUTHOR", "NULL"));
-	moduleDescriptor->setDescription(xmlSettings->getValue("DESCRIPTION", "NULL"));
+nuiModuleDescriptor *nuiFrameworkManager::parseModuleDescriptor(Json::Value *root) {
+	nuiModuleDescriptor* moduleDescriptor = new nuiModuleDescriptor();
+	moduleDescriptor->setName(root->get("type", NULL).asString());
+	moduleDescriptor->setAuthor(root->get("author", NULL).asString());
+	moduleDescriptor->setDescription(root->get("description", NULL).asString());
 
-	//load default pipeline settings. Default id of each pipeline is (0x0FFFFFFF).
 	moduleDescriptor->property("id") = *(new nuiProperty(PIPELINE_ID));
 
-	xmlSettings->pushTag("PROPERTIES", 0);
-	parseModuleDescriptorParameters(*moduleDescriptor,xmlSettings);
-	xmlSettings->popTag();
+	parseModuleDescriptorParameters(*moduleDescriptor,root);
 
-	xmlSettings->pushTag("MODULES", 0);
-	int numModuleTags = xmlSettings->getNumTags("MODULE");
-	for (int i=0;i<numModuleTags;i++)
+	Json::Value* submodules = &root->get("modules", new Json::Value);
+	if(!submodules->isArray()) return NULL; //error
+	for (Json::Value::iterator i = submodules->begin(); i!=submodules->end(); i++)
 	{
-		xmlSettings->pushTag("MODULE", i);
-		nuiModuleDescriptor* childDescriptor = new	nuiModuleDescriptor();
-		childDescriptor->setName(xmlSettings->getValue("TYPE", "NULL"));
-        int id = xmlSettings->getValue("ID", 0);
-        nuiProperty* property = new nuiProperty(id);
-		childDescriptor->property("id") = *property;
-        xmlSettings->pushTag("PROPERTIES");
-		parseModuleDescriptorParameters(*childDescriptor,xmlSettings);
-		xmlSettings->popTag();
+		nuiModuleDescriptor *childDescriptor = new nuiModuleDescriptor();
+		childDescriptor->setName((*i).get("type", NULL).asString());
+		int id = (*i).get("id", PIPELINE_ID).asInt();
+		childDescriptor->property("id") = *(new nuiProperty(id));
+		parseModuleDescriptorParameters(*childDescriptor, &*i);
 		moduleDescriptor->addChildModuleDescriptor(childDescriptor);
-        xmlSettings->popTag();
-	}
-	xmlSettings->popTag();
-
-	xmlSettings->pushTag("ENDPOINTS", 0);
-    xmlSettings->pushTag("INPUT", 0);
-	int numInputEndpointTags = xmlSettings->getNumTags("ENDPOINT");
-    //moduleDescriptor->setInputEndpointsCount(numInputEndpointTags);
-	for (int i=0;i<numInputEndpointTags;i++)
-	{
-		xmlSettings->pushTag("ENDPOINT", i);
-		nuiEndpointDescriptor* endpointDescriptor = new	nuiEndpointDescriptor(xmlSettings->getValue("TYPE", "*"));
-		endpointDescriptor->setIndex(xmlSettings->getValue("ID", 0));
-		xmlSettings->popTag();
-		moduleDescriptor->addInputEndpointDescriptor(endpointDescriptor,endpointDescriptor->getIndex());
-	}
-    xmlSettings->popTag();
-	xmlSettings->popTag();
-
-	xmlSettings->pushTag("ENDPOINTS", 0);
-    xmlSettings->pushTag("OUTPUT", 0);
-	int numOutputEndpointTags = xmlSettings->getNumTags("ENDPOINT");
-    //moduleDescriptor->setOutputEndpointsCount(numOutputEndpointTags);
-	for (int i=0;i<numOutputEndpointTags;i++)
-	{
-		xmlSettings->pushTag("ENDPOINT", i);
-		nuiEndpointDescriptor* endpointDescriptor = new	nuiEndpointDescriptor(xmlSettings->getValue("TYPE", "*"));
-		endpointDescriptor->setIndex(xmlSettings->getValue("ID", 0));
-		xmlSettings->popTag();
-		moduleDescriptor->addOutputEndpointDescriptor(endpointDescriptor,endpointDescriptor->getIndex());
-	}
-	xmlSettings->popTag();
-    xmlSettings->popTag();
-
-	xmlSettings->pushTag("CONNECTIONS",0);
-	int numConnectionTags = xmlSettings->getNumTags("CONNECTION");
-
-	for (int i=0;i<numConnectionTags;i++)
-	{
-		xmlSettings->pushTag("CONNECTION",i);
-		
-		nuiDataStreamDescriptor* datastreamDescriptor = new nuiDataStreamDescriptor();
-		int sourceID = xmlSettings->getValue("SOURCE:ID", -1);
-		int destinationID = xmlSettings->getValue("DESTINATION:ID", -1);	
-		int sourcePort = xmlSettings->getValue("SOURCE:PORT", -1);
-		int destinationPort = xmlSettings->getValue("DESTINATION:PORT", -1);
-
-		if ((sourceID!=-1) && (destinationID!=-1) && (sourcePort!=-1) &&(destinationPort!=-1))
-		{
-			datastreamDescriptor->sourceModuleID = sourceID;
-			datastreamDescriptor->sourcePort = sourcePort;
-			datastreamDescriptor->destinationModuleID = destinationID;
-			datastreamDescriptor->destinationPort = destinationPort;
-
-			if (xmlSettings->getNumTags("PROPERTIES"))
-			{
-				xmlSettings->pushTag("PROPERTIES",0);
-				datastreamDescriptor->asyncMode  = xmlSettings->getValue("ASYNC",0);
-				datastreamDescriptor->buffered = xmlSettings->getValue("BUFFERED",0);
-				datastreamDescriptor->bufferSize = xmlSettings->getValue("BUFFERSIZE",16);
-				datastreamDescriptor->deepCopy = xmlSettings->getValue("DEEPCOPY",0);
-				datastreamDescriptor->lastPacket = xmlSettings->getValue("LASTPACKET",0);
-				datastreamDescriptor->overflow = xmlSettings->getValue("OVERFLOW",0);
-				xmlSettings->popTag();
-			}
-			moduleDescriptor->addDataStreamDescriptor(datastreamDescriptor);
-		}
-		xmlSettings->popTag();
 	}
 
-	xmlSettings->popTag();
+	// endpoint
+
+	// connections
 
 	return moduleDescriptor;
 }
 
-void nuiFrameworkManager::parseModuleDescriptorParameters(nuiModuleDescriptor &moduleDescriptor, ofxXmlSettings *xmlSettings)
+void nuiFrameworkManager::parseModuleDescriptorParameters(nuiModuleDescriptor &moduleDescriptor, Json::Value *root)
 {
-	int numPropertyTags = xmlSettings->getNumTags("PROPERTY");
-	for (int i=0;i<numPropertyTags;i++)
+	Json::Value* properties = &root->get("properties", new Json::Value);
+	//if(!properties->isArray()) return;
+	Json::Value::Members propertyNames = properties->getMemberNames();
+	for (Json::Value::Members::iterator i = propertyNames.begin(); i!=propertyNames.end(); i++)
 	{
-		xmlSettings->pushTag("PROPERTY", i);
-		std::string propertyID = xmlSettings->getValue("KEY", "none");
-		std::string value = xmlSettings->getValue("VALUE", "none");
+		std::string propertyID = *i;
+		Json::Value value = properties->get(*i, "none");
 		if ((value != "none") && (propertyID != "none"))
 		{
-			nuiProperty *prop = new	nuiProperty(value);
+			nuiProperty *prop = new	nuiProperty(value.asString());
 			std::map<std::string, nuiProperty*>::iterator search = moduleDescriptor.getProperties().find(propertyID);
 			if (search == moduleDescriptor.getProperties().end())
 				moduleDescriptor.property(propertyID) = *prop;
 		}
-		xmlSettings->popTag();
 	}
 }
 
@@ -488,7 +250,7 @@ nuiModuleDescriptor *nuiFrameworkManager::createModule(std::string &pipelineName
 	{
 		childDescriptor->property(iter->first) = iter->second;
 	}
-	childDescriptor->property("id") = new nuiProperty(nuiUtils::getRandomNumber());
+	childDescriptor->property("id") = new nuiProperty(nuiUtils::getRandomNumber(), "identifier");
 	pipelineDescriptor->addChildModuleDescriptor(childDescriptor);
 
 	for (nuiTree<int,nuiModule*>::iterator moduleObject = dataObjectTree->begin(); moduleObject != dataObjectTree->end(); moduleObject++)
@@ -785,7 +547,7 @@ nuiModuleDescriptor * nuiFrameworkManager::getCurrentPipeline()
     return nuiFactory::getInstance()->getDescriptor(getCurrent()->getName());
 }
 
-nuiModuleDescriptor *nuiFrameworkManager::getRootPipeline()
+nuiModuleDescriptor *nuiFrameworkManager::getWorkflowRoot()
 {
 	return nuiFactory::getInstance()->getDescriptor(this->rootPipeline->getName());
 }
