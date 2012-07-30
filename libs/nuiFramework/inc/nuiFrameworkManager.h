@@ -1,5 +1,6 @@
 #ifndef _NUI_FRAMEWORK_MANAGER_
 #define _NUI_FRAMEWORK_MANAGER_
+#define _WINSOCKAPI_
 
 #include <string>
 #include <vector>
@@ -8,14 +9,13 @@
 
 #include "nuiProperty.h"
 #include "pasync.h"
-#include "ofxXmlSettings.h"
 #include "nuiTimer.h"
 #include "nuiThread.h"
 #include "nuiEndpoint.h"
 #include "nuiTree.h"
 #include "nuiDebugLogger.h"
-
 #include "nuiJsonRpcApi.h"
+#include "json\json.h"
 
 
 

@@ -1,15 +1,17 @@
 #ifndef NUI_JSONAPI_H
 #define NUI_JSONAPI_H
+#pragma once
 
 #include "boost/cstdint.hpp"
 #include "pasync.h"
+
+#include "nuiFrameworkManager.h"
 
 #include "json/json.h"
 #include "networking.h"
 #include "jsonrpc.h"
 #include "jsonrpc_tcpserver.h"
 
-#include "nuiFrameworkManager.h"
 #include "nuiModule.h"
 #include "nuiDataStream.h"
 #include "nuiEndpoint.h"

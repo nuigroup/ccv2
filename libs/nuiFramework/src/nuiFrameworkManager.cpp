@@ -103,6 +103,11 @@ nuiFrameworkManagerErrorCode nuiFrameworkManager::saveSettingsToJson( Json::Valu
 	return saveSettingsToJson(root, &descriptors);
 }
 
+nuiFrameworkManagerErrorCode nuiFrameworkManager::loadSettingsFromJson(const char* fileName) {
+	// open file
+	return NUI_FRAMEWORK_WRONG_FILE;
+}
+
 nuiFrameworkManagerErrorCode nuiFrameworkManager::loadSettingsFromJson(Json::Value *root) {
 	Json::Value pipelines = root->get("pipelines", new Json::Value());
 	std::map<std::string,nuiModuleDescriptor*> pipelineDescriptorsMap;
