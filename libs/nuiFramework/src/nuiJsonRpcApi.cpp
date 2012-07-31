@@ -798,7 +798,7 @@ void nuiJsonRpcApi::setFailure( Json::Value &response )
 	response["result"] = "failure";
 }
 
-void nuiJsonRpcApi::setFailure( Json::Value &response, string message )
+void nuiJsonRpcApi::setFailure( Json::Value &response, std::string message )
 {
 	response["message"] = message;
 	setFailure(response);

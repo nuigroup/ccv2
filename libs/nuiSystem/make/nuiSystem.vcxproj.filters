@@ -45,12 +45,6 @@
     <ClInclude Include="..\inc\nuiAudioData.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\inc\tinyxml.h">
-      <Filter>Header Files\3rdParty</Filter>
-    </ClInclude>
-    <ClInclude Include="..\inc\ofxXmlSettings.h">
-      <Filter>Header Files\3rdParty</Filter>
-    </ClInclude>
     <ClInclude Include="..\inc\nuiUtils.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -82,18 +76,6 @@
     </ClCompile>
     <ClCompile Include="..\src\nuiFileSystem.cpp">
       <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\tinyxml.cpp">
-      <Filter>Source Files\3rdParty</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\tinyxmlerror.cpp">
-      <Filter>Source Files\3rdParty</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\tinyxmlparser.cpp">
-      <Filter>Source Files\3rdParty</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\ofxXmlSettings.cpp">
-      <Filter>Source Files\3rdParty</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

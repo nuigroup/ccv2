@@ -25,13 +25,6 @@ public:
 	void setOutputEndpoint(int n, nuiEndpoint *endpoint);
 	void setInputEndpointCount(int n);
 	void setOutputEndpointCount(int n);
-	/*
-public:
-	void readSettingsFromXML(ofxXmlSettings *xmlSettings);
-	void saveSettingsToXML(ofxXmlSettings *xmlSettings);	
-private:
-	void loadConnections(ofxXmlSettings *xmlSettings);
-	*/
 public:
 	void setName(std::string name);
 	void setAuthor(std::string author);

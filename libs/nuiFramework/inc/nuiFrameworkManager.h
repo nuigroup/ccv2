@@ -115,8 +115,6 @@ public:
     //! returns back to upper pipeline
     //! \returns new current pipeline descriptor, NULL if action failed
     nuiModuleDescriptor *navigatePop( );
-public:
-    nuiFrameworkManagerErrorCode saveSettingsAsXml(const char* fileName, std::string& pipelineName);
 private:
     //gets currently selected pipeline
     nuiPipelineModule *getCurrent();
