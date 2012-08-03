@@ -3,7 +3,7 @@
 #include "boost/filesystem.hpp"
 #include <string.h>
 
-using namespace boost::filesystem3;
+using namespace boost::filesystem;
 using namespace nuiFileSystem;
 using namespace boost;
 

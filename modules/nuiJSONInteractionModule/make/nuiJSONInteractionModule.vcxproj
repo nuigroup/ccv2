@@ -63,13 +63,13 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;NUIJSONINTERACTIONMODULE_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\..\..\libs\3rdParty\cJSON;..\..\..\libs\3rdParty\boost;..\..\..\libs\nuiModule\inc;..\..\..\libs\3rdParty\ptypes-2.1.1\include\;..\..\..\libs\3rdParty\ptypes-2.1.1\;..\src;..\..\..\libs\nuiSystem\inc</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\..\libs\3rdParty\cJSON;..\..\..\libs\nuiModule\inc;..\src;..\..\..\libs\nuiSystem\inc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(SolutionDir)\lib\</AdditionalLibraryDirectories>
-      <AdditionalDependencies>kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;nuiSystem.lib;nuiModule.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)\lib\;$(SolutionDir)$(Configuration)\$(CurrentPlatformName)\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>nuiModule.lib;s3decoder.lib;ptypes.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
       <Command>
