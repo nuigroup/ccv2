@@ -6,6 +6,8 @@
 #include <vector>
 #include <map>
 #include <list>
+#include <iostream>
+#include <fstream>
 
 #include "nuiProperty.h"
 #include "pasync.h"

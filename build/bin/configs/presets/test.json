@@ -1,0 +1,44 @@
+{
+	"pipelines":[
+		{
+			"type":"root",
+			"author":"Scott Halstvedt",
+			"description":"Loaded from file",
+			"modules": [
+						{"id":0,"type":"nuiDebugGestureModule","properties":{
+							"use_thread" : 0, "oscillator_mode" : 0, "synced_input" : 1, "x" : 386, "y" : 444
+								}
+							}
+			],
+			"properties":{
+			"yes":"no"
+			},
+			"endpoints":{
+			"input":[
+				{
+					"id":0,
+					"type":"bhal"
+				}
+			],
+			"output":[
+				{
+					"id":0,
+					"type":"lhab"
+				}
+			]
+			},
+			"connections":[
+			{
+				"source":{
+					"id":3,
+					"port":0
+				},
+				"destination":{
+					"id":4,
+					"port":1
+				}
+			}
+			]
+		}
+	]
+}

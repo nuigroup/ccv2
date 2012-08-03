@@ -25,15 +25,15 @@ int main(int argc, char **argv)
 	// initialize log
 	nuiDebugLogger::init(config_syslog);
 
+	nuiFrameworkManager::getInstance()->loadAddonsAtPath("modules");
+
 	// initialize JSON RPC daemon and network
 	if(!nuiJsonRpcApi::getInstance()->init("127.0.0.1", 7500)) goto exit_critical;
-	
-	bool frameworkInitStatus = nuiFrameworkManager::getInstance()->init();
+
+	//bool frameworkInitStatus = nuiFrameworkManager::getInstance()->init();
+	bool frameworkInitStatus = nuiFrameworkManager::getInstance()->initializeFrameworkManager("configs/presets/test.json");
 	if(frameworkInitStatus != NUI_FRAMEWORK_MANAGER_OK)
 		if(frameworkInitStatus == NUI_FRAMEWORK_ROOT_INITIALIZATION_FAILED) LOG(NUI_CRITICAL, "Failed to initialize framework root");
-
-	nuiFrameworkManager::getInstance()->loadAddonsAtPath("modules");
-	//nuiFrameworkManager::getInstance()->initializeFrameworkManager("configs/presets/test.xml");
 
 	nuiJsonRpcApi::getInstance()->startApi();
 

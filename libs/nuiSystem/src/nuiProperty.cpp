@@ -250,8 +250,8 @@ nuiProperty::nuiProperty(std::string value, const std::string &description) {
 nuiProperty::nuiProperty(int value, const std::string &description) {
 	this->init(description);
 	this->type = NUI_PROPERTY_INTEGER;
-	this->val = new int(value);
-	//this->set(value);
+	this->val = new int();
+	this->set(value);
 }
 
 nuiProperty::nuiProperty(double value, const std::string &description) {

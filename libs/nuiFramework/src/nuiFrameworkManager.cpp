@@ -49,8 +49,9 @@ nuiFrameworkManagerErrorCode nuiFrameworkManager::init() {
 
 nuiFrameworkManagerErrorCode nuiFrameworkManager::initializeFrameworkManager(const char *fileName)
 {
-	nuiFrameworkManagerErrorCode returnCode = loadSettingsFromJson(fileName);
-    //this->rootPipeline = (nuiPipelineModule*)(nuiFactory::getInstance()->create("root"));
+	nuiFactory::getInstance()->init();
+	if(loadSettingsFromJson(fileName) == NUI_FRAMEWORK_WRONG_FILE) return NUI_FRAMEWORK_ROOT_INITIALIZATION_FAILED;
+    this->rootPipeline = (nuiPipelineModule*)(nuiFactory::getInstance()->create("root"));
 	if(rootPipeline != NULL) {
 		nuiTreeNode<int, nuiModule*> *temp = new nuiTreeNode<int, nuiModule*>(rootPipeline->property("id").asInteger(), rootPipeline);
 		for (int i=0; i<rootPipeline->getChildModuleCount(); i++) {
@@ -105,11 +106,16 @@ nuiFrameworkManagerErrorCode nuiFrameworkManager::saveSettingsToJson( Json::Valu
 
 nuiFrameworkManagerErrorCode nuiFrameworkManager::loadSettingsFromJson(const char* fileName) {
 	// open file
-	return NUI_FRAMEWORK_WRONG_FILE;
+	std::ifstream settingsFile(fileName);
+	Json::Value root;
+	Json::Reader reader;
+	bool parsingSuccessful = reader.parse(settingsFile, root);
+	if(!parsingSuccessful) return NUI_FRAMEWORK_WRONG_FILE;
+	return loadSettingsFromJson(&root);
 }
 
 nuiFrameworkManagerErrorCode nuiFrameworkManager::loadSettingsFromJson(Json::Value *root) {
-	Json::Value pipelines = root->get("pipelines", new Json::Value());
+	Json::Value pipelines = root->get("pipelines", NULL);
 	std::map<std::string,nuiModuleDescriptor*> pipelineDescriptorsMap;
 	for(Json::Value::iterator i = pipelines.begin(); i != pipelines.end(); i++) {
 		nuiModuleDescriptor *parsedDescriptor = parseModuleDescriptor(&*i);
@@ -146,34 +152,78 @@ nuiModuleDescriptor *nuiFrameworkManager::parseModuleDescriptor(Json::Value *roo
 
 	parseModuleDescriptorParameters(*moduleDescriptor,root);
 
-	Json::Value* submodules = &root->get("modules", new Json::Value);
-	if(!submodules->isArray()) return NULL; //error
-	for (Json::Value::iterator i = submodules->begin(); i!=submodules->end(); i++)
-	{
-		nuiModuleDescriptor *childDescriptor = new nuiModuleDescriptor();
-		childDescriptor->setName((*i).get("type", NULL).asString());
-		int id = (*i).get("id", PIPELINE_ID).asInt();
-		childDescriptor->property("id") = *(new nuiProperty(id));
-		parseModuleDescriptorParameters(*childDescriptor, &*i);
-		moduleDescriptor->addChildModuleDescriptor(childDescriptor);
+	// submodules
+	Json::Value submodules = root->get("modules", NULL);
+	if(submodules.isArray()) {
+		for (Json::Value::iterator i = submodules.begin(); i!=submodules.end(); i++)
+		{
+			nuiModuleDescriptor *childDescriptor = new nuiModuleDescriptor();
+			childDescriptor->setName((*i).get("type", NULL).asString());
+			int id = (*i).get("id", PIPELINE_ID).asInt();
+			childDescriptor->property("id") = *(new nuiProperty(id));
+			parseModuleDescriptorParameters(*childDescriptor, &*i);
+			moduleDescriptor->addChildModuleDescriptor(childDescriptor);
+		}
 	}
 
-	// endpoint
+	// endpoints
+	Json::Value endpoints = root->get("endpoints", new Json::Value);
+	// for every endpoint, we need to:
+	Json::Value inputs = endpoints.get("input", new Json::Value);
+	for (Json::Value::iterator i = inputs.begin(); i!=inputs.end(); i++)
+	{
+		nuiEndpointDescriptor* endpointDescriptor = new nuiEndpointDescriptor((*i).get("type", "*").asString());
+		endpointDescriptor->setIndex((*i).get("id", 0).asInt()); // is this the right way to index?
+		moduleDescriptor->addInputEndpointDescriptor(endpointDescriptor, endpointDescriptor->getIndex());
+	}
+	Json::Value outputs = endpoints.get("output", new Json::Value);
+	for (Json::Value::iterator i = outputs.begin(); i!=outputs.end(); i++)
+	{
+		nuiEndpointDescriptor* endpointDescriptor = new nuiEndpointDescriptor((*i).get("type", "*").asString());
+		endpointDescriptor->setIndex((*i).get("id", 0).asInt()); // is this the right way to index?
+		moduleDescriptor->addOutputEndpointDescriptor(endpointDescriptor, endpointDescriptor->getIndex());
+	}
 
 	// connections
+	Json::Value connections = root->get("connections", new Json::Value);
+	for (Json::Value::iterator i = connections.begin(); i!=connections.end(); i++)
+	{
+		nuiDataStreamDescriptor *datastreamDescriptor = new nuiDataStreamDescriptor();
+		int sourceID = (*i).get("source", new Json::Value).get("id", -1).asInt();
+		int destID = (*i).get("destination", new Json::Value).get("id", -1).asInt();
+		int sourcePort = (*i).get("source", new Json::Value).get("port", -1).asInt();
+		int destPort = (*i).get("destination", new Json::Value).get("port", -1).asInt();
 
+		if ((sourceID!=-1) && (destID!=-1) && (sourcePort!=-1) &&(destPort!=-1))
+		{
+			datastreamDescriptor->sourceModuleID = sourceID;
+			datastreamDescriptor->sourcePort = sourcePort;
+			datastreamDescriptor->destinationModuleID = destID;
+			datastreamDescriptor->destinationPort = destPort;
+
+			if((*i).get("properties", NULL) != NULL) {
+				datastreamDescriptor->asyncMode  = (*i).get("async",0).asBool();
+				datastreamDescriptor->buffered  = (*i).get("buffered",0).asBool();
+				datastreamDescriptor->bufferSize  = (*i).get("buffersize",0).asInt();
+				datastreamDescriptor->deepCopy  = (*i).get("deepcopy",0).asBool();
+				datastreamDescriptor->lastPacket = (*i).get("lastpacket",0).asBool();
+				datastreamDescriptor->overflow = (*i).get("overflow",0).asBool();
+			}
+			moduleDescriptor->addDataStreamDescriptor(datastreamDescriptor);
+		}
+	}
 	return moduleDescriptor;
 }
 
 void nuiFrameworkManager::parseModuleDescriptorParameters(nuiModuleDescriptor &moduleDescriptor, Json::Value *root)
 {
-	Json::Value* properties = &root->get("properties", new Json::Value);
-	//if(!properties->isArray()) return;
-	Json::Value::Members propertyNames = properties->getMemberNames();
+	Json::Value properties = root->get("properties", new Json::Value);
+	if(!properties.isArray()) return;
+	Json::Value::Members propertyNames = properties.getMemberNames();
 	for (Json::Value::Members::iterator i = propertyNames.begin(); i!=propertyNames.end(); i++)
 	{
 		std::string propertyID = *i;
-		Json::Value value = properties->get(*i, "none");
+		Json::Value value = properties.get(*i, "none");
 		if ((value != "none") && (propertyID != "none"))
 		{
 			nuiProperty *prop = new	nuiProperty(value.asString());
