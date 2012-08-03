@@ -18,7 +18,7 @@
 #include "nuiEndpoint.h"
 #include "nuiDataPacket.h"
 
-NUI_DATAPACKET_DEFAULT_IMPLEMENTATION(DebugGestureOutputModule, vector<client::unimodalLeafNode>*)
+NUI_DATAPACKET_DEFAULT_IMPLEMENTATION(DebugGestureOutputModule, std::vector<client::unimodalLeafNode>*)
 
 class nuiDebugGestureOutputModule : public nuiModule {
 public:

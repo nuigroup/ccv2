@@ -21,8 +21,6 @@
     <ClInclude Include="..\inc\nuiTimer.h" />
     <ClInclude Include="..\inc\nuiTree.h" />
     <ClInclude Include="..\inc\nuiUtils.h" />
-    <ClInclude Include="..\inc\ofxXmlSettings.h" />
-    <ClInclude Include="..\inc\tinyxml.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\src\nuiDataGenericContainer.cpp" />
@@ -33,10 +31,6 @@
     <ClCompile Include="..\src\nuiThread.cpp" />
     <ClCompile Include="..\src\nuiTimer.cpp" />
     <ClCompile Include="..\src\nuiUtils.cpp" />
-    <ClCompile Include="..\src\ofxXmlSettings.cpp" />
-    <ClCompile Include="..\src\tinyxml.cpp" />
-    <ClCompile Include="..\src\tinyxmlerror.cpp" />
-    <ClCompile Include="..\src\tinyxmlparser.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{2D5C91FF-2601-4134-A3E1-3D6A50B9B24C}</ProjectGuid>

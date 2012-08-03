@@ -4,7 +4,7 @@
 
 
 //MODULE_DECLARE(Pipeline, "native", "Handle object list");
-
+LOG_DECLARE("Pipeline");
 
 
 nuiPipelineModule::nuiPipelineModule() : nuiModule()

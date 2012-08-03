@@ -91,3 +91,9 @@ int nuiUtils::getRandomNumber()
 	}
 	return rand();
 }
+
+template<class Iterator, class Function> static Function for_each(Iterator first, Iterator last, Function f)
+{
+	for ( ; first != last; ++first ) f(*first);
+	return f;
+}

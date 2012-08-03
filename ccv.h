@@ -1,5 +1,8 @@
-#include <stdio.h>
+#ifndef _CCV_H
+#define _CCV_H
 
+#include <stdio.h>
+#define _WINSOCKAPI_
 #ifdef WIN32
 #include <Ws2tcpip.h>
 #include <Wspiapi.h>
@@ -34,6 +37,11 @@
 
 // JSON
 #include "cJSON.h"
+#include "json/json.h"
+
+// boost
+//#include "boost/property_tree/json_parser.hpp"
+//#include "boost/property_tree/ptree.hpp"
 
 // NUI
 #include "nuiFramework.h"
@@ -50,4 +58,6 @@
 #define SLEEP( milliseconds ) Sleep( (DWORD) milliseconds ) 
 #else
 #define SLEEP( milliseconds ) usleep( (unsigned long) (milliseconds * 1000.0) )
+#endif
+
 #endif

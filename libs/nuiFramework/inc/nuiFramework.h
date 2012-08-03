@@ -11,12 +11,16 @@
  ** This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
  ** WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  **********************************************************************/
+#ifndef _NUI_FRAMEWORK_H
+#define _NUI_FRAMEWORK_H
 
 #include "nuiDebugLogger.h"
-#include "nuiDaemon.h"
+//#include "nuiDaemon.h"
 #include "nuiPipeline.h"
 #include "nuiModule.h"
 #include "nuiFactory.h"
 #include "nuiProperty.h"
 #include "nuiDataStream.h"
 #include "nuiDataGenericContainer.h"
+
+#endif

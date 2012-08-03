@@ -11,7 +11,7 @@
  ** This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
  ** WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  **********************************************************************/
-
+#define _WINSOCKAPI_
 
 #ifndef NUI_UTILS_H
 #define NUI_UTILS_H
@@ -35,6 +35,7 @@ public:
 	static double degToRad(double deg);
 	static double radToDeg(double rad);
 	static int getRandomNumber();
+	template<class Iterator, class Function> static Function for_each(Iterator first, Iterator last, Function f);
 private:
 	static bool isRandInitialized;
 };
