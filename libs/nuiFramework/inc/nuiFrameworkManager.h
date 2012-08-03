@@ -1,19 +1,23 @@
 #ifndef _NUI_FRAMEWORK_MANAGER_
 #define _NUI_FRAMEWORK_MANAGER_
+#define _WINSOCKAPI_
 
 #include <string>
 #include <vector>
 #include <map>
 #include <list>
+#include <iostream>
+#include <fstream>
 
 #include "nuiProperty.h"
 #include "pasync.h"
-#include "ofxXmlSettings.h"
 #include "nuiTimer.h"
 #include "nuiThread.h"
 #include "nuiEndpoint.h"
 #include "nuiTree.h"
 #include "nuiDebugLogger.h"
+#include "nuiJsonRpcApi.h"
+#include "json\json.h"
 
 
 
@@ -86,7 +90,7 @@ public:
 	int setOutputEndpointCount(std::string &pipelineName,int count);
 public:
     nuiModuleDescriptor *getCurrentPipeline();
-	nuiModuleDescriptor *getRootPipeline();
+	nuiModuleDescriptor *getWorkflowRoot();
 	nuiModuleDescriptor *getPipeline(std::string &pipelineName);
 	nuiModuleDescriptor *getModule(std::string &pipelineName, int index);
 	nuiModuleDescriptor *getModule(std::string &moduleName);
@@ -113,20 +117,20 @@ public:
     //! returns back to upper pipeline
     //! \returns new current pipeline descriptor, NULL if action failed
     nuiModuleDescriptor *navigatePop( );
-public:
-    nuiFrameworkManagerErrorCode saveSettingsAsXml(const char* fileName, std::string& pipelineName);
 private:
     //gets currently selected pipeline
     nuiPipelineModule *getCurrent();
     //list of child indexes to the current pipeline
     std::list<int> pathToCurrent;
 private:
-	nuiFrameworkManagerErrorCode saveSettingsToXml(const char *fileName, std::list<nuiModuleDescriptor*>* descriptors);
-	nuiFrameworkManagerErrorCode loadSettingsFromXml(const char *fileName);
-	nuiFrameworkManagerErrorCode saveSettingsToXml(ofxXmlSettings *xmlSettings, std::list<nuiModuleDescriptor*>* descriptors);
-	nuiFrameworkManagerErrorCode loadSettingsFromXml(ofxXmlSettings *xmlSettings);
-	nuiModuleDescriptor *parseModuleDescriptor(ofxXmlSettings *xmlSettings);
-	void parseModuleDescriptorParameters(nuiModuleDescriptor &moduleDescriptor, ofxXmlSettings *xmlSettings);
+	nuiFrameworkManagerErrorCode saveSettingsToJson(const char *fileName, std::string &pipelineName);
+	nuiFrameworkManagerErrorCode saveSettingsToJson(const char *fileName, std::list<nuiModuleDescriptor*>* descriptors);
+	nuiFrameworkManagerErrorCode saveSettingsToJson(Json::Value *root, std::list<nuiModuleDescriptor*>* descriptors);
+	nuiFrameworkManagerErrorCode saveSettingsToJson(Json::Value *root, std::string &pipelineName);
+	nuiFrameworkManagerErrorCode loadSettingsFromJson(const char *fileName);
+	nuiFrameworkManagerErrorCode loadSettingsFromJson(Json::Value *root);
+	nuiModuleDescriptor *parseModuleDescriptor(Json::Value *root);
+	void parseModuleDescriptorParameters(nuiModuleDescriptor &moduleDescriptor, Json::Value *root);
 private:
     nuiModule* currentModule;
 	nuiPipelineModule *rootPipeline;

@@ -41,8 +41,8 @@ nuiDataPacket* nuiDebugGestureModuleDataPacket::copyPacketData(nuiDataPacketErro
     for( it=currentLeaves->begin() ; it < currentLeaves->end() ; it++)
     {
         client::unimodalLeafNode* leaf = new client::unimodalLeafNode();
-        leaf->type = *(new string(it->type));
-        leaf->val = *(new string(it->val));
+        leaf->type = *(new std::string(it->type));
+        leaf->val = *(new std::string(it->val));
         newLeaves->push_back(*leaf);
     }
 

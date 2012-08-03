@@ -1,12 +1,17 @@
+#ifndef NUI_JSONAPI_H
+#define NUI_JSONAPI_H
+#pragma once
+
 #include "boost/cstdint.hpp"
 #include "pasync.h"
+
+#include "nuiFrameworkManager.h"
 
 #include "json/json.h"
 #include "networking.h"
 #include "jsonrpc.h"
 #include "jsonrpc_tcpserver.h"
 
-#include "nuiFrameworkManager.h"
 #include "nuiModule.h"
 #include "nuiDataStream.h"
 #include "nuiEndpoint.h"
@@ -22,24 +27,24 @@ public:
 	void stopApi();
 	bool isInitialized();
 	bool isFinished();
+	static Json::Value serialize_workflow(nuiModuleDescriptor* descriptor);
+	static Json::Value serialize_pipeline(nuiModuleDescriptor* descriptor);
+	static Json::Value serialize_module(nuiModuleDescriptor* descriptor);
+	static Json::Value serialize_endpoint(nuiEndpointDescriptor *descriptor);
+	static Json::Value serialize_connection(nuiDataStreamDescriptor *descriptor);
 protected:
 private:
 	bool finished;
 	bool want_quit;
 
-	void setFailure(Json::Value &responce);
-	void setSuccess(Json::Value &responce);
+	void setFailure(Json::Value &response);
+	void setFailure(Json::Value &response, std::string message);
+	void setSuccess(Json::Value &response);
 
 	nuiJsonRpcApi();
 	Json::Rpc::TcpServer *server;
 	void execute();
 	void cleanup();
-
-	Json::Value serialize_workflow(nuiModuleDescriptor* descriptor);
-	Json::Value serialize_pipeline(nuiModuleDescriptor* descriptor);
-	Json::Value serialize_module(nuiModuleDescriptor* descriptor);
-	Json::Value serialize_endpoint(nuiEndpointDescriptor *descriptor);
-	Json::Value serialize_connection(nuiDataStreamDescriptor *descriptor);
 
 	bool nui_list_dynamic(const Json::Value& root, Json::Value& response);
 	bool nui_list_pipelines(const Json::Value& root, Json::Value& response);
@@ -67,3 +72,5 @@ private:
 	bool nui_navigate_pop(const Json::Value& root, Json::Value& response);
 	bool nui_save_workflow(const Json::Value& root, Json::Value& response);
 };
+
+#endif // NUI_JSON_API

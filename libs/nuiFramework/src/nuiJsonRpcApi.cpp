@@ -610,11 +610,11 @@ bool nuiJsonRpcApi::nui_get_module( const Json::Value& root, Json::Value& respon
 {
 	response["id"] = root["id"];
 	std::string pipeline = root["params"]["pipeline"].asString();
-	int index = root["params"]["moduleId"].asInt();
+	int index = root["params"]["identifier"].asInt();
 	nuiModuleDescriptor* descriptor = nuiFrameworkManager::getInstance()->getModule(pipeline, index);
 	if(descriptor == NULL)
 	{
-		setFailure(response);
+		setFailure(response, "couldn't find module");
 		return false;
 	}
 	else
@@ -691,7 +691,7 @@ bool nuiJsonRpcApi::nui_navigate_pop( const Json::Value& root, Json::Value& resp
 bool nuiJsonRpcApi::nui_save_workflow( const Json::Value& root, Json::Value& response )
 {
 	response["id"] = root["id"];
-	response = serialize_workflow(nuiFrameworkManager::getInstance()->getRootPipeline());
+	response = serialize_workflow(nuiFrameworkManager::getInstance()->getWorkflowRoot());
 	setSuccess(response);
 	return true;
 }
@@ -796,6 +796,12 @@ Json::Value nuiJsonRpcApi::serialize_connection( nuiDataStreamDescriptor *descri
 void nuiJsonRpcApi::setFailure( Json::Value &response )
 {
 	response["result"] = "failure";
+}
+
+void nuiJsonRpcApi::setFailure( Json::Value &response, std::string message )
+{
+	response["message"] = message;
+	setFailure(response);
 }
 
 void nuiJsonRpcApi::setSuccess( Json::Value &response )

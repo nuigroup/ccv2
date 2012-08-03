@@ -20,7 +20,7 @@ nuiDebugGestureOutputModuleDataPacket::~nuiDebugGestureOutputModuleDataPacket()
 nuiDataPacketError nuiDebugGestureOutputModuleDataPacket::packData(const void *_data)
 {
     this->setLocalCopy(false);
-    this->data = ( vector<client::unimodalLeafNode>*) _data;
+    this->data = ( std::vector<client::unimodalLeafNode>*) _data;
     return NUI_DATAPACKET_OK;
 };
 
@@ -34,8 +34,8 @@ nuiDataPacket* nuiDebugGestureOutputModuleDataPacket::copyPacketData(nuiDataPack
 {
     nuiDataPacket* newPacket = new nuiDebugGestureOutputModuleDataPacket();
 
-    vector<client::unimodalLeafNode>* currentLeaves = this->data;
-    vector<client::unimodalLeafNode>* newLeaves = new std::vector<client::unimodalLeafNode>(*currentLeaves);
+    std::vector<client::unimodalLeafNode>* currentLeaves = this->data;
+    std::vector<client::unimodalLeafNode>* newLeaves = new std::vector<client::unimodalLeafNode>(*currentLeaves);
 
     newPacket->packData(newLeaves);
     newPacket->setLocalCopy(true);

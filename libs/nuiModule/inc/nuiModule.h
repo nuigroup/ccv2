@@ -19,7 +19,6 @@
 #include <uuid/uuid.h>
 #endif
 
-#include "ofxXmlSettings.h"
 #include "nuiTimer.h"
 #include "nuiThread.h"
 #include "nuiEndpoint.h"
