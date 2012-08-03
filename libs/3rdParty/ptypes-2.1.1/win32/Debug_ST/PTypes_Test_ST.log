@@ -1,0 +1,16 @@
+﻿Build started 31.07.2012 14:51:12.
+     1>Project "D:\gsoc\libs\ptypes-2.1.1\win32\PTypes_Test_ST.vcxproj" on node 4 (build target(s)).
+     1>InitializeBuildStatus:
+         Creating ".\Debug_ST\PTypes_Test_ST.unsuccessfulbuild" because "AlwaysCreate" was specified.
+       ClCompile:
+         C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\CL.exe /c /I../include /Zi /nologo /W3 /WX- /Od /Oy- /D PTYPES_ST /D _CONSOLE /D _DEBUG /D WIN32 /D _VC80_UPGRADE=0x0600 /D _MBCS /Gm /EHsc /RTC1 /MTd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo".\Debug_ST/" /Fd".\Debug_ST/vc100.pdb" /FR".\Debug_ST\\" /Gd /TP /analyze- /errorReport:prompt ..\src\ptypes_test.cxx
+         ptypes_test.cxx
+       Link:
+         C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:".\Debug_ST/PTypes_Test_ST.exe" /INCREMENTAL:NO /NOLOGO ws2_32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /ManifestFile:".\Debug_ST\PTypes_Test_ST.exe.intermediate.manifest" /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /DEBUG /PDB:".\Debug_ST/PTypes_Test_ST.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:".\Debug_ST\PTypes_Test_ST.lib" /MACHINE:X86 .\Debug_ST/ptypes_test.obj
+         "D:\gsoc\libs\ptypes-2.1.1\win32\Debug_ST\ptypesn.lib"
+     1>LINK : fatal error LNK1181: cannot open input file 'D:\gsoc\libs\ptypes-2.1.1\win32\Debug_ST\ptypesn.lib'
+     1>Done Building Project "D:\gsoc\libs\ptypes-2.1.1\win32\PTypes_Test_ST.vcxproj" (build target(s)) -- FAILED.
+
+Build FAILED.
+
+Time Elapsed 00:00:00.92
