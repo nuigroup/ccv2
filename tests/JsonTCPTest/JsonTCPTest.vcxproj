@@ -54,7 +54,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\..\libs\3rdParty\boost;..\..\libs\3rdParty\json-rpc\src;..\..\libs\3rdParty\json-cpp\include;..\..\libs\3rdParty\XgetOpt;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\libs\3rdParty\json-rpc\src;..\..\libs\3rdParty\json-cpp\include;..\..\libs\3rdParty\XgetOpt;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
