@@ -1,26 +1,17 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 9.00
-# Visual Studio 2005
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "PTypes_DLL", "PTypes_DLL.vcproj", "{181E52DE-3CF7-425B-B24A-E59711635486}"
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "PTypes_DLL", "PTypes_DLL.vcxproj", "{181E52DE-3CF7-425B-B24A-E59711635486}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "PTypes_Lib", "PTypes_Lib.vcproj", "{4A435BFE-D414-4FFA-8364-672A2B7FFF01}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "PTypes_Lib", "PTypes_Lib.vcxproj", "{4A435BFE-D414-4FFA-8364-672A2B7FFF01}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "PTypes_Lib_ST", "PTypes_Lib_ST.vcproj", "{FB3CDEFD-B016-4EFE-8634-86083A584B04}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "PTypes_Lib_ST", "PTypes_Lib_ST.vcxproj", "{FB3CDEFD-B016-4EFE-8634-86083A584B04}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "PTypes_Test", "PTypes_Test.vcproj", "{A08093B3-4E89-4D19-85FD-D0679E7DC4EA}"
-	ProjectSection(ProjectDependencies) = postProject
-		{181E52DE-3CF7-425B-B24A-E59711635486} = {181E52DE-3CF7-425B-B24A-E59711635486}
-	EndProjectSection
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "PTypes_Test", "PTypes_Test.vcxproj", "{A08093B3-4E89-4D19-85FD-D0679E7DC4EA}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "PTypes_Test_ST", "PTypes_Test_ST.vcproj", "{ADC21731-3254-476F-8D37-8266E1EC293D}"
-	ProjectSection(ProjectDependencies) = postProject
-		{FB3CDEFD-B016-4EFE-8634-86083A584B04} = {FB3CDEFD-B016-4EFE-8634-86083A584B04}
-	EndProjectSection
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "PTypes_Test_ST", "PTypes_Test_ST.vcxproj", "{ADC21731-3254-476F-8D37-8266E1EC293D}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "wshare", "wshare.vcproj", "{6B53FB0A-5052-4A7B-8419-7CBF117088EB}"
-	ProjectSection(ProjectDependencies) = postProject
-		{4A435BFE-D414-4FFA-8364-672A2B7FFF01} = {4A435BFE-D414-4FFA-8364-672A2B7FFF01}
-	EndProjectSection
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "wshare", "wshare.vcxproj", "{6B53FB0A-5052-4A7B-8419-7CBF117088EB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -71,8 +71,8 @@ typedef int socklen_t;
 #endif
 
 #include <string>
-#include "../../boost/boost/cstdint.hpp"
-#include "../../ptypes-2.1.1/include/pport.h"
+#include "boost/cstdint.hpp"
+#include "pport.h"
 
 #ifdef _WIN64
 typedef __int64         ssize_t;
