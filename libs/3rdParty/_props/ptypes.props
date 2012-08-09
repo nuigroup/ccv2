@@ -12,7 +12,7 @@
       <AdditionalDependencies>ptypes.lib</AdditionalDependencies>
     </Lib>
     <Link>
-      <AdditionalLibraryDirectories>D:\gsoc\libs\ptypes-2.1.1\lib\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)\..\..\libs\3rdParty\ptypes-2.1.1\lib\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>ptypes.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>

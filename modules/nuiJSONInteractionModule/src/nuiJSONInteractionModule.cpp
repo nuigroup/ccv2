@@ -70,11 +70,6 @@ char* nuiJSONInteractionModuleDataPacket::getDataPacketType()
 nuiJSONInteractionModule::nuiJSONInteractionModule() : nuiModule() {
     MODULE_INIT();
     
-	/*this->input = new nuiDataStream("mAST");
-	this->declareInput(0, &this->input, new nuiDataStreamInfo(
-			"data", "mAST", "Multimodal abstract syntax tree"));
-    this->output = new nuiDataStream("JSON");
-    this->declareOutput(0, &this->output, new nuiDataStreamInfo("cJSON", "JSON", "JSON interaction"));*/
     this->output = new nuiEndpoint(this);
     this->output->setTypeDescriptor(std::string("cJSON"));
     this->setOutputEndpointCount(1);
@@ -96,14 +91,14 @@ void nuiJSONInteractionModule::update() {
     cJSON* outputJSON;
     if(this->input->getData() != NULL) 
         outputJSON = mast_to_json((client::multimodalSyntaxTree *)this->input->getData());
-    if(outputJSON != NULL) 
-        //this->output->push(outputJSON);
+
+    if(outputJSON != NULL)
         this->outputDataPacket->packData((void*)outputJSON);
-    else 
+    else
         this->output->clear();
 }
 
-//! ToDo What this bunch of code was originated to do?
+//! TODO What this bunch of code was originated to do?
 
 /*void nuiJSONInteractionModule::notifyData(nuiDataStream *stream) {
     this->notifyUpdate();

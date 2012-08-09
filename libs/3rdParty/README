@@ -1,7 +1,0 @@
-Build separately
-
-Boost
-(with usual boost.build to boost_1_50_0\lib folder)
-
-Ptypes
-(with solution provided in ptypes-2.1.1\win32libs\ptypes folder)
