@@ -14,7 +14,7 @@
 #include "nuiMultimodalSyntaxTree.h"
 #include "nuiDataPacket.h"
 
-MODULE_DECLARE(JSONInteraction, "native", "Converts mAST to JSON for output");
+MODULE_DECLARE(JSONInteractionModule, "native", "Converts mAST to JSON for output");
 
 nuiJSONInteractionModuleDataPacket::~nuiJSONInteractionModuleDataPacket()
 {

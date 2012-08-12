@@ -49,7 +49,7 @@ char* nuiSpiritParserModuleDataPacket::getDataPacketType()
 };
 
 
-MODULE_DECLARE(SpiritParser, "native", "Parses attributes out of ASR text to fill in the semantic tree");
+MODULE_DECLARE(SpiritParserModule, "native", "Parses attributes out of ASR text to fill in the semantic tree");
 
 nuiSpiritParserModule::nuiSpiritParserModule() : nuiModule() {
     

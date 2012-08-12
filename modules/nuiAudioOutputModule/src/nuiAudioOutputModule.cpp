@@ -54,7 +54,7 @@ char* nuiAudioOutputModuleDataPacket::getDataPacketType()
     return "AudioDataStream";
 }
 
-MODULE_DECLARE(AudioOutput, "native", "Get audio from RtAudio input (Core Audio or DirectSound)");
+MODULE_DECLARE(AudioOutputModule, "native", "Get audio from RtAudio input (Core Audio or DirectSound)");
 
 bool nuiAudioOutputModule::bRecording = false;
 

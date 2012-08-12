@@ -37,9 +37,9 @@ typedef nuiModule* (*nuiFactoryCreateCallback)();
 	static std::string module_name = #name; \
 	static std::string module_author = author; \
 	static std::string module_description = description; \
-	std::string nui##name##module::getName() { return module_name; } \
-	std::string nui##name##module::getDescription() { return module_description; } \
-	std::string nui##name##module::getAuthor() { return module_author; } \
+	std::string nui##name##::getName() { return module_name; } \
+	std::string nui##name##::getDescription() { return module_description; } \
+	std::string nui##name##::getAuthor() { return module_author; } \
 
 #define MODULE_INIT() \
 	this->properties["id"] = new nuiProperty(nuiUtils::getRandomNumber()); \
