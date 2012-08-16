@@ -48,7 +48,7 @@ char* nuiPSModuleDataPacket::getDataPacketType()
 	return "IplImage";
 };
 
-MODULE_DECLARE(PS, "native", "Capture video from PS3 camera using Code Laborotories PS3 Eye SDK")
+MODULE_DECLARE(PSModule, "native", "Capture video from PS3 camera using Code Laborotories PS3 Eye SDK")
 
 nuiPSModule::nuiPSModule() : nuiModule()
 {
