@@ -5,6 +5,7 @@ nuiEndpoint::nuiEndpoint(nuiModule *hostModule)
 {
 	mtx = new pt::mutex();
 	moduleHoster = hostModule;
+	dataPacket = NULL;
 }
 
 nuiEndpoint::~nuiEndpoint() 
@@ -16,7 +17,7 @@ nuiEndpoint::~nuiEndpoint()
 nuiDataStreamErrorCode nuiEndpoint::writeData(nuiDataPacket* dataPacket)
 {
 	this->dataPacket = dataPacket;
-	if (moduleHoster == NULL)
+	if (moduleHoster != NULL)
 		moduleHoster->notifyDataReceived(this);
 	return NUI_DATASTREAM_OK;
 }

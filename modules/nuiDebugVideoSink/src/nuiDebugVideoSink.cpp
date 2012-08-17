@@ -13,7 +13,7 @@ nuiDebugVideoSink::nuiDebugVideoSink() : nuiModule() {
     MODULE_INIT();
 
 	this->input = new nuiEndpoint(this);
-    this->input->setTypeDescriptor(std::string("cv::Mat"));
+    this->input->setTypeDescriptor(std::string("IplImage"));
     this->setInputEndpointCount(1);
     this->setInputEndpoint(0,this->input);
 }
@@ -22,28 +22,28 @@ nuiDebugVideoSink::~nuiDebugVideoSink() {
 }
 
 void nuiDebugVideoSink::update() {    
-    /*cv::Mat *frame;
+	//LOG(NUI_DEBUG, "module update called");
+	void* data;
+	nuiDataPacket* packet = this->input->getData();
+	if(packet == NULL) return;
+	packet->unpackData(data);
+	IplImage* frame = (IplImage*)data;
+	cv::Mat newFrame = cv::cvarrToMat(frame);
 	cv::Mat edges;
-    void* pFrame = (void*)frame;
-    this->input->getData()->unpackData(pFrame);
-    frame = (cv::Mat*)pFrame;
-
-	//cv::namedWindow("edges",1);
-	cv::cvtColor(*frame, edges, CV_BGR2GRAY);
+	cv::Mat thr;
+	cv::cvtColor(newFrame, edges, CV_BGR2GRAY);
 	cv::GaussianBlur(edges, edges, cv::Size(7,7), 1.5, 1.5);
 	cv::Canny(edges, edges, 0, 30, 3);
-	cv::imshow("edges", edges);*/
+	cv::imshow("edges", edges);
+	//cvThreshold( frame, thr, 100, 255, CV_THRESH_BINARY );
+	cv::threshold( newFrame, thr, 70, 255,3 );
+	cvShowImage("ot", frame);
+	cv::imshow("thr", thr);
+	//cvShowImage("thr", thr);
+	cv::waitKey(1);
 }
 
 void nuiDebugVideoSink::start() {
 	nuiModule::start();
-	cv::Mat edges;
-	cv::namedWindow("edges",1);
-	cv::Mat frame = cvLoadImageM("thing.png");
-	cv::cvtColor(frame, edges, CV_BGR2GRAY);
-    GaussianBlur(edges, edges, cv::Size(7,7), 1.5, 1.5);
-    Canny(edges, edges, 0, 30, 3);
-    imshow("edges", edges);
 	LOG(NUI_DEBUG,"starting video sink");
-	if(cv::waitKey(30) >= 0) LOG(NUI_DEBUG,"bad");
 }

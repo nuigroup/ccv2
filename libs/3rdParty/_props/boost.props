@@ -8,7 +8,7 @@
       <AdditionalIncludeDirectories>$(SolutionDir)\..\..\libs\3rdParty\boost_1_50_0\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
-      <AdditionalLibraryDirectories>$(SolutionDir)\..\..\libs\3rdParty\boost_1_50_0\lib\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)\..\..\libs\3rdParty\boost_1_50_0\stage\lib\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <Lib>
       <AdditionalLibraryDirectories>$(SolutionDir)\..\..\libs\3rdParty\boost_1_50_0\stage\lib\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>

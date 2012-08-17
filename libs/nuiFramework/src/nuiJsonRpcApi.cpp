@@ -94,7 +94,7 @@ void nuiJsonRpcApi::execute()
 {
 	while(!want_quit)
 	{
-		server->WaitMessage(200);
+		server->WaitMessage(0);
 	}
 }
 
@@ -235,9 +235,9 @@ bool nuiJsonRpcApi::nui_create_connection( const Json::Value& root, Json::Value&
 {
 	response["id"] = root["id"];
 	std::string pipeline = root["params"]["pipeline"].asString();	
-	int srcIndex = root["params"]["source"].asInt();
+	int srcIndex = root["params"]["sourceModule"].asInt();
 	int srcPort = root["params"]["sourcePort"].asInt();
-	int dstIndex = root["params"]["destination"].asInt();
+	int dstIndex = root["params"]["destinationModule"].asInt();
 	int dstPort = root["params"]["destinationPort"].asInt();
 
 	nuiDataStreamDescriptor* descriptor = nuiFrameworkManager::getInstance()->
@@ -398,9 +398,9 @@ bool nuiJsonRpcApi::nui_update_connection( const Json::Value& root, Json::Value&
 {
 	response["id"] = root["id"];
 	std::string pipeline = root["params"]["pipeline"].asString(); 
-	int srcIndex = root["params"]["source"].asInt(); 
+	int srcIndex = root["params"]["sourceModule"].asInt(); 
 	int srcPort = root["params"]["sourcePort"].asInt(); 
-	int dstIndex = root["params"]["destination"].asInt(); 
+	int dstIndex = root["params"]["destinationModule"].asInt(); 
 	int dstPort = root["params"]["destinationPort"].asInt();
 
 	nuiDataStreamDescriptor *current = nuiFrameworkManager::getInstance()->
@@ -412,12 +412,12 @@ bool nuiJsonRpcApi::nui_update_connection( const Json::Value& root, Json::Value&
 		return false;
 	}
 
-	int deepCopy = response["deepCopy"].asInt();
-	int asyncMode = response["asyncMode"].asInt();
-	int buffered = response["buffered"].asInt();
-	int bufferSize = response["bufferSize"].asInt();
-	int lastPacket = response["lastPacket"].asInt();
-	int overflow = response["overflow"].asInt();
+	current->deepCopy = root["params"]["deepCopy"].asInt();
+	current->asyncMode = root["params"]["asyncMode"].asInt();
+	current->buffered = root["params"]["buffered"].asInt();
+	current->bufferSize = root["params"]["bufferSize"].asInt();
+	current->lastPacket = root["params"]["lastPacket"].asInt();
+	current->overflow = root["params"]["overflow"].asInt();
 
 	nuiDataStreamDescriptor *descriptor = nuiFrameworkManager::getInstance()->
 		updateConnection(pipeline,srcIndex,dstIndex,srcPort,dstPort,current); 
@@ -551,9 +551,9 @@ bool nuiJsonRpcApi::nui_delete_connection( const Json::Value& root, Json::Value&
 {
 	response["id"] = root["id"];
 	std::string pipeline = root["params"]["pipeline"].asString(); 
-	int srcIndex = root["params"]["source"].asInt(); 
+	int srcIndex = root["params"]["sourceModule"].asInt(); 
 	int srcPort = root["params"]["sourcePort"].asInt(); 
-	int dstIndex = root["params"]["destination"].asInt(); 
+	int dstIndex = root["params"]["destinationModule"].asInt(); 
 	int dstPort = root["params"]["destinationPort"].asInt();
 
 	nuiModuleDescriptor* descriptor = nuiFrameworkManager::getInstance()->
@@ -629,9 +629,9 @@ bool nuiJsonRpcApi::nui_get_connection( const Json::Value& root, Json::Value& re
 {
 	response["id"] = root["id"];
 	std::string pipeline = root["params"]["pipeline"].asString(); 
-	int srcIndex = root["params"]["source"].asInt(); 
+	int srcIndex = root["params"]["sourceModule"].asInt(); 
 	int srcPort = root["params"]["sourcePort"].asInt(); 
-	int dstIndex = root["params"]["destination"].asInt(); 
+	int dstIndex = root["params"]["destinationModule"].asInt(); 
 	int dstPort = root["params"]["destinationPort"].asInt();
 
 	nuiDataStreamDescriptor* descriptor = nuiFrameworkManager::getInstance()->

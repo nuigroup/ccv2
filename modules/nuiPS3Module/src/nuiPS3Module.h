@@ -56,7 +56,9 @@ START_IMPLEMENT_DESCRIPTOR(nuiPSModule,"native","Capture video from PS3 camera")
 descriptor->setOutputEndpointsCount(1);
 nuiEndpointDescriptor* outputDescriptor = new nuiEndpointDescriptor("IplImage");
 descriptor->addOutputEndpointDescriptor(outputDescriptor, 0);
-descriptor->property("use_thread").set(true);
+//descriptor->property("use_thread").set(true);
+//descriptor->property("oscillator_mode").set(true);
+//descriptor->property("oscillator_wait").set(50);
 END_IMPLEMENT_DESCRIPTOR(nuiPSModule)
 
 START_MODULE_EXIT()

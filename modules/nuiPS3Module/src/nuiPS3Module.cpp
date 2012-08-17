@@ -67,7 +67,7 @@ nuiPSModule::~nuiPSModule()
 
 void nuiPSModule::update()
 {
-	LOG(NUI_DEBUG, "ps3 module update called");
+	//LOG(NUI_DEBUG, "ps3 module update called");
 	this->_pOutput->lock();
 
 	this->_pOutput->clear();
@@ -77,18 +77,18 @@ void nuiPSModule::update()
 	this->_pOutputDataPacket->packData((void*)_pFrame);
 	this->_pOutput->setData(this->_pOutputDataPacket);
 	this->_pOutput->transmitData();
-
 	this->_pOutput->unlock();
 };
 
 void nuiPSModule::start()
 {
-	nuiModule::start();
 
 	GUID guid = CLEyeGetCameraUUID(0);	// Get Camera GUID by index
 	this->_pCam = new CLEyeCamera(guid, CLEYE_COLOR_PROCESSED, CLEYE_VGA, 120);
 
 	this->_pFrame =  cvCreateImage( cvSize(_pCam->width(), _pCam->height()), IPL_DEPTH_8U, 4 );
+
+	nuiModule::start();
 };
 
 void nuiPSModule::stop()

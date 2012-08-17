@@ -298,7 +298,7 @@ void nuiDataStream::processData()
 {
 	if (!packetData.empty())
 	{
-		void *dataToSent = NULL;
+		nuiDataPacket *dataToSent = NULL;
 		nuiDataSendCallback callback = NULL;
 
 		mtx->lock();
@@ -320,6 +320,7 @@ void nuiDataStream::processData()
 		}
 		else
 		{
+			receiver->writeData(dataToSent);
 			nuiDataStreamErrorCode returnCode = NUI_DATASTREAM_OK;// receiver->writeData(dataToSent);
 			if (callback!=NULL)
 				callback(returnCode, NULL);

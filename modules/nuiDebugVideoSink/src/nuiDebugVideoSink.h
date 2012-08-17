@@ -38,7 +38,7 @@ IMPLEMENT_DEALLOCATOR(nuiDebugVideoSink)
 START_IMPLEMENT_DESCRIPTOR(nuiDebugVideoSink,"native","Print streams/structures to the debug console in text format")
 descriptor->setInputEndpointsCount(1);
 descriptor->setOutputEndpointsCount(0);
-nuiEndpointDescriptor* inputDescriptor = new nuiEndpointDescriptor("cv::Mat");
+nuiEndpointDescriptor* inputDescriptor = new nuiEndpointDescriptor("IplImage");
 descriptor->addInputEndpointDescriptor(inputDescriptor,0);
 descriptor->property("use_thread").set(true);
 END_IMPLEMENT_DESCRIPTOR(nuiDebugVideoSink)	
