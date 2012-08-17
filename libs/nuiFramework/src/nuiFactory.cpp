@@ -267,7 +267,7 @@ void nuiFactory::loadSettings(nuiModule* module, nuiModuleDescriptor* descriptor
 {
 	for (std::map<std::string, nuiProperty*>::iterator iter = descriptor->getProperties().begin();iter!= descriptor->getProperties().end();iter++)
 	{
-		module->property(iter->first) = iter->second;
+		module->property(iter->first).set(iter->second->asString());
 	}
 }
 

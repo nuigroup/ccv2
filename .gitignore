@@ -4,6 +4,8 @@ tmp/
 # PDT-specific
 .buildpath
 
+libs/3rdParty/boost*
+libs/3rdParty/opencv*
 
 #################
 ## Visual Studio

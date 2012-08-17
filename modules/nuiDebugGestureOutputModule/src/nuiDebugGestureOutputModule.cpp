@@ -51,7 +51,7 @@ char* nuiDebugGestureOutputModuleDataPacket::getDataPacketType()
 
 #include "nuiDebugGestureOutputModule.h"
 
-MODULE_DECLARE(DebugGestureOutput, "native", "Pushes a vector<unimodalLeaf> onto the stream for tactile GUI events");
+MODULE_DECLARE(DebugGestureOutputModule, "native", "Pushes a vector<unimodalLeaf> onto the stream for tactile GUI events");
 
 nuiDebugGestureOutputModule::nuiDebugGestureOutputModule() : nuiModule() {
     MODULE_INIT();

@@ -51,7 +51,7 @@ char* nuiDebugInputModuleDataPacket::getDataPacketType()
     return "mAST";
 };*/
 
-MODULE_DECLARE(DebugInput, "native", "Print streams/structures to the debug console in text format");
+MODULE_DECLARE(DebugInputModule, "native", "Print streams/structures to the debug console in text format");
 
 nuiDebugInputModule::nuiDebugInputModule() : nuiModule() {
     MODULE_INIT();

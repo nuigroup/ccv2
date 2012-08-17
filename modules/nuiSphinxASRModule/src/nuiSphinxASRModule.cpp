@@ -54,7 +54,7 @@ char* nuiSphinxASRModuleDataPacket::getDataPacketType()
 };
 
 
-MODULE_DECLARE(SphinxASR, "native", "Fetch CCA speech recognition");
+MODULE_DECLARE(SphinxASRModule, "native", "Fetch CCA speech recognition");
 
 nuiSphinxASRModule::nuiSphinxASRModule() : nuiModule() {
 

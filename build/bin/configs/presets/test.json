@@ -5,40 +5,45 @@
 			"author":"Scott Halstvedt",
 			"description":"Loaded from file",
 			"modules": [
-						{"id":0,"type":"nuiDebugGestureModule","properties":{
-							"use_thread" : 0, "oscillator_mode" : 0, "synced_input" : 1, "x" : 386, "y" : 444
+						{"id":0,"type":"nuiPSModule","properties":{
+							"use_thread" : "false", "oscillator_mode" : "true", "oscillator_wait" : 30, "synced_input" : "false", "x" : 386, "y" : 444
+								}
+							},
+						{"id":1,"type":"nuiDebugVideoSink","properties":{
+							"use_thread" : "true", "oscillator_mode" : "false", "synced_input" : "false", "x" : 386, "y" : 444
 								}
 							}
 			],
 			"properties":{
-			"yes":"no"
+				"yes":"no"
 			},
 			"endpoints":{
 			"input":[
 				{
 					"id":0,
-					"type":"bhal"
+					"type":"input"
 				}
 			],
 			"output":[
 				{
 					"id":0,
-					"type":"lhab"
+					"type":"output"
 				}
 			]
 			},
 			"connections":[
 			{
 				"source":{
-					"id":3,
+					"id":0,
 					"port":0
 				},
 				"destination":{
-					"id":4,
-					"port":1
+					"id":1,
+					"port":0
 				}
 			}
 			]
 		}
 	]
+}
 }
