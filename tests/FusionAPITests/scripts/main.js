@@ -7,10 +7,10 @@ var jsonReq = null;
 
 var identifiers = ['pipeline', 'module', 'index', 'hosterName', 'sourceModule', 'sourcePort', 'destinationModule', 'destinationPort', 'author', 'description', 'identifier'];
 
-var map = {'nui_list_pipelines' : 'hosterName', 'nui_create_pipeline' : ['pipeline'], 'nui_create_module' : ['pipeline', 'module'], 'nui_create_connection' : ['pipeline', 'source', 'sourcePort', 'destination', 'destinationPort'],
+var map = {'nui_list_pipelines' : 'hosterName', 'nui_create_pipeline' : ['pipeline'], 'nui_create_module' : ['pipeline', 'module'], 'nui_create_connection' : ['pipeline', 'sourceModule', 'sourcePort', 'destinationModule', 'destinationPort'],
 'nui_update_pipeline' : ['pipeline', 'name', 'description', 'author'],'nui_update_module' : ['pipeline', 'index', 'description'],'nui_update_connection' : ['pipeline', 'sourceModule', 'sourcePort', 'destinationModule', 'destinationPort'],
 'nui_delete_pipeline' : ['pipeline'],'nui_delete_module' : ['pipeline', 'module'],'nui_delete_connection' : ['pipeline', 'sourceModule', 'sourcePort', 'destinationModule', 'destinationPort'],
-'nui_get_pipeline' : ['pipeline'],'nui_get_module' : ['pipeline', 'identifier'],'nui_get_connection' : ['pipeline', 'index'],'nui_navigate_push' : ['index'],'nui_navigate_pop' : []};
+'nui_get_pipeline' : ['pipeline'],'nui_get_module' : ['pipeline', 'identifier'],'nui_get_connection' : ['pipeline', 'sourceModule', 'sourcePort', 'destinationModule', 'destinationPort'],'nui_navigate_push' : ['index'],'nui_navigate_pop' : []};
 
 $.disjoin = function(a, b) {
     return $.grep(a, function($e) { return $.inArray($e, b) == -1; });

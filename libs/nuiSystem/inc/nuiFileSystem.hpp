@@ -10,7 +10,7 @@ Copyright:	(c) 2012 NUI Group
 #include "boost/filesystem.hpp"
 
 using namespace std;
-using namespace boost::filesystem3;
+using namespace boost::filesystem;
 
 
 namespace nuiFileSystem

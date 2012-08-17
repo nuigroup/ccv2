@@ -174,7 +174,8 @@ void nuiModule::stop()
 void nuiModule::trigger()
 {
 	if (!this->isStarted())
-		this->start();
+		//this->start();
+		return;
 	this->need_update = true;
 	if ( this->use_thread )
 	{

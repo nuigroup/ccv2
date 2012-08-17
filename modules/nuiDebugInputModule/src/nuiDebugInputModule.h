@@ -14,20 +14,14 @@
 #include "nuiDataPacket.h"
 #include "nuiEndpoint.h"
 
-//NUI_DATAPACKET_DEFAULT_IMPLEMENTATION(DebugInputModule, datatype)
-
 class nuiDebugInputModule : public nuiModule {
 public:
 	nuiDebugInputModule(); 
 	virtual ~nuiDebugInputModule();
-
-	//virtual void notifyData(nuiDataStream *stream);
 	void update();
 
 private:
-	//nuiDataStream *stream;
-    nuiEndpoint* input;
-    
+    nuiEndpoint* input;    
 	MODULE_INTERNALS();
 };
 

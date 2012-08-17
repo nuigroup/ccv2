@@ -59,7 +59,7 @@ char* nuiDebugGestureModuleDataPacket::getDataPacketType()
 
 #include "nuiDebugGestureModule.h"
 
-MODULE_DECLARE(DebugGesture, "native", "Passes through vector<unimodalLeaf> onto the stream for tactile GUI events");
+MODULE_DECLARE(DebugGestureModule, "native", "Passes through vector<unimodalLeaf> onto the stream for tactile GUI events");
 
 nuiDebugGestureModule::nuiDebugGestureModule() : 
     nuiModule() 

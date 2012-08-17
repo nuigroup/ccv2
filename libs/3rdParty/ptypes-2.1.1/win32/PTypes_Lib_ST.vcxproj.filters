@@ -2,19 +2,19 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <Filter Include="Types">
-      <UniqueIdentifier>{0e014839-b7be-4dfa-b1fc-580ea755f58d}</UniqueIdentifier>
+      <UniqueIdentifier>{8fb3fa21-92f6-4384-afe2-238bc7d98e7a}</UniqueIdentifier>
       <Extensions>h;cpp;c;cxx;rc;def;r;odl;idl;hpj;bat</Extensions>
     </Filter>
     <Filter Include="Public Headers">
-      <UniqueIdentifier>{a1ea342d-2dc0-461a-8bcb-79f6e52818fc}</UniqueIdentifier>
+      <UniqueIdentifier>{b8eb4f7f-5dc3-4b53-b9c3-433bc66e38b7}</UniqueIdentifier>
       <Extensions>h;hpp;hxx;hm;inl</Extensions>
     </Filter>
     <Filter Include="Streams">
-      <UniqueIdentifier>{ed7a2caf-a6e1-4000-a11b-1c040199768c}</UniqueIdentifier>
+      <UniqueIdentifier>{963d8e35-3f39-4d80-93bb-0397d1369288}</UniqueIdentifier>
       <Extensions>h;cpp;c;cxx;rc;def;r;odl;idl;hpj;bat</Extensions>
     </Filter>
     <Filter Include="Inet">
-      <UniqueIdentifier>{ab2ef224-efa7-40dd-aa78-c01025ee344c}</UniqueIdentifier>
+      <UniqueIdentifier>{4f380f14-77c0-418f-b46b-8de2e10253af}</UniqueIdentifier>
       <Extensions>h;cpp;c;cxx;rc;def;r;odl;idl;hpj;bat</Extensions>
     </Filter>
   </ItemGroup>

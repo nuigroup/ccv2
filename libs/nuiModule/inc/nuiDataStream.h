@@ -53,7 +53,7 @@ class nuiEndpoint;
 class nuiDataStream
 {
 public:
-	nuiDataStream(bool asyncMode = false, nuiDataSendCallback defaultCallback = NULL, bool deepCopy = false,  bool bufferedMode = false, int bufferSize = MIN_NUI_STREAM_BUFFER_SIZE, bool lastPacketProprity = true);
+	nuiDataStream(bool asyncMode = false, nuiDataSendCallback defaultCallback = NULL, bool deepCopy = true,  bool bufferedMode = false, int bufferSize = MIN_NUI_STREAM_BUFFER_SIZE, bool lastPacketProprity = true);
 	~nuiDataStream();
 public:
 	inline bool isDeepCopy();

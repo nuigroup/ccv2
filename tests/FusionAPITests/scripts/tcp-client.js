@@ -69,6 +69,10 @@ Author: Boris Smus (smus@chromium.org)
     // Register received callback.
     this.callbacks.recv = callback;
   }
+  
+  TcpClient.prototype.getSocketId = function() {
+	return this.socketId;
+  }
 
   TcpClient.prototype.disconnect = function() {
     socket.disconnect(this.socketId);

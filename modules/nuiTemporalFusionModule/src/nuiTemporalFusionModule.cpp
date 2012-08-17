@@ -47,7 +47,7 @@ char* nuiTemporalFusionModuleDataPacket::getDataPacketType()
     return "client::multimodalSyntaxTree*";
 };
 
-MODULE_DECLARE(TemporalFusion, "native", "Temporal fusion module");
+MODULE_DECLARE(TemporalFusionModule, "native", "Temporal fusion module");
 
 nuiTemporalFusionModule::nuiTemporalFusionModule() : nuiModule() {
 

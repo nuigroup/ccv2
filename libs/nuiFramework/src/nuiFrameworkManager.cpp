@@ -218,18 +218,19 @@ nuiModuleDescriptor *nuiFrameworkManager::parseModuleDescriptor(Json::Value *roo
 void nuiFrameworkManager::parseModuleDescriptorParameters(nuiModuleDescriptor &moduleDescriptor, Json::Value *root)
 {
 	Json::Value properties = root->get("properties", new Json::Value);
-	if(!properties.isArray()) return;
+	//if(!properties.isArray()) return;
 	Json::Value::Members propertyNames = properties.getMemberNames();
 	for (Json::Value::Members::iterator i = propertyNames.begin(); i!=propertyNames.end(); i++)
 	{
 		std::string propertyID = *i;
 		Json::Value value = properties.get(*i, "none");
-		if ((value != "none") && (propertyID != "none"))
+		if ((value != "none") && (propertyID != "none")) // right way to check?
 		{
-			nuiProperty *prop = new	nuiProperty(value.asString());
 			std::map<std::string, nuiProperty*>::iterator search = moduleDescriptor.getProperties().find(propertyID);
 			if (search == moduleDescriptor.getProperties().end())
-				moduleDescriptor.property(propertyID) = *prop;
+				if(value.isInt()) moduleDescriptor.property(propertyID).set(value.asInt());
+				else if(value.isString()) moduleDescriptor.property(propertyID).set(value.asString());
+				//else moduleDescriptor.property(propertyID);
 		}
 	}
 }

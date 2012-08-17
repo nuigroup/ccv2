@@ -33,16 +33,14 @@ int main(int argc, char **argv)
 	//bool frameworkInitStatus = nuiFrameworkManager::getInstance()->init();
 	bool frameworkInitStatus = nuiFrameworkManager::getInstance()->initializeFrameworkManager("configs/presets/test.json");
 	if(frameworkInitStatus != NUI_FRAMEWORK_MANAGER_OK)
-		if(frameworkInitStatus == NUI_FRAMEWORK_ROOT_INITIALIZATION_FAILED) LOG(NUI_CRITICAL, "Failed to initialize framework root");
+		if(frameworkInitStatus == NUI_FRAMEWORK_ROOT_INITIALIZATION_FAILED) 
+			LOG(NUI_CRITICAL, "Failed to initialize framework root");
 
 	nuiJsonRpcApi::getInstance()->startApi();
 
 	//nuiFrameworkManager::getInstance()->workflowStart();
 
-
-
-do
-    {
+	do {
 		SLEEP(g_config_delay);
 	} while ( nuiJsonRpcApi::getInstance()->isFinished() == false );
 
