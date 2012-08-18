@@ -320,8 +320,7 @@ void nuiDataStream::processData()
 		}
 		else
 		{
-			receiver->writeData(dataToSent);
-			nuiDataStreamErrorCode returnCode = NUI_DATASTREAM_OK;// receiver->writeData(dataToSent);
+			nuiDataStreamErrorCode returnCode = receiver->writeData(dataToSent);// receiver->writeData(dataToSent);
 			if (callback!=NULL)
 				callback(returnCode, NULL);
 		}

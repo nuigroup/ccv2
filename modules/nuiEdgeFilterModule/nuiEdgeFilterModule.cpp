@@ -9,6 +9,7 @@
 
 nuiEdgeFilterModuleDataPacket::~nuiEdgeFilterModuleDataPacket()
 {
+		cvReleaseImage(&data);
 };
 
 nuiDataPacketError nuiEdgeFilterModuleDataPacket::packData(const void *_data)
@@ -69,16 +70,18 @@ void nuiEdgeFilterModule::update() {
 	if(packet == NULL) return;
 	packet->unpackData(data);
 	IplImage* frame = (IplImage*)data;
-	cv::Mat newFrame = cv::cvarrToMat(frame);
+	filterFrame = cvCloneImage(frame);
+	cv::Mat newFrame = cv::cvarrToMat(filterFrame);
 	cv::Mat edges;
 	cv::cvtColor(newFrame, edges, CV_BGR2GRAY);
 	cv::GaussianBlur(edges, edges, cv::Size(7,7), 1.5, 1.5);
 	cv::Canny(edges, edges, 0, 30, 3);
 	IplImage* oldImage = new IplImage(edges);
-	this->outputDataPacket->packData(cvCloneImage(oldImage));
+	this->outputDataPacket->packData(oldImage);
 	this->output->setData(this->outputDataPacket);
 	this->output->transmitData();
 	this->output->unlock();
+	cvReleaseImage(&filterFrame);
 }
 
 void nuiEdgeFilterModule::start() {

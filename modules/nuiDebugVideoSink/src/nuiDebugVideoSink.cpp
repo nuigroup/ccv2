@@ -16,6 +16,8 @@ nuiDebugVideoSink::nuiDebugVideoSink() : nuiModule() {
     this->input->setTypeDescriptor(std::string("IplImage"));
     this->setInputEndpointCount(1);
     this->setInputEndpoint(0,this->input);
+
+	dispFrame = NULL;
 }
 
 nuiDebugVideoSink::~nuiDebugVideoSink() {
@@ -28,9 +30,11 @@ void nuiDebugVideoSink::update() {
 	if(packet == NULL) return;
 	packet->unpackData(data);
 	IplImage* frame = (IplImage*)data;
-	IplImage* frameLocal = cvCloneImage(frame);
-	cvShowImage("ot", frameLocal);
+	dispFrame = cvCloneImage(frame);
+	cvShowImage((this->property("id")).asString().c_str(), dispFrame);
 	cv::waitKey(1);
+	cvReleaseImage(&dispFrame);
+	//delete frame;
 }
 
 void nuiDebugVideoSink::start() {

@@ -14,6 +14,7 @@
 
 nuiPSModuleDataPacket::~nuiPSModuleDataPacket()
 {
+	cvReleaseImage(&data);
 };
 
 nuiDataPacketError nuiPSModuleDataPacket::packData(const void *_data)

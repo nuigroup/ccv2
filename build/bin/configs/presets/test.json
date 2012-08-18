@@ -5,16 +5,32 @@
 			"author":"Scott Halstvedt",
 			"description":"Loaded from file",
 			"modules": [
-						{"id":0,"type":"nuiPSModule","properties":{
-							"use_thread" : "false", "oscillator_mode" : "true", "oscillator_wait" : 10, "synced_input" : "false", "x" : 386, "y" : 444
+						{"id":0,"type":"nuiVideoFileSource","properties":{
+							"use_thread" : "false", "oscillator_mode" : "true", "oscillator_wait" : 30, "synced_input" : "false", "x" : 386, "y" : 444
 								}
 							},
-						{"id":1,"type":"nuiEdgeFilterModule","properties":{
+						{"id":1,"type":"nuiPSModule","properties":{
+							"use_thread" : "false", "oscillator_mode" : "true", "oscillator_wait" : 20, "synced_input" : "false", "x" : 386, "y" : 444
+								}
+							},
+						{"id":2,"type":"nuiEdgeFilterModule","properties":{
 							"use_thread" : "true", "oscillator_mode" : "false", "synced_input" : "false", "x" : 386, "y" : 444
 								}
 							},
-						{"id":2,"type":"nuiDebugVideoSink","properties":{
+						{"id":3,"type":"nuiEdgeFilterModule","properties":{
 							"use_thread" : "true", "oscillator_mode" : "false", "synced_input" : "false", "x" : 386, "y" : 444
+								}
+							},
+						{"id":4,"type":"nuiDebugVideoSink","properties":{
+							"use_thread" : "false", "oscillator_mode" : "false", "synced_input" : "false", "x" : 386, "y" : 444
+								}
+							},
+						{"id":5,"type":"nuiDebugVideoSink","properties":{
+							"use_thread" : "false", "oscillator_mode" : "false", "synced_input" : "false", "x" : 386, "y" : 444
+								}
+							},
+						{"id":6,"type":"nuiDebugVideoSink","properties":{
+							"use_thread" : "false", "oscillator_mode" : "false", "synced_input" : "false", "x" : 386, "y" : 444
 								}
 							}
 			],
@@ -42,7 +58,17 @@
 					"port":0
 				},
 				"destination":{
-					"id":1,
+					"id":2,
+					"port":0
+				}
+			},
+			{
+				"source":{
+					"id":2,
+					"port":0
+				},
+				"destination":{
+					"id":4,
 					"port":0
 				}
 			},
@@ -52,7 +78,27 @@
 					"port":0
 				},
 				"destination":{
-					"id":2,
+					"id":3,
+					"port":0
+				}
+			},
+			{
+				"source":{
+					"id":3,
+					"port":0
+				},
+				"destination":{
+					"id":5,
+					"port":0
+				}
+			},
+			{
+				"source":{
+					"id":1,
+					"port":0
+				},
+				"destination":{
+					"id":6,
 					"port":0
 				}
 			}

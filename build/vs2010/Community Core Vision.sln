@@ -201,12 +201,18 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "nuiPS3Module", "..\..\modul
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "nuiEdgeFilterModule", "..\..\modules\nuiEdgeFilterModule\nuiEdgeFilterModule.vcxproj", "{DB9C713D-93EF-4710-992C-0DD1CBB6CD81}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "nuiVideoFileSource", "..\..\modules\nuiVideoFileSource\nuiVideoFileSource.vcxproj", "{02B4AF8F-C62A-4A8E-85E2-81E3E4E915F0}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
 		Release|Win32 = Release|Win32
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{02B4AF8F-C62A-4A8E-85E2-81E3E4E915F0}.Debug|Win32.ActiveCfg = Debug|Win32
+		{02B4AF8F-C62A-4A8E-85E2-81E3E4E915F0}.Debug|Win32.Build.0 = Debug|Win32
+		{02B4AF8F-C62A-4A8E-85E2-81E3E4E915F0}.Release|Win32.ActiveCfg = Release|Win32
+		{02B4AF8F-C62A-4A8E-85E2-81E3E4E915F0}.Release|Win32.Build.0 = Release|Win32
 		{02F3DDDB-D9D4-4751-8298-AEB349DCF60A}.Debug|Win32.ActiveCfg = Debug|Win32
 		{02F3DDDB-D9D4-4751-8298-AEB349DCF60A}.Debug|Win32.Build.0 = Debug|Win32
 		{02F3DDDB-D9D4-4751-8298-AEB349DCF60A}.Release|Win32.ActiveCfg = Release|Win32
@@ -302,6 +308,7 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
+		{02B4AF8F-C62A-4A8E-85E2-81E3E4E915F0} = {9C3E3B66-A8DF-4A7B-9FA4-0FCA19864C75}
 		{02F3DDDB-D9D4-4751-8298-AEB349DCF60A} = {9C3E3B66-A8DF-4A7B-9FA4-0FCA19864C75}
 		{248C8A93-6A8B-49EE-9042-09DB38C52B75} = {9C3E3B66-A8DF-4A7B-9FA4-0FCA19864C75}
 		{2D270F82-ED55-45D4-B96E-3043334BFA36} = {6A0C656A-FE97-4C93-961E-5E764EF010EB}
