@@ -82,13 +82,16 @@ void nuiPSModule::update()
 
 void nuiPSModule::start()
 {
+	if(CLEyeGetCameraCount() != 0) {
+		GUID guid = CLEyeGetCameraUUID(0);	// Get first Camera GUID by index
+		this->_pCam = new CLEyeCamera(guid, CLEYE_COLOR_PROCESSED, CLEYE_VGA, 120);
+		this->_pFrame =  cvCreateImage( cvSize(_pCam->width(), _pCam->height()), IPL_DEPTH_8U, 4 );
 
-	GUID guid = CLEyeGetCameraUUID(0);	// Get Camera GUID by index
-	this->_pCam = new CLEyeCamera(guid, CLEYE_COLOR_PROCESSED, CLEYE_VGA, 120);
-
-	this->_pFrame =  cvCreateImage( cvSize(_pCam->width(), _pCam->height()), IPL_DEPTH_8U, 4 );
-
-	nuiModule::start();
+		nuiModule::start();
+	} else {
+		LOG(NUI_CRITICAL, "No PS Eye detected");
+		stop();
+	}
 };
 
 void nuiPSModule::stop()

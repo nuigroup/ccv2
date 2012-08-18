@@ -28,18 +28,8 @@ void nuiDebugVideoSink::update() {
 	if(packet == NULL) return;
 	packet->unpackData(data);
 	IplImage* frame = (IplImage*)data;
-	cv::Mat newFrame = cv::cvarrToMat(frame);
-	cv::Mat edges;
-	cv::Mat thr;
-	cv::cvtColor(newFrame, edges, CV_BGR2GRAY);
-	cv::GaussianBlur(edges, edges, cv::Size(7,7), 1.5, 1.5);
-	cv::Canny(edges, edges, 0, 30, 3);
-	cv::imshow("edges", edges);
-	//cvThreshold( frame, thr, 100, 255, CV_THRESH_BINARY );
-	cv::threshold( newFrame, thr, 70, 255,3 );
-	cvShowImage("ot", frame);
-	cv::imshow("thr", thr);
-	//cvShowImage("thr", thr);
+	IplImage* frameLocal = cvCloneImage(frame);
+	cvShowImage("ot", frameLocal);
 	cv::waitKey(1);
 }
 

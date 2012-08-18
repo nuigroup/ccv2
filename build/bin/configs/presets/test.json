@@ -6,10 +6,14 @@
 			"description":"Loaded from file",
 			"modules": [
 						{"id":0,"type":"nuiPSModule","properties":{
-							"use_thread" : "false", "oscillator_mode" : "true", "oscillator_wait" : 30, "synced_input" : "false", "x" : 386, "y" : 444
+							"use_thread" : "false", "oscillator_mode" : "true", "oscillator_wait" : 10, "synced_input" : "false", "x" : 386, "y" : 444
 								}
 							},
-						{"id":1,"type":"nuiDebugVideoSink","properties":{
+						{"id":1,"type":"nuiEdgeFilterModule","properties":{
+							"use_thread" : "true", "oscillator_mode" : "false", "synced_input" : "false", "x" : 386, "y" : 444
+								}
+							},
+						{"id":2,"type":"nuiDebugVideoSink","properties":{
 							"use_thread" : "true", "oscillator_mode" : "false", "synced_input" : "false", "x" : 386, "y" : 444
 								}
 							}
@@ -39,6 +43,16 @@
 				},
 				"destination":{
 					"id":1,
+					"port":0
+				}
+			},
+			{
+				"source":{
+					"id":1,
+					"port":0
+				},
+				"destination":{
+					"id":2,
 					"port":0
 				}
 			}

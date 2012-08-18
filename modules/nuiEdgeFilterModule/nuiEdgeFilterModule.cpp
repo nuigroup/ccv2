@@ -75,7 +75,7 @@ void nuiEdgeFilterModule::update() {
 	cv::GaussianBlur(edges, edges, cv::Size(7,7), 1.5, 1.5);
 	cv::Canny(edges, edges, 0, 30, 3);
 	IplImage* oldImage = new IplImage(edges);
-	this->outputDataPacket->packData(oldImage);
+	this->outputDataPacket->packData(cvCloneImage(oldImage));
 	this->output->setData(this->outputDataPacket);
 	this->output->transmitData();
 	this->output->unlock();

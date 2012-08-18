@@ -85,17 +85,18 @@ void nuiJsonRpcApi::startApi()
 		start();
 };
 
-void nuiJsonRpcApi::stopApi()
+void nuiJsonRpcApi::stopApi(bool killServer)
 {
 	this->want_quit = true;
+	//if(killServer) cleanup();
 };
 
 void nuiJsonRpcApi::execute()
 {
-	while(!want_quit)
+	do
 	{
-		server->WaitMessage(0);
-	}
+		server->WaitMessage(1000);
+	} while(!want_quit);
 }
 
 void nuiJsonRpcApi::cleanup() {

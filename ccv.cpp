@@ -7,8 +7,7 @@ int g_config_delay = 200;
 
 static void signal_term(int signal) 
 {
-	LOG(NUI_TRACE, "ahhhhhhhh");
-	nuiJsonRpcApi::getInstance()->stopApi();
+	nuiJsonRpcApi::getInstance()->stopApi(true);
 }
 
 int main(int argc, char **argv) 
