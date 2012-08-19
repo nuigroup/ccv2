@@ -37,12 +37,20 @@
 							"use_thread" : "true", "oscillator_mode" : "false", "synced_input" : "false", "x" : 386, "y" : 444
 								}
 							},
-						{"id":8,"type":"nuiPSModule","properties":{
-							"use_thread" : "false", "oscillator_mode" : "true", "path" : "out.avi", "oscillator_wait" : 40, "synced_input" : "false", "x" : 386, "y" : 444
+						{"id":8,"type":"nuiVideoFileSource","properties":{
+							"use_thread" : "false", "oscillator_mode" : "true", "path" : "reardi.avi", "oscillator_wait" : 20, "synced_input" : "false", "x" : 386, "y" : 444
 								}
 							},
 						{"id": 9,"type":"nuiDebugVideoSink","properties":{
-							"use_thread" : "false", "oscillator_mode" : "false", "synced_input" : "false", "x" : 386, "y" : 444
+							"use_thread" : "true", "oscillator_mode" : "false", "synced_input" : "false", "x" : 386, "y" : 444
+								}
+							},
+						{"id": 10,"type":"nuiGaussianBlurFilter","properties":{
+							"use_thread" : "true", "oscillator_mode" : "false", "disablegauss" : "false", "synced_input" : "false", "x" : 386, "y" : 444
+								}
+							},
+						{"id": 11,"type":"nuiDebugVideoSink","properties":{
+							"use_thread" : "true", "oscillator_mode" : "false", "synced_input" : "false", "x" : 386, "y" : 444
 								}
 							}
 			],
@@ -74,9 +82,9 @@
 						"port":0
 					},
 					"properties" : { 
-						"async" : "true",
-						"deepcopy" : "true",
-						"lastpacket" : "false"
+						"async" : 1,
+						"deepcopy" : 1,
+						"lastpacket" : 0
 					}			
 				},
 				{
@@ -89,9 +97,9 @@
 						"port":0
 					},
 					"properties" : { 
-						"async" : "true",
-						"deepcopy" : "true",
-						"lastpacket" : "false"
+						"async" : 1,
+						"deepcopy" : 1,
+						"lastpacket" : 0
 					}			
 				},
 				{
@@ -104,9 +112,9 @@
 						"port":0
 					},
 					"properties" : { 
-						"async" : "true",
-						"deepcopy" : "true",
-						"lastpacket" : "false"
+						"async" : 1,
+						"deepcopy" : 1,
+						"lastpacket" : 0
 					}
 				},
 				{
@@ -119,9 +127,9 @@
 						"port":0
 					},
 					"properties" : { 
-						"async" : "true",
-						"deepcopy" : "true",
-						"lastpacket" : "false"
+						"async" : 1,
+						"deepcopy" : 1,
+						"lastpacket" : 0
 					}
 				},
 				{
@@ -134,9 +142,9 @@
 						"port":0
 					},
 					"properties" : { 
-						"async" : "true",
-						"deepcopy" : "true",
-						"lastpacket" : "false"
+						"async" : 1,
+						"deepcopy" : 1,
+						"lastpacket" : 0
 					}
 				},
 				{
@@ -149,9 +157,9 @@
 						"port":0
 					},
 					"properties" : { 
-						"async" : "true",
-						"deepcopy" : "true",
-						"lastpacket" : "false"
+						"async" : 1,
+						"deepcopy" : 1,
+						"lastpacket" : 0
 					}
 				},
 				{
@@ -164,9 +172,9 @@
 						"port":0
 					},
 					"properties" : { 
-						"async" : "true",
-						"deepcopy" : "true",
-						"lastpacket" : "false"
+						"async" : 1,
+						"deepcopy" : 1,
+						"lastpacket" : 0
 					}
 				},
 				{
@@ -179,9 +187,39 @@
 						"port":0
 					},
 					"properties" : { 
-						"async" : "false",
-						"deepcopy" : "false",
-						"lastpacket" : "false"
+						"async" : 1,
+						"deepcopy" : 1,
+						"lastpacket" : 0
+					}
+				},
+				{
+					"source":{
+						"id":8,
+						"port":0
+					},
+					"destination":{
+						"id":10,
+						"port":0
+					},
+					"properties" : { 
+						"async" : 1,
+						"deepcopy" : 1,
+						"lastpacket" : 0
+					}
+				},
+				{
+					"source":{
+						"id":10,
+						"port":0
+					},
+					"destination":{
+						"id":11,
+						"port":0
+					},
+					"properties" : { 
+						"async" : 1,
+						"deepcopy" : 1,
+						"lastpacket" : 0
 					}
 				}
 			]
