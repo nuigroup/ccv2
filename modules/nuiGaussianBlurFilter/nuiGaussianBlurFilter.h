@@ -35,6 +35,8 @@ private:
     
 	IplImage* filterFrame;
 
+	bool dev;
+
 	MODULE_INTERNALS();
 };
 

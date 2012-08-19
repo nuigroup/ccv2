@@ -68,7 +68,11 @@ nuiBackgroundSubtractModule::nuiBackgroundSubtractModule() : nuiModule() {
 nuiBackgroundSubtractModule::~nuiBackgroundSubtractModule() {
 }
 
-void nuiBackgroundSubtractModule::update() {    
+void nuiBackgroundSubtractModule::update() {  
+	this->frameOutput->lock();
+	this->frameOutput->clear();
+	this->bgOutput->lock();
+	this->bgOutput->clear();
 	void* data;
 	nuiDataPacket* packet = this->input->getData();
 	if(packet == NULL) return;

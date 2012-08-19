@@ -64,7 +64,9 @@ nuiEdgeFilterModule::nuiEdgeFilterModule() : nuiModule() {
 nuiEdgeFilterModule::~nuiEdgeFilterModule() {
 }
 
-void nuiEdgeFilterModule::update() {    
+void nuiEdgeFilterModule::update() { 
+	this->output->lock();
+	this->output->clear();
 	void* data;
 	nuiDataPacket* packet = this->input->getData();
 	if(packet == NULL) return;
@@ -72,9 +74,7 @@ void nuiEdgeFilterModule::update() {
 	IplImage* frame = (IplImage*)data;
 	filterFrame = cvCloneImage(frame);
 	cv::Mat newFrame = cv::cvarrToMat(filterFrame);
-	cv::Mat edges;
-	cv::cvtColor(newFrame, edges, CV_BGR2GRAY);
-	cv::GaussianBlur(edges, edges, cv::Size(7,7), 1.5, 1.5);
+	cv::Mat edges = cv::cvarrToMat(filterFrame);
 	cv::Canny(edges, edges, 0, 30, 3);
 	IplImage* oldImage = new IplImage(edges);
 	this->outputDataPacket->packData(oldImage);
@@ -86,5 +86,6 @@ void nuiEdgeFilterModule::update() {
 
 void nuiEdgeFilterModule::start() {
 	nuiModule::start();
+	this->timer->Start();
 	LOG(NUI_DEBUG,"starting filter");
 }

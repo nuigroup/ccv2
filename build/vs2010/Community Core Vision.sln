@@ -230,6 +230,10 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "nuiHighpassFilter", "..\..\
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "nuiBackgroundSubtractModule", "..\..\modules\nuiBackgroundSubtractModule\nuiBackgroundSubtractModule.vcxproj", "{071F4BD0-2A6C-4B0F-9250-05B5243B8DAE}"
+	ProjectSection(ProjectDependencies) = postProject
+		{2D5C91FF-2601-4134-A3E1-3D6A50B9B24C} = {2D5C91FF-2601-4134-A3E1-3D6A50B9B24C}
+		{70A18341-3B6E-460D-B9A6-4F583D786C69} = {70A18341-3B6E-460D-B9A6-4F583D786C69}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

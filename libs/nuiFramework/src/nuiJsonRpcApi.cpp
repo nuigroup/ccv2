@@ -10,6 +10,17 @@ nuiJsonRpcApi *nuiJsonRpcApi::getInstance()
 	return instance;
 };
 
+template<class T>
+std::string t_to_string(T i)
+{
+    std::stringstream ss;
+    std::string s;
+    ss << i;
+    s = ss.str();
+
+    return s;
+}
+
 bool nuiJsonRpcApi::init(std::string address, int port)
 {
 
@@ -320,9 +331,11 @@ bool nuiJsonRpcApi::nui_update_moduleProperty( const Json::Value& root, Json::Va
 	response["id"] = root["id"];
 	std::string pipeline = root["params"]["pipeline"].asString();
 	std::string key = root["params"]["key"].asString();
-	std::string value = root["params"]["value"].asString();
+	std::string value;
+	if (root["params"]["value"].isInt()) value = value = t_to_string(root["params"]["value"].asInt());
+	else value = root["params"]["value"].asString();
 	std::string description = root["params"]["description"].asString();
-	int moduleIndex = root["params"]["module"].asInt();
+	int moduleIndex = root["params"]["index"].asInt();
 
 	nuiModuleDescriptor* descr = nuiFrameworkManager::getInstance()->getModule(pipeline, moduleIndex);
 

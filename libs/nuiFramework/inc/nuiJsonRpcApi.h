@@ -5,6 +5,8 @@
 #include "boost/cstdint.hpp"
 #include "pasync.h"
 
+#include <sstream>
+
 #include "nuiFrameworkManager.h"
 
 #include "json/json.h"

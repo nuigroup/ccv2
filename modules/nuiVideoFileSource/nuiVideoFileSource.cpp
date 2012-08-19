@@ -9,7 +9,7 @@
 
 nuiVideoFileSourceDataPacket::~nuiVideoFileSourceDataPacket()
 {
-	cvReleaseImage(&data);
+	if(this->isLocalCopy()) cvReleaseImage(&data);
 };
 
 nuiDataPacketError nuiVideoFileSourceDataPacket::packData(const void *_data)
@@ -30,7 +30,7 @@ nuiDataPacket* nuiVideoFileSourceDataPacket::copyPacketData(nuiDataPacketError &
 	nuiVideoFileSourceDataPacket* newDataPacket = new nuiVideoFileSourceDataPacket();
 
 	//! TODO : Test if this implies deep copy
-	IplImage* newData = new IplImage(*(this->data));
+	IplImage* newData = cvCloneImage((this->data));
 
 	newDataPacket->packData(newData);
 	newDataPacket->setLocalCopy(true);
@@ -63,7 +63,6 @@ nuiVideoFileSource::~nuiVideoFileSource()
 
 void nuiVideoFileSource::update()
 {
-	//LOG(NUI_DEBUG, "ps3 module update called");
 	this->output->lock();
 
 	this->output->clear();
@@ -72,9 +71,20 @@ void nuiVideoFileSource::update()
 	if(frame == NULL) {
 		cvReleaseCapture(&cap);
 		cvReleaseImage(&frame);
-		cap = cvCaptureFromAVI("reardi.avi");
+		cap = cvCaptureFromAVI(this->property("path").asString().c_str());
 		frame = cvQueryFrame(cap);
 	}
+	CvFont font;
+    double hScale=0.5;
+    double vScale=0.5;
+    int    lineWidth=1;
+    cvInitFont(&font,CV_FONT_HERSHEY_SIMPLEX|CV_FONT_ITALIC, hScale,vScale,0,lineWidth);
+	std::ostringstream oss;
+	oss << "~ " << this->timer->getAverageFPS() << " FPS";
+	cvRectangle(frame, cvPoint(150,0), cvPoint(300,20), cvScalar(0,0,0), CV_FILLED, CV_AA);
+	cvRectangle(frame, cvPoint(150,0), cvPoint(300,20), cvScalar(255,100,100), 2, CV_AA);
+	cvPutText (frame, oss.str().c_str(), cvPoint(155,15), &font, cvScalar(255,255,255));
+
 
 	this->outputDataPacket->packData((void*)frame);
 	this->output->setData(this->outputDataPacket);
@@ -84,7 +94,7 @@ void nuiVideoFileSource::update()
 
 void nuiVideoFileSource::start()
 {
-	cap = cvCaptureFromAVI("out.avi");
+	cap = cvCaptureFromAVI(this->property("path").asString().c_str());
 	nuiModule::start();
 };
 

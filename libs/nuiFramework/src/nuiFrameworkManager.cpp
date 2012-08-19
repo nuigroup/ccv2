@@ -200,14 +200,14 @@ nuiModuleDescriptor *nuiFrameworkManager::parseModuleDescriptor(Json::Value *roo
 			datastreamDescriptor->sourcePort = sourcePort;
 			datastreamDescriptor->destinationModuleID = destID;
 			datastreamDescriptor->destinationPort = destPort;
-
-			if((*i).get("properties", NULL) != NULL) {
-				datastreamDescriptor->asyncMode  = (*i).get("async",0).asBool();
-				datastreamDescriptor->buffered  = (*i).get("buffered",0).asBool();
-				datastreamDescriptor->bufferSize  = (*i).get("buffersize",0).asInt();
-				datastreamDescriptor->deepCopy  = (*i).get("deepcopy",0).asBool();
-				datastreamDescriptor->lastPacket = (*i).get("lastpacket",0).asBool();
-				datastreamDescriptor->overflow = (*i).get("overflow",0).asBool();
+			Json::Value props = (*i).get("properties", NULL);
+			if(props != NULL) {
+				datastreamDescriptor->asyncMode  = props.get("async",0).asBool();
+				datastreamDescriptor->buffered  = props.get("buffered",0).asBool();
+				datastreamDescriptor->bufferSize  = props.get("buffersize",0).asInt();
+				datastreamDescriptor->deepCopy  = props.get("deepcopy",0).asBool();
+				datastreamDescriptor->lastPacket = props.get("lastpacket",0).asBool();
+				datastreamDescriptor->overflow = props.get("overflow",0).asBool();
 			}
 			moduleDescriptor->addDataStreamDescriptor(datastreamDescriptor);
 		}
@@ -1021,10 +1021,10 @@ nuiModuleDescriptor *nuiFrameworkManager::updateModule(std::string &pipelineName
 		oldModuleDescriptor = createModule(pipelineName,moduleDescriptor->getName());
 	if (oldModuleDescriptor == NULL)
 		return NULL;
-	for (std::map<std::string, nuiProperty*>::iterator iter = moduleDescriptor->getProperties().begin();iter!=moduleDescriptor->getProperties().begin();iter++)
+	for (std::map<std::string, nuiProperty*>::iterator iter = moduleDescriptor->getProperties().begin();iter!=moduleDescriptor->getProperties().end();iter++)
 	{
 		if (iter->first != "id")
-			oldModuleDescriptor->property(iter->first) = iter->second;
+			oldModuleDescriptor->property(iter->first).set(iter->second->asString()); // as int for other things!
 	}
 	std::list<nuiPipelineModule*>* stack = new std::list<nuiPipelineModule*>();
 	if (rootPipeline!=NULL)
@@ -1038,10 +1038,10 @@ nuiModuleDescriptor *nuiFrameworkManager::updateModule(std::string &pipelineName
 			nuiModule* updatedModule = currentPipeline->getChildModuleAtIndex(index);
 			if (updatedModule == NULL)
 				continue;
-			for (std::map<std::string, nuiProperty*>::iterator iter = moduleDescriptor->getProperties().begin();iter!=moduleDescriptor->getProperties().begin();iter++)
+			for (std::map<std::string, nuiProperty*>::iterator iter = moduleDescriptor->getProperties().begin();iter!=moduleDescriptor->getProperties().end();iter++)
 			{
 				if (iter->first != "id")
-					updatedModule->property(iter->first) = iter->second;
+					updatedModule->property(iter->first).set(iter->second->asString());
 			}
 		}
 		else
@@ -1374,5 +1374,6 @@ nuiPipelineModule *nuiFrameworkManager::getCurrent()
     std::list<int>::iterator it;
     for (it = pathToCurrent.begin() ; it != pathToCurrent.end() ; it++)
         current = dynamic_cast<nuiPipelineModule*>(current->getChildModuleAtIndex(*it));
+	if(current == NULL) current = rootPipeline;
     return current;
 }

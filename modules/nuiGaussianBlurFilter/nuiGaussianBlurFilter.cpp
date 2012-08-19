@@ -30,7 +30,7 @@ nuiDataPacket* nuiGaussianBlurFilterDataPacket::copyPacketData(nuiDataPacketErro
 	nuiGaussianBlurFilterDataPacket* newDataPacket = new nuiGaussianBlurFilterDataPacket();
 
 	//! TODO : Test if this implies deep copy
-	IplImage* newData = new IplImage(*(this->data));
+	IplImage* newData = cvCloneImage((this->data));
 
 	newDataPacket->packData(newData);
 	newDataPacket->setLocalCopy(true);
@@ -64,7 +64,9 @@ nuiGaussianBlurFilter::nuiGaussianBlurFilter() : nuiModule() {
 nuiGaussianBlurFilter::~nuiGaussianBlurFilter() {
 }
 
-void nuiGaussianBlurFilter::update() {    
+void nuiGaussianBlurFilter::update() {   
+	this->output->lock();
+	this->output->clear();
 	void* data;
 	nuiDataPacket* packet = this->input->getData();
 	if(packet == NULL) return;
@@ -73,18 +75,20 @@ void nuiGaussianBlurFilter::update() {
 	filterFrame = cvCloneImage(frame);
 	cv::Mat& newFrame = cv::cvarrToMat(filterFrame, true);
 	cv::Mat& blur = cv::cvarrToMat(filterFrame);
-	bool dev = true;
+	int amount = this->property("amount").asInteger();
 	if(dev) cv::cvtColor(newFrame, blur, CV_BGR2GRAY, 3);
-	cv::GaussianBlur(blur, blur, cv::Size(9,9), 1.5, 1.5);
+	if(!this->property("disablegauss").asBool()) cv::GaussianBlur(blur, blur, cv::Size(amount,amount), 1.5, 1.5);
 	IplImage* oldImage = new IplImage(blur);
 	this->outputDataPacket->packData(oldImage);
 	this->output->setData(this->outputDataPacket);
 	this->output->transmitData();
 	this->output->unlock();
 	cvReleaseImage(&filterFrame);
+	delete packet;
 }
 
 void nuiGaussianBlurFilter::start() {
 	nuiModule::start();
+	dev = false;
 	LOG(NUI_DEBUG,"starting gaussian filter");
 }
