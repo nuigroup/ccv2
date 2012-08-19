@@ -13,23 +13,15 @@
 							"use_thread" : "false", "oscillator_mode" : "true", "oscillator_wait" : 20, "synced_input" : "false", "x" : 386, "y" : 444
 								}
 							},
-						{"id":2,"type":"nuiEdgeFilterModule","properties":{
-							"use_thread" : "true", "oscillator_mode" : "false", "synced_input" : "false", "x" : 386, "y" : 444
+						{"id":2,"type":"nuiGaussianBlurFilter","properties":{
+							"use_thread" : "false", "oscillator_mode" : "false", "synced_input" : "false", "x" : 386, "y" : 444
 								}
 							},
-						{"id":3,"type":"nuiEdgeFilterModule","properties":{
-							"use_thread" : "true", "oscillator_mode" : "false", "synced_input" : "false", "x" : 386, "y" : 444
+						{"id":3,"type":"nuiBackgroundSubtractModule","properties":{
+							"use_thread" : "false", "oscillator_mode" : "false", "synced_input" : "false", "x" : 386, "y" : 444
 								}
 							},
 						{"id":4,"type":"nuiDebugVideoSink","properties":{
-							"use_thread" : "false", "oscillator_mode" : "false", "synced_input" : "false", "x" : 386, "y" : 444
-								}
-							},
-						{"id":5,"type":"nuiDebugVideoSink","properties":{
-							"use_thread" : "false", "oscillator_mode" : "false", "synced_input" : "false", "x" : 386, "y" : 444
-								}
-							},
-						{"id":6,"type":"nuiDebugVideoSink","properties":{
 							"use_thread" : "false", "oscillator_mode" : "false", "synced_input" : "false", "x" : 386, "y" : 444
 								}
 							}
@@ -54,7 +46,7 @@
 			"connections":[
 			{
 				"source":{
-					"id":0,
+					"id":1,
 					"port":0
 				},
 				"destination":{
@@ -65,40 +57,20 @@
 			{
 				"source":{
 					"id":2,
+					"port":0
+				},
+				"destination":{
+					"id":3,
+					"port":0
+				}
+			},
+			{
+				"source":{
+					"id":3,
 					"port":0
 				},
 				"destination":{
 					"id":4,
-					"port":0
-				}
-			},
-			{
-				"source":{
-					"id":1,
-					"port":0
-				},
-				"destination":{
-					"id":3,
-					"port":0
-				}
-			},
-			{
-				"source":{
-					"id":3,
-					"port":0
-				},
-				"destination":{
-					"id":5,
-					"port":0
-				}
-			},
-			{
-				"source":{
-					"id":1,
-					"port":0
-				},
-				"destination":{
-					"id":6,
 					"port":0
 				}
 			}
