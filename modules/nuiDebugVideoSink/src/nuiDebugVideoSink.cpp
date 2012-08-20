@@ -6,6 +6,7 @@
 /////////////////////////////////////////////////////////////////////////////
 
 #include "nuiDebugVideoSink.h"
+#include <sstream>
 
 MODULE_DECLARE(DebugVideoSink, "native", "Sink to display video");
 
@@ -16,6 +17,8 @@ nuiDebugVideoSink::nuiDebugVideoSink() : nuiModule() {
     this->input->setTypeDescriptor(std::string("IplImage"));
     this->setInputEndpointCount(1);
     this->setInputEndpoint(0,this->input);
+
+	dispFrame = NULL;
 }
 
 nuiDebugVideoSink::~nuiDebugVideoSink() {
@@ -28,19 +31,22 @@ void nuiDebugVideoSink::update() {
 	if(packet == NULL) return;
 	packet->unpackData(data);
 	IplImage* frame = (IplImage*)data;
-	cv::Mat newFrame = cv::cvarrToMat(frame);
-	cv::Mat edges;
-	cv::Mat thr;
-	cv::cvtColor(newFrame, edges, CV_BGR2GRAY);
-	cv::GaussianBlur(edges, edges, cv::Size(7,7), 1.5, 1.5);
-	cv::Canny(edges, edges, 0, 30, 3);
-	cv::imshow("edges", edges);
-	//cvThreshold( frame, thr, 100, 255, CV_THRESH_BINARY );
-	cv::threshold( newFrame, thr, 70, 255,3 );
-	cvShowImage("ot", frame);
-	cv::imshow("thr", thr);
-	//cvShowImage("thr", thr);
+	dispFrame = NULL;
+	dispFrame = cvCloneImage(frame);
+	CvFont font;
+    double hScale=0.5;
+    double vScale=0.5;
+    int    lineWidth=1;
+    cvInitFont(&font,CV_FONT_HERSHEY_SIMPLEX|CV_FONT_ITALIC, hScale,vScale,0,lineWidth);
+	std::ostringstream oss;
+	oss << "~ " << this->timer->getAverageFPS() << " FPS";
+	cvRectangle(dispFrame, cvPoint(0,0), cvPoint(150,20), cvScalar(0,0,0), CV_FILLED, CV_AA);
+	cvRectangle(dispFrame, cvPoint(0,0), cvPoint(150,20), cvScalar(255,255,255), 2, CV_AA);
+	cvPutText (dispFrame, oss.str().c_str(), cvPoint(5,15), &font, cvScalar(255,255,255));
+	cvShowImage((this->property("id")).asString().c_str(), dispFrame);
 	cv::waitKey(1);
+	cvReleaseImage(&dispFrame);
+	delete packet;
 }
 
 void nuiDebugVideoSink::start() {

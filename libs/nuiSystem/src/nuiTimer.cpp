@@ -1,4 +1,5 @@
 #include "nuiTimer.h"
+#include <assert.h>
 
 nuiTimer::nuiTimer()
 {
@@ -24,13 +25,13 @@ void nuiTimer::Process()
 	_last_time = curtime;
 	_process_frame ++;
 	// calculate average fps every 1s
-	if ( (_process_time + _wait_time) > 1. )
+	if ( (_process_time + _wait_time) / 1000 > 1. )
 	{
 		// average is on the last period
 		average_process_time	= _process_time / (double)_process_frame;
 		average_wait_time	= _wait_time / (double)_process_frame;
 		// calculate fps
-		average_fps			= (double)_process_frame / (_process_time + _wait_time);
+		average_fps			= (double)_process_frame / ((_process_time + _wait_time) / 1000);
 		// update totals
 		total_wait_time		+= _wait_time;
 		total_process_time	+= _process_time;
@@ -40,6 +41,7 @@ void nuiTimer::Process()
 		_process_time		= 0;
 		_wait_time			= 0;
 	}
+
 }
 
 void nuiTimer::Reset()

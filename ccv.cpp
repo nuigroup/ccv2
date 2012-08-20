@@ -7,8 +7,7 @@ int g_config_delay = 200;
 
 static void signal_term(int signal) 
 {
-	LOG(NUI_TRACE, "ahhhhhhhh");
-	nuiJsonRpcApi::getInstance()->stopApi();
+	nuiJsonRpcApi::getInstance()->stopApi(true);
 }
 
 int main(int argc, char **argv) 
@@ -30,20 +29,20 @@ int main(int argc, char **argv)
 	// initialize JSON RPC daemon and network
 	if(!nuiJsonRpcApi::getInstance()->init("127.0.0.1", 7500)) goto exit_critical;
 
+	nuiJsonRpcApi::getInstance()->startApi();
 	//bool frameworkInitStatus = nuiFrameworkManager::getInstance()->init();
-	bool frameworkInitStatus = nuiFrameworkManager::getInstance()->initializeFrameworkManager("configs/presets/test.json");
-	if(frameworkInitStatus != NUI_FRAMEWORK_MANAGER_OK)
+	nuiFrameworkManagerErrorCode frameworkInitStatus = nuiFrameworkManager::getInstance()->initializeFrameworkManager("configs/presets/test.json");
+	if(frameworkInitStatus != NUI_FRAMEWORK_MANAGER_OK) {
 		if(frameworkInitStatus == NUI_FRAMEWORK_ROOT_INITIALIZATION_FAILED) 
 			LOG(NUI_CRITICAL, "Failed to initialize framework root");
-
-	nuiJsonRpcApi::getInstance()->startApi();
-
-	//nuiFrameworkManager::getInstance()->workflowStart();
+		if(frameworkInitStatus == NUI_FRAMEWORK_WRONG_FILE)
+			LOG(NUI_CRITICAL, "Wrong file");
+	} else nuiFrameworkManager::getInstance()->workflowStart();
 
 	do {
 		SLEEP(g_config_delay);
 	} while ( nuiJsonRpcApi::getInstance()->isFinished() == false );
-
+	
 	nuiFrameworkManager::getInstance()->workflowStop();
 	nuiFrameworkManager::getInstance()->workflowQuit();
 

@@ -18,7 +18,9 @@ nuiDataStream::nuiDataStream(bool asyncMode, nuiDataSendCallback defaultCallback
 	this->defaultCallback = defaultCallback;
 	setDeepCopy(deepCopy);
 	setBufferedMode(bufferedMode);
+	//setBufferedMode(false);
 	setLastPacketPriority(lastPacketProprity);
+	//setLastPacketPriority(false);
 	setBufferSize(bufferSize);
 	mtx = new pt::mutex();
 	asyncThread = NULL;
@@ -36,16 +38,19 @@ nuiDataStream::~nuiDataStream()
 bool nuiDataStream::isDeepCopy()
 {
 	return streamMetadata & NUI_DATASTREAM_DATA_DEEP_COPY;
+	//return true;
 }
 
 bool nuiDataStream::isLastPacketPriority()
 {
 	return isBuffered() ? false : streamMetadata & NUI_DATASTREAM_LAST_PACKET_PRIORITY;
+	//return true;
 }
 
 bool nuiDataStream::isAsyncMode()
 {
 	return streamMetadata & NUI_DATASTREAM_ASYNC;
+	//return true;
 }
 
 bool nuiDataStream::isBuffered()
@@ -146,7 +151,7 @@ void nuiDataStream::startStream()
 
 void nuiDataStream::stopStream()
 {
-	mtx->lock();
+	mtx->lock(); //maybe cause null pointers?
 	running = false;
 	cleanStream();
 	mtx->unlock();
@@ -301,7 +306,7 @@ void nuiDataStream::processData()
 		nuiDataPacket *dataToSent = NULL;
 		nuiDataSendCallback callback = NULL;
 
-		mtx->lock();
+		//mtx->lock(); //this should be here but doesn't work
 		dataToSent = packetData.front();
 		callback = callbackQueue.front();
 		packetData.pop();
@@ -320,8 +325,7 @@ void nuiDataStream::processData()
 		}
 		else
 		{
-			receiver->writeData(dataToSent);
-			nuiDataStreamErrorCode returnCode = NUI_DATASTREAM_OK;// receiver->writeData(dataToSent);
+			nuiDataStreamErrorCode returnCode = receiver->writeData(dataToSent);// receiver->writeData(dataToSent);
 			if (callback!=NULL)
 				callback(returnCode, NULL);
 		}

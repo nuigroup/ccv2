@@ -168,6 +168,15 @@ void nuiModule::stop()
 	}
 	this->need_update = false;
 	this->is_started = false;
+	timer->Reset();
+	mtx->unlock();
+	for(int i = 0; i < this->getOutputEndpointCount(); i++) {
+		nuiEndpoint* cur = this->getOutputEndpoint(i);
+		for(int j = 0; j < cur->getConnectionCount(); j++) {
+			nuiDataStream* curStream = cur->getDataStreamForEndpoint(cur->getConnectedEndpointOnIndex(j));
+			curStream->stopStream();
+		}
+	}
 	LOG(NUI_DEBUG, "stop <" << this->property("id").asString() << ">");
 }
 
@@ -177,12 +186,12 @@ void nuiModule::trigger()
 		//this->start();
 		return;
 	this->need_update = true;
-	if ( this->use_thread )
+	if ( this->use_thread)
 	{
 		this->thread->post();
 		return;
 	}
-	if (this->needUpdate(false))
+	if (this->needUpdate(true))
 	{
 		timer->Wait();
 		this->update();

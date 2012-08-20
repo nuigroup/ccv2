@@ -9,6 +9,7 @@
 
 nuiEdgeFilterModuleDataPacket::~nuiEdgeFilterModuleDataPacket()
 {
+		cvReleaseImage(&data);
 };
 
 nuiDataPacketError nuiEdgeFilterModuleDataPacket::packData(const void *_data)
@@ -29,7 +30,7 @@ nuiDataPacket* nuiEdgeFilterModuleDataPacket::copyPacketData(nuiDataPacketError 
 	nuiEdgeFilterModuleDataPacket* newDataPacket = new nuiEdgeFilterModuleDataPacket();
 
 	//! TODO : Test if this implies deep copy
-	IplImage* newData = new IplImage(*(this->data));
+	IplImage* newData = cvCloneImage(this->data);
 
 	newDataPacket->packData(newData);
 	newDataPacket->setLocalCopy(true);
@@ -63,25 +64,29 @@ nuiEdgeFilterModule::nuiEdgeFilterModule() : nuiModule() {
 nuiEdgeFilterModule::~nuiEdgeFilterModule() {
 }
 
-void nuiEdgeFilterModule::update() {    
+void nuiEdgeFilterModule::update() { 
+	this->output->lock();
+	this->output->clear();
 	void* data;
 	nuiDataPacket* packet = this->input->getData();
 	if(packet == NULL) return;
 	packet->unpackData(data);
 	IplImage* frame = (IplImage*)data;
-	cv::Mat newFrame = cv::cvarrToMat(frame);
-	cv::Mat edges;
-	cv::cvtColor(newFrame, edges, CV_BGR2GRAY);
-	cv::GaussianBlur(edges, edges, cv::Size(7,7), 1.5, 1.5);
-	cv::Canny(edges, edges, 0, 30, 3);
+	filterFrame = cvCloneImage(frame);
+	cv::Mat newFrame = cv::cvarrToMat(filterFrame);
+	cv::Mat edges = cv::cvarrToMat(filterFrame);
+	if(!this->property("disable").asBool()) cv::Canny(edges, edges, 0, 30, 3);
 	IplImage* oldImage = new IplImage(edges);
 	this->outputDataPacket->packData(oldImage);
 	this->output->setData(this->outputDataPacket);
 	this->output->transmitData();
 	this->output->unlock();
+	cvReleaseImage(&filterFrame);
+	delete packet;
 }
 
 void nuiEdgeFilterModule::start() {
 	nuiModule::start();
+	this->timer->Start();
 	LOG(NUI_DEBUG,"starting filter");
 }

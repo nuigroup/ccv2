@@ -28,6 +28,8 @@ public:
 
 private:
     nuiEndpoint* input;
+
+	IplImage *dispFrame;
     
 	MODULE_INTERNALS();
 };
