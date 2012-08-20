@@ -90,7 +90,9 @@
       </Command>
     </PostBuildEvent>
     <PreBuildEvent>
-      <Command>xcopy /d /i /e /y "$(ProjectDir)\..\bin\configs" "$(ProjectDir)\configs"</Command>
+      <Command>xcopy /d /i /e /y "$(ProjectDir)\..\bin\*" "$(ProjectDir)"
+xcopy /d /i /e /y "$(SolutionDir)\..\..\libs\3rdParty\opencv\build\x86\vc10\bin\*.dll" "$(ProjectDir)"
+xcopy /d /i /e /y "$(SolutionDir)\..\..\libs\3rdParty\opencv\build\common\tbb\ia32\vc10\tbb_debug.dll" "$(ProjectDir)"</Command>
     </PreBuildEvent>
     <ProjectReference>
       <UseLibraryDependencyInputs>true</UseLibraryDependencyInputs>
