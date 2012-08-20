@@ -12,6 +12,8 @@
 
 #include "..\..\..\libs\nuiSystem\inc\nuiDebugLogger.h"
 
+std::list<GUID> nuiPSEye::usedCameras;
+
 nuiPSEyeDataPacket::~nuiPSEyeDataPacket()
 {
 	cvReleaseImage(&data);
@@ -95,7 +97,14 @@ void nuiPSEye::update()
 void nuiPSEye::start()
 {
 	if(CLEyeGetCameraCount() != 0) {
-		GUID guid = CLEyeGetCameraUUID(0);	// Get first Camera GUID by index
+		GUID guid = CLEyeGetCameraUUID(this->property("camera_number").asInteger());
+		if(nuiPSEye::isCameraInUse(guid))
+		{
+			LOG(NUI_DEBUG, "Camera already in use");
+			stop();
+			return;
+		}
+		nuiPSEye::usedCameras.push_back(guid);
 		this->_pCam = new CLEyeCamera(guid, CLEYE_COLOR_PROCESSED, CLEYE_VGA, 120);
 		this->_pFrame =  cvCreateImage( cvSize(_pCam->width(), _pCam->height()), IPL_DEPTH_8U, 4 );
 		LOG(NUI_DEBUG, "Starting PS module");
@@ -110,3 +119,12 @@ void nuiPSEye::stop()
 {
 	nuiModule::stop();
 };
+
+bool nuiPSEye::isCameraInUse(GUID cameraGUID)
+{
+	for(std::list<GUID>::iterator it = usedCameras.begin() ; it != usedCameras.end() ; it++)
+		if( IsEqualGUID(*it, cameraGUID) )
+			return true;
+
+	return false;
+}

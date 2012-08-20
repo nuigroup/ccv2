@@ -5,12 +5,12 @@
 // Copyright:	(c) 2012 NUI Group
 //////////////////////////////////////////////////////////////////////////
 
-//! TODO : Singleton
-//! TODO : Params to module instance ???
-//! TODO : Initialize Module instance with camera number ???
-
 #ifndef NUI_PS3EyeMODULE
 #define NUI_PS3EyeMODULE
+
+#define DEFAULT_CAMERAS_NUMBER 9
+
+#include <list>
 
 #include "nuiModule.h"
 #include "nuiPlugin.h"
@@ -39,6 +39,9 @@ public:
 
 protected:
 private:
+	static bool isCameraInUse(GUID cameraGUID);
+	static std::list<GUID> usedCameras;
+
 	nuiEndpoint* _pOutput;
 
 	nuiDataPacket* _pOutputDataPacket;
@@ -65,7 +68,7 @@ START_MODULE_EXIT()
 END_MODULE_EXIT()
 
 START_MODULE_REGISTRATION()	  
-REGISTER_PLUGIN(nuiPSEye,"nuiPSEye", 1, 0)
+REGISTER_PLUGIN(nuiPSEye,"nuiPSEyeModule", 1, 0)
 END_MODULE_REGISTRATION()
 
 #endif
