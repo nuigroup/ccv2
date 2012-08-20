@@ -338,10 +338,8 @@ bool nuiJsonRpcApi::nui_update_moduleProperty( const Json::Value& root, Json::Va
 
 	nuiModuleDescriptor* descr = nuiFrameworkManager::getInstance()->getModule(pipeline, moduleIndex);
 
-	std::map<std::string, nuiProperty*> props = descr->getProperties();
-	std::map<std::string, nuiProperty*>::iterator property = props.find(key);
-	property->second->set(value);
-	property->second->setDescription(description);
+	descr->property(key).set(value);
+	descr->property(key).setDescription(description);
 
 	nuiModuleDescriptor* descriptor = 
 		nuiFrameworkManager::getInstance()->updateModule(pipeline,moduleIndex, descr);
