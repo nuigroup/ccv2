@@ -12,5 +12,12 @@
       "transient": true
     }
   },
-  "permissions": ["experimental", "socket"]
+  "permissions": [
+    {"socket": [
+      "tcp-connect",
+      "udp-send-to",
+      "udp-bind"
+    ]},
+	"experimental"
+  ]
 }

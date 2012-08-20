@@ -14,6 +14,7 @@
 
 nuiPSModuleDataPacket::~nuiPSModuleDataPacket()
 {
+	cvReleaseImage(&data);
 };
 
 nuiDataPacketError nuiPSModuleDataPacket::packData(const void *_data)
@@ -34,7 +35,7 @@ nuiDataPacket* nuiPSModuleDataPacket::copyPacketData(nuiDataPacketError &errorCo
 	nuiPSModuleDataPacket* newDataPacket = new nuiPSModuleDataPacket();
 
 	//! TODO : Test if this implies deep copy
-	IplImage* newData = new IplImage(*(this->data));
+	IplImage* newData = cvCloneImage((this->data));
 
 	newDataPacket->packData(newData);
 	newDataPacket->setLocalCopy(true);
@@ -74,6 +75,17 @@ void nuiPSModule::update()
 
 	this->_pCam->getFrame(_pFrame);
 
+	CvFont font;
+    double hScale=0.5;
+    double vScale=0.5;
+    int    lineWidth=1;
+    cvInitFont(&font,CV_FONT_HERSHEY_SIMPLEX|CV_FONT_ITALIC, hScale,vScale,0,lineWidth);
+	std::ostringstream oss;
+	oss << "~ " << this->timer->getAverageFPS() << " FPS";
+	cvRectangle(_pFrame, cvPoint(150,0), cvPoint(300,20), cvScalar(0,0,0), CV_FILLED, CV_AA);
+	cvRectangle(_pFrame, cvPoint(150,0), cvPoint(300,20), cvScalar(100,100,255), 2, CV_AA);
+	cvPutText (_pFrame, oss.str().c_str(), cvPoint(155,15), &font, cvScalar(255,255,255));
+
 	this->_pOutputDataPacket->packData((void*)_pFrame);
 	this->_pOutput->setData(this->_pOutputDataPacket);
 	this->_pOutput->transmitData();
@@ -82,13 +94,16 @@ void nuiPSModule::update()
 
 void nuiPSModule::start()
 {
-
-	GUID guid = CLEyeGetCameraUUID(0);	// Get Camera GUID by index
-	this->_pCam = new CLEyeCamera(guid, CLEYE_COLOR_PROCESSED, CLEYE_VGA, 120);
-
-	this->_pFrame =  cvCreateImage( cvSize(_pCam->width(), _pCam->height()), IPL_DEPTH_8U, 4 );
-
-	nuiModule::start();
+	if(CLEyeGetCameraCount() != 0) {
+		GUID guid = CLEyeGetCameraUUID(0);	// Get first Camera GUID by index
+		this->_pCam = new CLEyeCamera(guid, CLEYE_COLOR_PROCESSED, CLEYE_VGA, 120);
+		this->_pFrame =  cvCreateImage( cvSize(_pCam->width(), _pCam->height()), IPL_DEPTH_8U, 4 );
+		LOG(NUI_DEBUG, "Starting PS module");
+		nuiModule::start();
+	} else {
+		LOG(NUI_CRITICAL, "No PS Eye detected");
+		stop();
+	}
 };
 
 void nuiPSModule::stop()

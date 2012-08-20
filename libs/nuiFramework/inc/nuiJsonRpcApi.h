@@ -5,6 +5,8 @@
 #include "boost/cstdint.hpp"
 #include "pasync.h"
 
+#include <sstream>
+
 #include "nuiFrameworkManager.h"
 
 #include "json/json.h"
@@ -24,7 +26,7 @@ public:
 	static nuiJsonRpcApi *getInstance();
 	bool init(std::string address, int port);
 	void startApi();
-	void stopApi();
+	void stopApi(bool killServer = false);
 	bool isInitialized();
 	bool isFinished();
 	static Json::Value serialize_workflow(nuiModuleDescriptor* descriptor);

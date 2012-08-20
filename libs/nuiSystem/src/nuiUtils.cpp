@@ -52,7 +52,7 @@ std::vector<std::string> nuiUtils::tokenize(const std::string& str, const std::s
 double nuiUtils::time()
 {
 #ifdef _WIN32
-	return ((double)GetTickCount()) / 1000000.;
+	return ((double)GetTickCount()); // milliseconds
 #else // _WIN32
 	struct timeval tv;
 	gettimeofday(&tv, NULL);
