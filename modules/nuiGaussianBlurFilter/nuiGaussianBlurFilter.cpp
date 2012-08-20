@@ -77,7 +77,7 @@ void nuiGaussianBlurFilter::update() {
 	cv::Mat& blur = cv::cvarrToMat(filterFrame);
 	int amount = this->property("amount").asInteger();
 	if(dev) cv::cvtColor(newFrame, blur, CV_BGR2GRAY, 3);
-	if(!this->property("disablegauss").asBool()) cv::GaussianBlur(blur, blur, cv::Size(amount,amount), 1.5, 1.5);
+	if(!this->property("disable").asBool()) cv::GaussianBlur(blur, blur, cv::Size(amount,amount), 1.5, 1.5);
 	IplImage* oldImage = new IplImage(blur);
 	this->outputDataPacket->packData(oldImage);
 	this->output->setData(this->outputDataPacket);

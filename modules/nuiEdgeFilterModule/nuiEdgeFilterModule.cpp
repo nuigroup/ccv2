@@ -30,7 +30,7 @@ nuiDataPacket* nuiEdgeFilterModuleDataPacket::copyPacketData(nuiDataPacketError 
 	nuiEdgeFilterModuleDataPacket* newDataPacket = new nuiEdgeFilterModuleDataPacket();
 
 	//! TODO : Test if this implies deep copy
-	IplImage* newData = new IplImage(*(this->data));
+	IplImage* newData = cvCloneImage(this->data);
 
 	newDataPacket->packData(newData);
 	newDataPacket->setLocalCopy(true);
@@ -75,13 +75,14 @@ void nuiEdgeFilterModule::update() {
 	filterFrame = cvCloneImage(frame);
 	cv::Mat newFrame = cv::cvarrToMat(filterFrame);
 	cv::Mat edges = cv::cvarrToMat(filterFrame);
-	cv::Canny(edges, edges, 0, 30, 3);
+	if(!this->property("disable").asBool()) cv::Canny(edges, edges, 0, 30, 3);
 	IplImage* oldImage = new IplImage(edges);
 	this->outputDataPacket->packData(oldImage);
 	this->output->setData(this->outputDataPacket);
 	this->output->transmitData();
 	this->output->unlock();
 	cvReleaseImage(&filterFrame);
+	delete packet;
 }
 
 void nuiEdgeFilterModule::start() {

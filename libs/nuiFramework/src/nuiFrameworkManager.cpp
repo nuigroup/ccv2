@@ -50,7 +50,8 @@ nuiFrameworkManagerErrorCode nuiFrameworkManager::init() {
 nuiFrameworkManagerErrorCode nuiFrameworkManager::initializeFrameworkManager(const char *fileName)
 {
 	nuiFactory::getInstance()->init();
-	if(loadSettingsFromJson(fileName) == NUI_FRAMEWORK_WRONG_FILE) return NUI_FRAMEWORK_ROOT_INITIALIZATION_FAILED;
+	nuiFrameworkManagerErrorCode loadCode = loadSettingsFromJson(fileName);
+	if(loadCode != NUI_FRAMEWORK_MANAGER_OK) return loadCode;
     this->rootPipeline = (nuiPipelineModule*)(nuiFactory::getInstance()->create("root"));
 	if(rootPipeline != NULL) {
 		nuiTreeNode<int, nuiModule*> *temp = new nuiTreeNode<int, nuiModule*>(rootPipeline->property("id").asInteger(), rootPipeline);
@@ -110,7 +111,7 @@ nuiFrameworkManagerErrorCode nuiFrameworkManager::loadSettingsFromJson(const cha
 	Json::Value root;
 	Json::Reader reader;
 	bool parsingSuccessful = reader.parse(settingsFile, root);
-	if(!parsingSuccessful) return NUI_FRAMEWORK_WRONG_FILE;
+	if(!parsingSuccessful) return NUI_FRAMEWORK_ROOT_INITIALIZATION_FAILED;
 	return loadSettingsFromJson(&root);
 }
 
@@ -133,7 +134,7 @@ nuiFrameworkManagerErrorCode nuiFrameworkManager::loadSettingsFromJson(Json::Val
 		nuiFactory::getInstance()->pipelineDescriptors[iter->first] = iter->second;
 	}
 	nuiFrameworkManagerErrorCode isGraphCorrect = NUI_FRAMEWORK_MANAGER_OK; // in the future, implement checkPipelineGraphForLoop(pipelineDescriptorsMap);
-	return isGraphCorrect ? NUI_FRAMEWORK_MANAGER_OK : NUI_FRAMEWORK_PIPELINE_STRUCTURE_LOOP;
+	return nuiFactory::getInstance()->pipelineDescriptors.size() > 0 ? NUI_FRAMEWORK_MANAGER_OK : NUI_FRAMEWORK_ROOT_INITIALIZATION_FAILED;
 }
 
 nuiFrameworkManagerErrorCode nuiFrameworkManager::loadAddonsAtPath(const char *addonsPath)
@@ -1326,7 +1327,7 @@ nuiFrameworkManagerErrorCode nuiFrameworkManager::workflowStart(int moduleIndex)
 nuiFrameworkManagerErrorCode nuiFrameworkManager::workflowStop()
 {
     nuiPipelineModule* current = getCurrent();
-    if(current->isStarted())
+    if(!(current == NULL) && current->isStarted())
         current->stop();
 
     return NUI_FRAMEWORK_MANAGER_OK;
@@ -1374,6 +1375,6 @@ nuiPipelineModule *nuiFrameworkManager::getCurrent()
     std::list<int>::iterator it;
     for (it = pathToCurrent.begin() ; it != pathToCurrent.end() ; it++)
         current = dynamic_cast<nuiPipelineModule*>(current->getChildModuleAtIndex(*it));
-	if(current == NULL) current = rootPipeline;
+	// if(current == NULL) current = rootPipeline; this is just bad
     return current;
 }

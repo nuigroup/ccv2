@@ -111,7 +111,6 @@ void nuiJsonRpcApi::execute()
 }
 
 void nuiJsonRpcApi::cleanup() {
-	printf("agh");
 	if (this->server != NULL)
 		server->Close();
 	delete server;
