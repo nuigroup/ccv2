@@ -15,15 +15,15 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\src\nuiPS3Module.h">
+    <ClInclude Include="..\src\CLEyeCamera.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\CLEyeCamera.h">
+    <ClInclude Include="..\src\nuiPS3EyeModule.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\src\nuiPS3Module.cpp">
+    <ClCompile Include="..\src\nuiPS3EyeModule.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

@@ -1,6 +1,6 @@
 //////////////////////////////////////////////////////////////////////////
-// Name:		modules/nuiPS3Module
-// Purpose:		Capture video from PS3 camera using PS3Eye SDK from Code Laboratories
+// Name:		modules/nuiPS3EyeModule
+// Purpose:		Capture video from PS3Eye camera using PS3EyeEye SDK from Code Laboratories
 // Author:		Anatoly Lushnikov
 // Copyright:	(c) 2012 NUI Group
 //////////////////////////////////////////////////////////////////////////
@@ -9,8 +9,8 @@
 //! TODO : Params to module instance ???
 //! TODO : Initialize Module instance with camera number ???
 
-#ifndef NUI_PS3MODULE
-#define NUI_PS3MODULE
+#ifndef NUI_PS3EyeMODULE
+#define NUI_PS3EyeMODULE
 
 #include "nuiModule.h"
 #include "nuiPlugin.h"
@@ -25,13 +25,13 @@
 
 #include "CLEyeCamera.h"
 
-NUI_DATAPACKET_DEFAULT_IMPLEMENTATION(PSModule, IplImage*)
+NUI_DATAPACKET_DEFAULT_IMPLEMENTATION(PSEye, IplImage*)
 
-class nuiPSModule : public nuiModule
+class nuiPSEye : public nuiModule
 {
 public:
-	nuiPSModule();
-	~nuiPSModule();
+	nuiPSEye();
+	~nuiPSEye();
 
 	void update();
 	void start();
@@ -49,23 +49,23 @@ private:
 	MODULE_INTERNALS();
 };
 
-IMPLEMENT_ALLOCATOR(nuiPSModule)
-IMPLEMENT_DEALLOCATOR(nuiPSModule)
+IMPLEMENT_ALLOCATOR(nuiPSEye)
+IMPLEMENT_DEALLOCATOR(nuiPSEye)
 
-START_IMPLEMENT_DESCRIPTOR(nuiPSModule,"native","Capture video from PS3 camera")
+START_IMPLEMENT_DESCRIPTOR(nuiPSEye,"native","Capture video from PS3Eye camera")
 descriptor->setOutputEndpointsCount(1);
 nuiEndpointDescriptor* outputDescriptor = new nuiEndpointDescriptor("IplImage");
 descriptor->addOutputEndpointDescriptor(outputDescriptor, 0);
 //descriptor->property("use_thread").set(true);
 //descriptor->property("oscillator_mode").set(true);
 //descriptor->property("oscillator_wait").set(50);
-END_IMPLEMENT_DESCRIPTOR(nuiPSModule)
+END_IMPLEMENT_DESCRIPTOR(nuiPSEye)
 
 START_MODULE_EXIT()
 END_MODULE_EXIT()
 
 START_MODULE_REGISTRATION()	  
-REGISTER_PLUGIN(nuiPSModule,"nuiPSModule", 1, 0)
+REGISTER_PLUGIN(nuiPSEye,"nuiPSEye", 1, 0)
 END_MODULE_REGISTRATION()
 
 #endif

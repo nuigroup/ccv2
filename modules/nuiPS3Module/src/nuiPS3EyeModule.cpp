@@ -1,38 +1,38 @@
 //////////////////////////////////////////////////////////////////////////
-// Name:		modules/nuiPS3Module
-// Purpose:		Capture video from PS3 camera using PS3Eye SDK from Code Laboratories
+// Name:		modules/nuiPS3EyeModule
+// Purpose:		Capture video from PS3Eye camera using PS3EyeEye SDK from Code Laboratories
 // Author:		Anatoly Lushnikov
 // Copyright:	(c) 2012 NUI Group
 //////////////////////////////////////////////////////////////////////////
 
-#include "nuiPS3Module.h"
+#include "nuiPS3EyeModule.h"
 
 #include <opencv\cv.h>
 #include <opencv\highgui.h>
 
 #include "..\..\..\libs\nuiSystem\inc\nuiDebugLogger.h"
 
-nuiPSModuleDataPacket::~nuiPSModuleDataPacket()
+nuiPSEyeDataPacket::~nuiPSEyeDataPacket()
 {
 	cvReleaseImage(&data);
 };
 
-nuiDataPacketError nuiPSModuleDataPacket::packData(const void *_data)
+nuiDataPacketError nuiPSEyeDataPacket::packData(const void *_data)
 {
 	this->setLocalCopy(false);
 	this->data = (IplImage*)_data;
 	return NUI_DATAPACKET_OK;
 };
 
-nuiDataPacketError nuiPSModuleDataPacket::unpackData(void* &_data)
+nuiDataPacketError nuiPSEyeDataPacket::unpackData(void* &_data)
 {
 	_data = (void*)this->data;
 	return NUI_DATAPACKET_OK;
 };
 
-nuiDataPacket* nuiPSModuleDataPacket::copyPacketData(nuiDataPacketError &errorCode)
+nuiDataPacket* nuiPSEyeDataPacket::copyPacketData(nuiDataPacketError &errorCode)
 {
-	nuiPSModuleDataPacket* newDataPacket = new nuiPSModuleDataPacket();
+	nuiPSEyeDataPacket* newDataPacket = new nuiPSEyeDataPacket();
 
 	//! TODO : Test if this implies deep copy
 	IplImage* newData = cvCloneImage((this->data));
@@ -44,14 +44,14 @@ nuiDataPacket* nuiPSModuleDataPacket::copyPacketData(nuiDataPacketError &errorCo
 	return newDataPacket;
 };
 
-char* nuiPSModuleDataPacket::getDataPacketType()
+char* nuiPSEyeDataPacket::getDataPacketType()
 {
 	return "IplImage";
 };
 
-MODULE_DECLARE(PSModule, "native", "Capture video from PS3 camera using Code Laborotories PS3 Eye SDK")
+MODULE_DECLARE(PSEye, "native", "Capture video from PS3Eye camera using Code Laborotories PS3Eye Eye SDK")
 
-nuiPSModule::nuiPSModule() : nuiModule()
+nuiPSEye::nuiPSEye() : nuiModule()
 {
 	MODULE_INIT();
 
@@ -60,15 +60,15 @@ nuiPSModule::nuiPSModule() : nuiModule()
 	this->setOutputEndpointCount(1);
 	this->setOutputEndpoint(0,this->_pOutput);
 
-	this->_pOutputDataPacket = new nuiPSModuleDataPacket();
+	this->_pOutputDataPacket = new nuiPSEyeDataPacket();
 };
 
-nuiPSModule::~nuiPSModule()
+nuiPSEye::~nuiPSEye()
 {};
 
-void nuiPSModule::update()
+void nuiPSEye::update()
 {
-	//LOG(NUI_DEBUG, "ps3 module update called");
+	//LOG(NUI_DEBUG, "PS3Eye module update called");
 	this->_pOutput->lock();
 
 	this->_pOutput->clear();
@@ -92,7 +92,7 @@ void nuiPSModule::update()
 	this->_pOutput->unlock();
 };
 
-void nuiPSModule::start()
+void nuiPSEye::start()
 {
 	if(CLEyeGetCameraCount() != 0) {
 		GUID guid = CLEyeGetCameraUUID(0);	// Get first Camera GUID by index
@@ -106,7 +106,7 @@ void nuiPSModule::start()
 	}
 };
 
-void nuiPSModule::stop()
+void nuiPSEye::stop()
 {
 	nuiModule::stop();
 };
