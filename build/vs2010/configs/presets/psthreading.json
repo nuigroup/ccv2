@@ -1,0 +1,53 @@
+{
+	"pipelines":[
+		{
+			"type":"root",
+			"author":"Scott Halstvedt",
+			"description":"Loaded from file",
+			"modules": [
+						{"id":0,"type":"nuiVideoFileSource","properties":{
+							"use_thread" : "true", "oscillator_mode" : "true", "path" : "out.avi", "oscillator_wait" : 40
+								}
+							},
+						{"id":1,"type":"nuiDebugVideoSink","properties":{
+							"use_thread" : "true", "oscillator_mode" : "false", "synced_input" : "false"
+								}
+							}						
+			],
+			"properties":{
+				"global":"property"
+			},
+			"endpoints":{
+			"input":[
+				{
+					"id":0,
+					"type":"input"
+				}
+			],
+			"output":[
+				{
+					"id":0,
+					"type":"output"
+				}
+			]
+			},
+			"connections" : [
+				{
+					"source":{
+						"id":0,
+						"port":0
+					},
+					"destination":{
+						"id":1,
+						"port":0
+					},
+					"properties" : { 
+						"async" : 1,
+						"deepcopy" : 1,
+						"lastpacket" : 0
+					}			
+				}
+			]
+		}
+	]
+}

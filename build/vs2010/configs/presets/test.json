@@ -25,7 +25,7 @@
 							"use_thread" : "true", "oscillator_mode" : "false", "synced_input" : "false"
 								}
 							},
-						{"id":5,"type":"nuiPSModule","properties":{
+						{"id":5,"type":"nuiPSEyeModule","properties":{
 							"use_thread" : "false", "oscillator_mode" : "true", "oscillator_wait" : 40
 								}
 							},
@@ -43,14 +43,6 @@
 							},
 						{"id":9,"type":"nuiDebugVideoSink","properties":{
 							"use_thread" : "true", "oscillator_mode" : "false", "synced_input" : "false"
-								}
-							},
-						{"id":10,"type":"nuiPSEyeModule","properties":{
-							"use_thread" : "false", "oscillator_mode" : "true", "oscillator_wait" : 40, "camera_number" : "0"
-								}
-							},
-						{"id":11,"type":"nuiPSEyeModule","properties":{
-							"use_thread" : "false", "oscillator_mode" : "true", "oscillator_wait" : 40, "camera_number" : "0"
 								}
 							}
 			],
