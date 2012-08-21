@@ -64,6 +64,8 @@ void nuiThread::post()
 	this->thread_trigger->post();
 }
 
+/// NUI MULTITHREADABLE
+
 void nuiMultithreadable::lock()
 {
 	mtx->lock();

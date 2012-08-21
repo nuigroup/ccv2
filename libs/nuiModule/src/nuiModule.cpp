@@ -80,6 +80,7 @@ nuiModule::~nuiModule()
 	delete mtx;
 }
 
+//check whether module::update should be called. disables flag and returns status.
 bool nuiModule::needUpdate(bool isAsyncMode)
 {
 	if (this->isOscillatorMode())
@@ -88,20 +89,25 @@ bool nuiModule::needUpdate(bool isAsyncMode)
 			this->thread->post();
 		return true;
 	}
+
+	//if we are not running any parallel code simply return status and disable need_update flag
 	if (this->need_update) 
 	{
 		this->need_update = false;
 		return true;
-	} 
+	}
 	else if (isAsyncMode == false)
 		return false;
+
 	if (isAsyncMode)
 		this->thread->wait();
+
 	if ( this->need_update ) 
 	{
 		this->need_update = false;
 		return true;
 	}
+
 	return false;
 }
 

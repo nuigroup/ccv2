@@ -31,7 +31,7 @@ int main(int argc, char **argv)
 
 	nuiJsonRpcApi::getInstance()->startApi();
 	//bool frameworkInitStatus = nuiFrameworkManager::getInstance()->init();
-	nuiFrameworkManagerErrorCode frameworkInitStatus = nuiFrameworkManager::getInstance()->initializeFrameworkManager("configs/presets/test.json");
+	nuiFrameworkManagerErrorCode frameworkInitStatus = nuiFrameworkManager::getInstance()->initializeFrameworkManager("configs/presets/psthreading.json");
 	if(frameworkInitStatus != NUI_FRAMEWORK_MANAGER_OK) {
 		if(frameworkInitStatus == NUI_FRAMEWORK_ROOT_INITIALIZATION_FAILED) 
 			LOG(NUI_CRITICAL, "Failed to initialize framework root");
