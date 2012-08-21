@@ -24,29 +24,33 @@ nuiDebugVideoSink::nuiDebugVideoSink() : nuiModule() {
 nuiDebugVideoSink::~nuiDebugVideoSink() {
 }
 
-void nuiDebugVideoSink::update() {    
-	//LOG(NUI_DEBUG, "module update called");
-	void* data;
-	nuiDataPacket* packet = this->input->getData();
-	if(packet == NULL) return;
-	packet->unpackData(data);
-	IplImage* frame = (IplImage*)data;
-	dispFrame = NULL;
-	dispFrame = cvCloneImage(frame);
-	CvFont font;
-    double hScale=0.5;
-    double vScale=0.5;
-    int    lineWidth=1;
-    cvInitFont(&font,CV_FONT_HERSHEY_SIMPLEX|CV_FONT_ITALIC, hScale,vScale,0,lineWidth);
-	std::ostringstream oss;
-	oss << "~ " << this->timer->getAverageFPS() << " FPS";
-	cvRectangle(dispFrame, cvPoint(0,0), cvPoint(150,20), cvScalar(0,0,0), CV_FILLED, CV_AA);
-	cvRectangle(dispFrame, cvPoint(0,0), cvPoint(150,20), cvScalar(255,255,255), 2, CV_AA);
-	cvPutText (dispFrame, oss.str().c_str(), cvPoint(5,15), &font, cvScalar(255,255,255));
-	cvShowImage((this->property("id")).asString().c_str(), dispFrame);
-	cv::waitKey(1);
-	cvReleaseImage(&dispFrame);
-	delete packet;
+void nuiDebugVideoSink::update() {
+	try {
+		//LOG(NUI_DEBUG, "module update called");
+		void* data;
+		nuiDataPacket* packet = this->input->getData();
+		if(packet == NULL) return;
+		packet->unpackData(data);
+		IplImage* frame = (IplImage*)data;
+		dispFrame = NULL;
+		dispFrame = cvCloneImage(frame);
+		CvFont font;
+		double hScale=0.5;
+		double vScale=0.5;
+		int    lineWidth=1;
+		cvInitFont(&font,CV_FONT_HERSHEY_SIMPLEX|CV_FONT_ITALIC, hScale,vScale,0,lineWidth);
+		std::ostringstream oss;
+		oss << "~ " << this->timer->getAverageFPS() << " FPS";
+		cvRectangle(dispFrame, cvPoint(0,0), cvPoint(150,20), cvScalar(0,0,0), CV_FILLED, CV_AA);
+		cvRectangle(dispFrame, cvPoint(0,0), cvPoint(150,20), cvScalar(255,255,255), 2, CV_AA);
+		cvPutText (dispFrame, oss.str().c_str(), cvPoint(5,15), &font, cvScalar(255,255,255));
+		cvShowImage((this->property("id")).asString().c_str(), dispFrame);
+		cv::waitKey(1);
+		cvReleaseImage(&dispFrame);
+		delete packet;
+	} catch (cv::Exception& e) {
+		LOG(NUI_CRITICAL, "OpenCV exception");
+	}
 }
 
 void nuiDebugVideoSink::start() {
