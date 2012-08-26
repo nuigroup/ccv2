@@ -41,3 +41,4 @@ Todo
 		   4) nuiDebugVideoSink (Line 28 added Try/Catch)
 		   5) nuiEdgeFilterModule (Try/Catch and more OpenCV)
 		   6) nuiGaussianBlurFilter (Line 68 added opencv)
+		   7) TUIOModule
