@@ -12,8 +12,8 @@ Components
 ------------
  - Core Engine - Pure C++ portable module engine.
  - CV Module Library - Base Modules for vision related applications.
- - Chrome Extension - Used for testing JSON RPC API. (Requires Chrome Canary)
- - Example Client - A example client API implementation in C#.
+ - Chrome Extension - Used for testing (TDD) the JSON RPC API. (Requires Chrome Canary)
+ - Example Client - An example client API implementation in C#.
 
 Changelog
 ------------
