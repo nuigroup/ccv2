@@ -24,14 +24,33 @@ int main(int argc, char **argv)
 	// initialize log
 	nuiDebugLogger::init(config_syslog);
 
-	nuiFrameworkManager::getInstance()->loadAddonsAtPath("modules");
+	// PSUEDO
+	//nuiFrameworkManager::getInstance()->loadJSONConfigData("data/default_config.json");
+	//nuiFrameworkManager::getInstance()->loadModulesFromJSON(JSON_OBJECT);
 
-	// initialize JSON RPC daemon and network
+	// FIRST LOAD THE JSON
+	nuiFrameworkManagerErrorCode loadCode = nuiFrameworkManager::getInstance()->loadSettingsFromJson("data/default_config.json");
+	if(loadCode != NUI_FRAMEWORK_MANAGER_OK) return loadCode;
+
+	// REPLACE THIS WITH JSON DATA
+	// nuiFrameworkManager::getInstance()->loadAddonsAtPath("modules");
+	
+	 nuiFrameworkManager::getInstance()->loadAddonsAtPath("modules");
+
+	// START JSON RPC API
 	if(!nuiJsonRpcApi::getInstance()->init("127.0.0.1", 7500)) goto exit_critical;
-
 	nuiJsonRpcApi::getInstance()->startApi();
+	
+	// INITIALIZE THE FRAMEWORK
+	nuiFrameworkManagerErrorCode frameworkInitStatus = nuiFrameworkManager::getInstance()->initializeFrameworkManager(""); // TODO: pass this loadCode
+	
+
+	// OLD...
 	//bool frameworkInitStatus = nuiFrameworkManager::getInstance()->init();
-	nuiFrameworkManagerErrorCode frameworkInitStatus = nuiFrameworkManager::getInstance()->initializeFrameworkManager("configs/presets/test.json");
+	//
+
+	
+	
 	if(frameworkInitStatus != NUI_FRAMEWORK_MANAGER_OK) {
 		if(frameworkInitStatus == NUI_FRAMEWORK_ROOT_INITIALIZATION_FAILED) 
 			LOG(NUI_CRITICAL, "Failed to initialize framework root");

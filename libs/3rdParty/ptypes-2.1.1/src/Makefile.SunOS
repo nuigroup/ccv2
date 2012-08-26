@@ -1,0 +1,40 @@
+#
+#
+#  C++ Portable Types Library (PTypes)
+#  Version 2.1.1  Released 27-Jun-2007
+#
+#  Copyright (C) 2001-2007 Hovik Melikyan
+#
+#  http://www.melikyan.com/ptypes/
+#
+#
+#
+# Makefile for SunOS, called from ../Makefile
+#
+
+CXX = g++
+AS = as
+
+OS_CXXOPTS_ST = -Wall -D_FILE_OFFSET_BITS=64
+OS_CXXOPTS = $(OS_CXXOPTS_ST) -D_REENTRANT -fPIC
+
+OS_LDLIBS_ST = -lsocket -lnsl -lposix4
+OS_LDLIBS = $(OS_LDLIBS_ST) -lpthread
+
+LIBTOOL = $(CXX) -shared
+SOSTRIP = strip
+
+SOEXT = so
+SOINSTOPT = -h $(SOREALNAME)
+
+PREFIX = /usr/local
+
+EXTRA_OBJS = mt/patomic.sparc.o
+ASOPTS = -xarch=v8plus
+
+mt/patomic.sparc.o: patomic.sparc.s
+	$(AS) $(ASOPTS) -o $@ patomic.sparc.s
+
+
+include Makefile.common
+

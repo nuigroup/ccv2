@@ -1,0 +1,21 @@
+#
+#
+#  C++ Portable Types Library (PTypes)
+#  Version 2.1.1  Released 27-Jun-2007
+#
+#  Copyright (C) 2001-2007 Hovik Melikyan
+#
+#  http://www.melikyan.com/ptypes/
+#
+#
+#
+# Makefile for SunOS, called from ../Makefile
+#
+
+CXX = g++
+
+OS_CXXOPTS = -Wall -D_REENTRANT -D_FILE_OFFSET_BITS=64
+OS_LDLIBS = -lpthread -lsocket -lnsl -lrt
+
+include Makefile.common
+

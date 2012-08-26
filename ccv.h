@@ -9,7 +9,7 @@
 #include <winsock2.h>
 #include <windows.h>
 #include <winbase.h>
-#include <Xgetopt.h>
+
 #else
 #include <getopt.h>
 #endif

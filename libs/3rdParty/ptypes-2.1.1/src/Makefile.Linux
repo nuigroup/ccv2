@@ -1,0 +1,29 @@
+#
+#
+#  C++ Portable Types Library (PTypes)
+#  Version 2.1.1  Released 27-Jun-2007
+#
+#  Copyright (C) 2001-2007 Hovik Melikyan
+#
+#  http://www.melikyan.com/ptypes/
+#
+#
+#
+# Makefile for Linux, called from ../Makefile
+#
+
+CXX = g++
+
+OS_CXXOPTS_ST = -Wall -D_GNU_SOURCE -D_FILE_OFFSET_BITS=64
+OS_CXXOPTS = $(OS_CXXOPTS_ST) -pthread -fPIC
+
+LIBTOOL = $(CXX) -shared -pthread
+SOSTRIP = strip
+
+SOEXT = so
+SOINSTOPT = -Xlinker -soname -Xlinker $(SOREALNAME)
+
+PREFIX = /usr
+
+include Makefile.common
+
