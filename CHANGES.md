@@ -29,6 +29,7 @@ Removed These Modules - They will be compiled in seperate project as they requir
 
 Todo
 ------------
+ - Seperate Core from Module Development (Core should require a minimal subset of libraries)
  - Refactor module names (... Available Modules, Module Libraries and Active Modules) 
  - Run through Doxygen
  - Merge Refactor Branch 
