@@ -3,6 +3,7 @@ Changelog Aug 25th 2012
 
 Core
 ------------
+ - Seperated Core and Module Projects (To isolate dependancies)
  - Removed boost dependancies
  - Removed event/xopt dependacies
  - Cleaned and included Ptypes and OpenCV libs
