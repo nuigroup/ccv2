@@ -13,6 +13,7 @@ Core
  - Removed nuiMultimodalSyntaxTree
  - Removed nuiFileSystem -> Now we get Modules from Settings
  - Set out.avi to hand video to test tracking
+ - Renamed the Chrome Extension to TDDChromeExtension to be a bit more clear
 
 Modules
 ------------
