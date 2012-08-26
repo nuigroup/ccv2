@@ -22,7 +22,6 @@ libs/3rdParty/boost_*
 [Dd]ebug/
 [Rr]elease/
 *.exe
-*.dll
 *.exp
 *_i.c
 *_p.c
