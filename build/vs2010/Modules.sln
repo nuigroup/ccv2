@@ -1,0 +1,56 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "nuiBackgroundSubtractModule", "..\..\modules\nuiBackgroundSubtractModule\nuiBackgroundSubtractModule.vcxproj", "{071F4BD0-2A6C-4B0F-9250-05B5243B8DAE}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "nuiDebugVideoSink", "..\..\modules\nuiDebugVideoSink\make\nuiDebugVideoSink.vcxproj", "{BE7207F0-01E2-4C74-BA1F-A788092614F5}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "nuiEdgeFilterModule", "..\..\modules\nuiEdgeFilterModule\nuiEdgeFilterModule.vcxproj", "{DB9C713D-93EF-4710-992C-0DD1CBB6CD81}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "nuiGaussianBlurFilter", "..\..\modules\nuiGaussianBlurFilter\nuiGaussianBlurFilter.vcxproj", "{30867EAC-56EE-4854-AE55-38DC96846A61}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "nuiHighpassFilter", "..\..\modules\nuiHighpassFilter\nuiHighpassFilter.vcxproj", "{6F67F514-FDA0-4ED4-9B9A-7613F1CADF27}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "nuiPS3Module", "..\..\modules\nuiPS3Module\make\nuiPS3Module.vcxproj", "{BE7918C3-E357-432A-8023-AFE3929FFFE2}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "nuiVideoFileSource", "..\..\modules\nuiVideoFileSource\nuiVideoFileSource.vcxproj", "{02B4AF8F-C62A-4A8E-85E2-81E3E4E915F0}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{071F4BD0-2A6C-4B0F-9250-05B5243B8DAE}.Debug|Win32.ActiveCfg = Debug|Win32
+		{071F4BD0-2A6C-4B0F-9250-05B5243B8DAE}.Debug|Win32.Build.0 = Debug|Win32
+		{071F4BD0-2A6C-4B0F-9250-05B5243B8DAE}.Release|Win32.ActiveCfg = Release|Win32
+		{071F4BD0-2A6C-4B0F-9250-05B5243B8DAE}.Release|Win32.Build.0 = Release|Win32
+		{BE7207F0-01E2-4C74-BA1F-A788092614F5}.Debug|Win32.ActiveCfg = Debug|Win32
+		{BE7207F0-01E2-4C74-BA1F-A788092614F5}.Debug|Win32.Build.0 = Debug|Win32
+		{BE7207F0-01E2-4C74-BA1F-A788092614F5}.Release|Win32.ActiveCfg = Release|Win32
+		{BE7207F0-01E2-4C74-BA1F-A788092614F5}.Release|Win32.Build.0 = Release|Win32
+		{DB9C713D-93EF-4710-992C-0DD1CBB6CD81}.Debug|Win32.ActiveCfg = Debug|Win32
+		{DB9C713D-93EF-4710-992C-0DD1CBB6CD81}.Debug|Win32.Build.0 = Debug|Win32
+		{DB9C713D-93EF-4710-992C-0DD1CBB6CD81}.Release|Win32.ActiveCfg = Release|Win32
+		{DB9C713D-93EF-4710-992C-0DD1CBB6CD81}.Release|Win32.Build.0 = Release|Win32
+		{30867EAC-56EE-4854-AE55-38DC96846A61}.Debug|Win32.ActiveCfg = Debug|Win32
+		{30867EAC-56EE-4854-AE55-38DC96846A61}.Debug|Win32.Build.0 = Debug|Win32
+		{30867EAC-56EE-4854-AE55-38DC96846A61}.Release|Win32.ActiveCfg = Release|Win32
+		{30867EAC-56EE-4854-AE55-38DC96846A61}.Release|Win32.Build.0 = Release|Win32
+		{6F67F514-FDA0-4ED4-9B9A-7613F1CADF27}.Debug|Win32.ActiveCfg = Debug|Win32
+		{6F67F514-FDA0-4ED4-9B9A-7613F1CADF27}.Debug|Win32.Build.0 = Debug|Win32
+		{6F67F514-FDA0-4ED4-9B9A-7613F1CADF27}.Release|Win32.ActiveCfg = Release|Win32
+		{6F67F514-FDA0-4ED4-9B9A-7613F1CADF27}.Release|Win32.Build.0 = Release|Win32
+		{BE7918C3-E357-432A-8023-AFE3929FFFE2}.Debug|Win32.ActiveCfg = Debug|Win32
+		{BE7918C3-E357-432A-8023-AFE3929FFFE2}.Debug|Win32.Build.0 = Debug|Win32
+		{BE7918C3-E357-432A-8023-AFE3929FFFE2}.Release|Win32.ActiveCfg = Release|Win32
+		{BE7918C3-E357-432A-8023-AFE3929FFFE2}.Release|Win32.Build.0 = Release|Win32
+		{02B4AF8F-C62A-4A8E-85E2-81E3E4E915F0}.Debug|Win32.ActiveCfg = Debug|Win32
+		{02B4AF8F-C62A-4A8E-85E2-81E3E4E915F0}.Debug|Win32.Build.0 = Debug|Win32
+		{02B4AF8F-C62A-4A8E-85E2-81E3E4E915F0}.Release|Win32.ActiveCfg = Release|Win32
+		{02B4AF8F-C62A-4A8E-85E2-81E3E4E915F0}.Release|Win32.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
