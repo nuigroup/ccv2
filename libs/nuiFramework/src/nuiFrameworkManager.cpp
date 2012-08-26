@@ -47,16 +47,9 @@ nuiFrameworkManagerErrorCode nuiFrameworkManager::init() {
 	return NUI_FRAMEWORK_MANAGER_OK;
 }
 
-nuiFrameworkManagerErrorCode nuiFrameworkManager::initializeFrameworkManager(const char *fileName)
+nuiFrameworkManagerErrorCode nuiFrameworkManager::initializeFrameworkManager()
 {
 	nuiFactory::getInstance()->init();
-
-	// LOADING JSON DATA (MOVED OUT TO MAIN CPP) THIS SHOULD HAPPEN FIRST
-	//nuiFrameworkManagerErrorCode loadCode = loadSettingsFromJson(fileName);
-	// SHOULD PASS loadCode in
-	//if(loadCode != NUI_FRAMEWORK_MANAGER_OK) return loadCode;
-	//
-
     this->rootPipeline = (nuiPipelineModule*)(nuiFactory::getInstance()->create("root"));
 	if(rootPipeline != NULL) {
 		nuiTreeNode<int, nuiModule*> *temp = new nuiTreeNode<int, nuiModule*>(rootPipeline->property("id").asInteger(), rootPipeline);
@@ -69,14 +62,14 @@ nuiFrameworkManagerErrorCode nuiFrameworkManager::initializeFrameworkManager(con
 }
 
 nuiFrameworkManagerErrorCode nuiFrameworkManager::loadSettingsFromJson(const char* fileName) {
-	// open file
+	// OPEN FILE
 	std::ifstream settingsFile(fileName);
 	Json::Value root;
 	Json::Reader reader;
 	bool parsingSuccessful = reader.parse(settingsFile, root);
 	if(!parsingSuccessful) return NUI_FRAMEWORK_ROOT_INITIALIZATION_FAILED;
-	// ROOT POINT
-	Json::Value modules = root.get("modules", NULL);
+	// LOAD MODULE LIBRARY FROM JSON
+	Json::Value modules = root.get("module_library", NULL);
 	for (Json::Value::iterator i = modules.begin(); i != modules.end(); i++) 
 	{
 		std::string path = (*i).get("path", NULL).asString();

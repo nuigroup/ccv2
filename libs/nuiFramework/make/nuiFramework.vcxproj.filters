@@ -1,25 +1,42 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <ClCompile Include="..\src\nuiDaemon.cpp" />
     <ClCompile Include="..\src\nuiDynamicLibrary.cpp" />
     <ClCompile Include="..\src\nuiFactory.cpp" />
     <ClCompile Include="..\src\nuiFrameworkManager.cpp" />
     <ClCompile Include="..\src\nuiPipeline.cpp" />
-    <ClCompile Include="..\src\nuiPluginEntity.cpp" />
-    <ClCompile Include="..\src\nuiPluginManager.cpp" />
-    <ClCompile Include="..\src\nuiJsonRpcApi.cpp" />
+    <ClCompile Include="..\src\nuiJsonRpcApi.cpp">
+      <Filter>Adapters</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\nuiPluginManager.cpp">
+      <Filter>Plugins</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\nuiPluginEntity.cpp">
+      <Filter>Plugins</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\inc\nuiDaemon.h" />
     <ClInclude Include="..\inc\nuiDynamicLibrary.h" />
     <ClInclude Include="..\inc\nuiFactory.h" />
     <ClInclude Include="..\inc\nuiFramework.h" />
     <ClInclude Include="..\inc\nuiFrameworkManager.h" />
     <ClInclude Include="..\inc\nuiPipeline.h" />
-    <ClInclude Include="..\inc\nuiPluginEntity.h" />
-    <ClInclude Include="..\inc\nuiPluginManager.h" />
-    <ClInclude Include="..\inc\nuiStaticServices.h" />
-    <ClInclude Include="..\inc\nuiJsonRpcApi.h" />
+    <ClInclude Include="..\inc\nuiJsonRpcApi.h">
+      <Filter>Adapters</Filter>
+    </ClInclude>
+    <ClInclude Include="..\inc\nuiPluginManager.h">
+      <Filter>Plugins</Filter>
+    </ClInclude>
+    <ClInclude Include="..\inc\nuiPluginEntity.h">
+      <Filter>Plugins</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Plugins">
+      <UniqueIdentifier>{51ca60a5-e76b-49e3-ab52-3bcec416d141}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Adapters">
+      <UniqueIdentifier>{0da4da2e-5f8d-4775-b83d-8906863baeaf}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
 </Project>

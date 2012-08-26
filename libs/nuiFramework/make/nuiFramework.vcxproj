@@ -11,7 +11,6 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\inc\nuiDaemon.h" />
     <ClInclude Include="..\inc\nuiDynamicLibrary.h" />
     <ClInclude Include="..\inc\nuiFactory.h" />
     <ClInclude Include="..\inc\nuiFramework.h" />
@@ -20,10 +19,8 @@
     <ClInclude Include="..\inc\nuiPipeline.h" />
     <ClInclude Include="..\inc\nuiPluginEntity.h" />
     <ClInclude Include="..\inc\nuiPluginManager.h" />
-    <ClInclude Include="..\inc\nuiStaticServices.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\src\nuiDaemon.cpp" />
     <ClCompile Include="..\src\nuiDynamicLibrary.cpp" />
     <ClCompile Include="..\src\nuiFactory.cpp" />
     <ClCompile Include="..\src\nuiFrameworkManager.cpp" />

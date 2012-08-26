@@ -45,9 +45,7 @@
 
 // NUI
 #include "nuiFramework.h"
-
 #include "nuiTree.h"
-
 #include "nuiJsonRpcApi.h"
 
 // assert

@@ -22,7 +22,7 @@
 typedef enum nuiFrameworkManagerErrorCode
 {
 	NUI_FRAMEWORK_MANAGER_OK,
-	NUI_FRAMEWORK_WRONG_FILE,
+	//NUI_FRAMEWORK_WRONG_FILE,
 	NUI_FRAMEWORK_PIPELINE_STRUCTURE_LOOP,
     NUI_FRAMEWORK_ERROR_SAVING_FILE,
 	NUI_FRAMEWORK_ROOT_ACCESS_DENIED,
@@ -60,7 +60,7 @@ private:
 	nuiFrameworkManager();
 public:
 	nuiFrameworkManagerErrorCode init();
-	nuiFrameworkManagerErrorCode initializeFrameworkManager(const char *fileName);
+	nuiFrameworkManagerErrorCode initializeFrameworkManager();
 	nuiFrameworkManagerErrorCode loadAddonsAtPath(const char *addonsPath);
 	std::vector<std::string> *listDynamicModules();
 	std::vector<std::string> *listPipelines(std::string &hostedPipelineName);
@@ -76,9 +76,7 @@ public:
 
     //! starts module index workflow at the current pipeline
     nuiFrameworkManagerErrorCode workflowStop(int moduleIndex);
-
 	nuiFrameworkManagerErrorCode workflowQuit();
-
 
 public:
 	nuiModuleDescriptor *createPipeline(std::string &pipelineName);
@@ -121,7 +119,7 @@ private:
     //list of child indexes to the current pipeline
     std::list<int> pathToCurrent;
 public: 
-	nuiFrameworkManagerErrorCode loadJSONConfigData(const char *fileName);
+	//nuiFrameworkManagerErrorCode loadJSONConfigData(const char *fileName);
 	nuiFrameworkManagerErrorCode loadSettingsFromJson(const char *fileName);
 	nuiFrameworkManagerErrorCode loadSettingsFromJson(Json::Value *root);
 private:

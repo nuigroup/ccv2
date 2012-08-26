@@ -11,16 +11,16 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\ccv.cpp" />
+    <ClCompile Include="..\..\nuiServerApplication.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\ccv.h" />
+    <ClInclude Include="..\..\nuiServerApplication.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{6EFD0DFD-EF69-4D51-B1BE-8F6D0AF5B6A7}</ProjectGuid>
     <RootNamespace>CommunityCoreVision</RootNamespace>
     <Keyword>Win32Proj</Keyword>
-    <ProjectName>Community Core Vision</ProjectName>
+    <ProjectName>nuiServerApplication</ProjectName>
     <VCTargetsPath Condition="'$(VCTargetsPath11)' != '' and '$(VSVersion)' == '' and $(VisualStudioVersion) == ''">$(VCTargetsPath11)</VCTargetsPath>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
