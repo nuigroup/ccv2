@@ -10,6 +10,9 @@ Core
  - Fixed issue with JSON-RPC compilation in VS2010
  - Removed anything that should'nt be on repo (*.obj etc)
  - Moved JSON Config to data/default_config.json
+ - Removed nuiMultimodalSyntaxTree
+ - Removed nuiFileSystem -> Now we get Modules from Settings
+ - Set out.avi to hand video to test tracking
 
 Modules
 ------------
@@ -25,9 +28,9 @@ Removed These Modules - They will be compiled in seperate project as they requir
 
 Todo
 ------------
-Refactor module names (... Available Modules, Module Libraries and Active Modules) 
-Run through Doxygen
-Merge Refactor Branch 
+ - Refactor module names (... Available Modules, Module Libraries and Active Modules) 
+ - Run through Doxygen
+ - Merge Refactor Branch 
 	
 		   1) nuiJSonRPCApi lines (341-346)
 		   2) nuiModule (N/A) Comment Removal
