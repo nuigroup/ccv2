@@ -1,29 +1,27 @@
-Changelog Aug 25th
+Changelog Aug 25th 2012
+====
 
 Core
 ------------
-Removed boost dependancies
-Removed event/xopt dependacies
-Cleaned and included Ptypes and OpenCV libs
-Refactored CCV.cpp/ nuiFactor and nuiFrameworkManager to load modules from JSON instead of scanning the disk.
-Fixed issue with JSON-RPC compilation in VS2010
-Removed anything that should'nt be on repo (*.obj etc)
-Moved JSON Config to data/default_config.json
-Removed nuiFileSystem -> Now we get Modules from Settings
-Set out.avi to hand video to test tracking
+ - Removed boost dependancies
+ - Removed event/xopt dependacies
+ - Cleaned and included Ptypes and OpenCV libs
+ - Refactored CCV.cpp/ nuiFactor and nuiFrameworkManager to load modules from JSON instead of scanning the disk.
+ - Fixed issue with JSON-RPC compilation in VS2010
+ - Removed anything that should'nt be on repo (*.obj etc)
+ - Moved JSON Config to data/default_config.json
 
 Modules
 ------------
-Removed nuiMultimodalSyntaxTree
 Removed These Modules - They will be compiled in seperate project as they require boost and other libs not required in core.
 
-nuiTemporalFusionModule
-nuiSpiritParserModule
-nuiDebugGestureModule
-nuiDebugInputModule
-nuiJSONINteraction
-nuiSpiriteParserModule
-nuiSphinxModule
+ - nuiTemporalFusionModule
+ - nuiSpiritParserModule
+ - nuiDebugGestureModule
+ - nuiDebugInputModule
+ - nuiJSONINteraction
+ - nuiSpiriteParserModule
+ - nuiSphinxModule
 
 Todo
 ------------
