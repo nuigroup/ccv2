@@ -15,6 +15,13 @@ Components
  - Chrome Extension - Used for testing (TDD) the JSON RPC API. (Requires Chrome Canary)
  - Example Client - An example client API implementation in C#.
 
+Compiling 
+------------
+We recommend using VS2010 to compile. The following solutions are provided:
+
+  - Community Core (Compiles main server)
+  - CV Module Library (Compiles associated CV modules *depends on core*)
+
 Changelog
 ------------
 View CHANGES.md for latest updates.
