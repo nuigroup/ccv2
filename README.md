@@ -20,7 +20,7 @@ Compiling
 We recommend using VS2010 to compile. The following solutions are provided:
 
   - Community Core (Compiles main server)
-  - CV Module Library (Compiles associated CV modules *depends on core*)
+  - CV Module Library (Compiles associated CV modules *depends on framework libs*)
 
 Changelog
 ------------
