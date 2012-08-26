@@ -8,11 +8,12 @@ It allows for general purpose signal processing from multiple sensor sources and
 Each platform will have its own specific runtimes and communication methods dependent on best available options. 
 Our first implementation will be focused on Computer Vision (CCV).
 
-Libs not included in package
+Changelog
 ------------
-Not all the libraries necessary to build ccv2 are located in libs/3rdParty folder.
-Some of them should be obtained and built separately.
+View CHANGES.md for latest updates.
 
-1. You should have boost 1.50.0 located in libs/3rdParty/boost_1_50_0.  Build by running libs/3rdparty/boost/build_boost.bat
-2. You should have opencv 2.4.0 library located in libs/3rdParty/opencv
-3. You should build ptypes library with the solution provided in libs/3rdParty/ptypes-2.1.1/win32libs
+Links
+------------
+http://nuigroup.com - NUI Group Community Homepage
+http://ccv.nuigroup.com - CCV 1.* Homepage
+http://gsoc.nuigc.com/about/projects - GSoC Projects
