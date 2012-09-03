@@ -48,7 +48,7 @@
     <UseDebugLibraries>false</UseDebugLibraries>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>MultiByte</CharacterSet>
-    <PlatformToolset>v110</PlatformToolset>
+    <PlatformToolset>v100</PlatformToolset>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
@@ -71,7 +71,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
-    <OutDir>$(SolutionDir)\lib\</OutDir>
+    <OutDir>$(SolutionDir)$(Configuration)\$(CurrentPlatformName)\</OutDir>
     <TargetExt>.lib</TargetExt>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -101,7 +101,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_USRDLL;NUIFRAMEWORK_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\..\..\libs\nuiModule\inc;..\..\..\libs\nuiSystem\inc;..\..\..\libs\3rdParty\json-cpp\include;..\inc;..\..\..\libs\3rdParty\ptypes-2.1.1\include;..\..\..\libs\3rdParty\ptypes-2.1.1\include\WIN32-Code\;..\..\..\libs\3rdParty\json-rpc\src</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\..\libs\nuiModule\inc;..\..\..\libs\nuiSystem\inc;..\..\..\libs\3rdParty\json-cpp\include;..\inc;..\..\..\libs\3rdParty\ptypes-2.1.1\include;..\..\..\libs\3rdParty\ptypes-2.1.1\include\WIN32-Code\;..\..\..\libs\3rdParty\json-rpc\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -110,8 +110,8 @@
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
     <Lib>
-      <AdditionalDependencies>nuiModule.lib;json-cpp.lib;json-rpc.lib</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(SolutionDir)\lib</AdditionalLibraryDirectories>
+      <AdditionalDependencies>nuiModule.lib;json-cpp.lib;json-rpc.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)$(Configuration)\$(CurrentPlatformName)\;;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Lib>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
