@@ -28,19 +28,19 @@
 #include "nuiUtils.h"
 
 typedef struct _nuiPoint {
-	double x;
-	double y;
+    double x;
+    double y;
 } nuiPoint;
 
 typedef std::vector<nuiPoint> nuiPointList;
 
 typedef enum _nuiPropertyType {
-	NUI_PROPERTY_NONE,
-	NUI_PROPERTY_BOOL, 
-	NUI_PROPERTY_STRING, 
-	NUI_PROPERTY_INTEGER,
-	NUI_PROPERTY_DOUBLE,
-	NUI_PROPERTY_POINTLIST,
+    NUI_PROPERTY_NONE,
+    NUI_PROPERTY_BOOL,
+    NUI_PROPERTY_STRING,
+    NUI_PROPERTY_INTEGER,
+    NUI_PROPERTY_DOUBLE,
+    NUI_PROPERTY_POINTLIST,
 } nuiPropertyType;
 
 class nuiProperty;
@@ -49,73 +49,73 @@ typedef void (*nuiPropertyCallback)(nuiProperty *property, void *userdata);
 
 class nuiProperty {
 public:
-	nuiProperty(bool value, const std::string &description = "");
-	nuiProperty(const char *value, const std::string &description = "");
-	nuiProperty(std::string value, const std::string &description = "");
-	nuiProperty(int value, const std::string &description = "");
-	nuiProperty(double value, const std::string &description = "");
-	nuiProperty(nuiPointList, const std::string &description = "");
-	~nuiProperty();
-	
-	nuiPropertyType getType();
+    nuiProperty(bool value, const std::string &description = "");
+    nuiProperty(const char *value, const std::string &description = "");
+    nuiProperty(std::string value, const std::string &description = "");
+    nuiProperty(int value, const std::string &description = "");
+    nuiProperty(double value, const std::string &description = "");
+    nuiProperty(nuiPointList, const std::string &description = "");
+    ~nuiProperty();
 
-	void setDescription(const std::string& desc);
-	std::string getDescription();
+    nuiPropertyType getType();
 
-	void setReadOnly(bool);
-	bool isReadOnly();
-	
-	bool asBool();
-	std::string asString();
-	double asDouble();
-	int asInteger();
-	nuiPointList asPointList();
+    void setDescription(const std::string& desc);
+    std::string getDescription();
 
-	void set(bool value);
-	void set(std::string value);
-	void set(const char* value);
-	void set(int value);
-	void set(double value);
-	void set(nuiPointList value);
+    void setReadOnly(bool);
+    bool isReadOnly();
 
-	bool haveMin();
-	bool haveMax();
-	bool haveChoices();
-	int getMin();
-	int getMax();
-	std::string getChoices();
-	void setMin(int val);
-	void setMax(int val);
-	void setChoices(const std::string &val);
+    bool asBool();
+    std::string asString();
+    double asDouble();
+    int asInteger();
+    nuiPointList asPointList();
 
-	void setText(bool is_text);
-	bool isText();
+    void set(bool value);
+    void set(std::string value);
+    void set(const char* value);
+    void set(int value);
+    void set(double value);
+    void set(nuiPointList value);
 
-	void addCallback(nuiPropertyCallback callback, void *userdata);
-	void removeCallback(nuiPropertyCallback callback);
-	
-	friend std::ostream& operator<< (std::ostream& o, const nuiProperty& f);
+    bool haveMin();
+    bool haveMax();
+    bool haveChoices();
+    int getMin();
+    int getMax();
+    std::string getChoices();
+    void setMin(int val);
+    void setMax(int val);
+    void setChoices(const std::string &val);
 
-	static std::string getPropertyTypeName(nuiPropertyType type);
-	
+    void setText(bool is_text);
+    bool isText();
+
+    void addCallback(nuiPropertyCallback callback, void *userdata);
+    void removeCallback(nuiPropertyCallback callback);
+
+    friend std::ostream& operator<< (std::ostream& o, const nuiProperty& f);
+
+    static std::string getPropertyTypeName(nuiPropertyType type);
+
 private:
-	nuiProperty(const nuiProperty& property);
-	nuiPropertyType type;
-	std::map<nuiPropertyCallback, void*> callbacks;
-	std::string description;
-	void* val;
-	bool readonly;
-	bool have_min;
-	bool have_max;
-	bool have_choices;
-	bool is_text;
-	int val_min;
-	int val_max;
-	std::string val_choices;
-	
-	void free();
-	void init(const std::string& description);
-	void fireCallback();
+    nuiProperty(const nuiProperty& property);
+    nuiPropertyType type;
+    std::map<nuiPropertyCallback, void*> callbacks;
+    std::string description;
+    void* val;
+    bool readonly;
+    bool have_min;
+    bool have_max;
+    bool have_choices;
+    bool is_text;
+    int val_min;
+    int val_max;
+    std::string val_choices;
+
+    void free();
+    void init(const std::string& description);
+    void fireCallback();
 };
 
 #endif

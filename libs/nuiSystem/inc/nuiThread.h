@@ -25,20 +25,20 @@ typedef void (*thread_process_t)(nuiThread *thread);
 
 class nuiThread : public pt::thread {
 public:
-	nuiThread(thread_process_t _process, void *_userdata);
-	virtual ~nuiThread();
-	void *getUserData();
-	void execute();
-	void stop();
-	void wait();
-	void post();
-	bool wantQuit();
-	bool relax(int);
+    nuiThread(thread_process_t _process, void *_userdata);
+    virtual ~nuiThread();
+    void *getUserData();
+    void execute();
+    void stop();
+    void wait();
+    void post();
+    bool wantQuit();
+    bool relax(int);
 private:
-	thread_process_t process;
-	pt::trigger *thread_trigger;
-	void *userdata;
-	bool want_quit;
+    thread_process_t process;
+    pt::trigger *thread_trigger;
+    void *userdata;
+    bool want_quit;
 };
 
 
@@ -46,13 +46,13 @@ private:
 class nuiMultithreadable
 {
 public:
-	nuiMultithreadable();
-	virtual ~nuiMultithreadable();
-	virtual void lock();
-	virtual void unlock();
+    nuiMultithreadable();
+    virtual ~nuiMultithreadable();
+    virtual void lock();
+    virtual void unlock();
 protected:
-	thread_process_t threaded_func;
-	pt::mutex *mtx;
+    thread_process_t threaded_func;
+    pt::mutex *mtx;
 };
 
 #endif

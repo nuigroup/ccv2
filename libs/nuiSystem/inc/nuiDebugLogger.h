@@ -1,5 +1,5 @@
 /* nuiDebugLogger.h
-*  
+*
 *  Created on 02/01/12.
 *  Copyright 2012 NUI Group. All rights reserved.
 *  Community Core Fusion
@@ -60,31 +60,31 @@
 extern int g_loglevel;
 
 enum {
-	NUI_CRITICAL	= 0,
-	NUI_ERROR		= 1,
-	NUI_WARNING		= 2,
-	NUI_INFO		= 3,
-	NUI_DEBUG		= 4,
-	NUI_TRACE		= 5,
+    NUI_CRITICAL	= 0,
+    NUI_ERROR		= 1,
+    NUI_WARNING		= 2,
+    NUI_INFO		= 3,
+    NUI_DEBUG		= 4,
+    NUI_TRACE		= 5,
 };
 
 class nuiDebugLogger {
 public:
-	static void init(bool use_syslog);
-	static void cleanup();
-	static void setLogLevel(int n);
-	static int getLogLevel();
-	static int getSysLogLevel(int n);
-	static std::string getLogLevelName(int n);
+    static void init(bool use_syslog);
+    static void cleanup();
+    static void setLogLevel(int n);
+    static int getLogLevel();
+    static int getSysLogLevel(int n);
+    static std::string getLogLevelName(int n);
 };
 
 class nuiLoggerMessage {
 public:
-	nuiLoggerMessage(std::string name, std::string filename, int line, int level);
-	~nuiLoggerMessage();
-	template<typename T> nuiLoggerMessage &operator<<(T __n) _LOG_FUNC;
+    nuiLoggerMessage(std::string name, std::string filename, int line, int level);
+    ~nuiLoggerMessage();
+    template<typename T> nuiLoggerMessage &operator<<(T __n) _LOG_FUNC;
 private:
-	std::ostringstream os;
-	int level;
+    std::ostringstream os;
+    int level;
 };
 #endif//_NUI_DEBUG_LOGGER_

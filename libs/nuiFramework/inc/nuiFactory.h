@@ -9,31 +9,31 @@
 #include "nuiModule.h"
 #include "nuiPluginManager.h"
 
-using namespace nuiPluginFramework;
+class nuiDynamicLibrary;
 
 class nuiFactory 
 {
 public:
-	static nuiFactory *getInstance();
-	~nuiFactory();
-	void loadDynamicModules();
-	void init();
-	static void cleanup();
-	std::vector<std::string> *listPipelineNames();
-	std::vector<std::string> *listModuleNames();
-	std::vector<std::string> *listAllNames();	
-	nuiModuleDescriptor* getDescriptor(const std::string &name);
-	nuiModuleDescriptor* getDescriptor(const std::string &pipelineName,int id);
+    static nuiFactory *getInstance();
+    ~nuiFactory();
+    void loadDynamicModules();
+    void init();
+    static void cleanup();
+    std::vector<std::string> *listPipelineNames();
+    std::vector<std::string> *listModuleNames();
+    std::vector<std::string> *listAllNames();	
+    nuiModuleDescriptor* getDescriptor(const std::string &name);
+    nuiModuleDescriptor* getDescriptor(const std::string &pipelineName,int id);
 private:
-	nuiModule *create(const std::string &name);
-	void remove(nuiModule *module);
-	nuiModule *createPipeline(nuiModuleDescriptor* descriptor);
-	void loadSettings(nuiModule* module, nuiModuleDescriptor* descriptor);
+    nuiModule *create(const std::string &name);
+    void remove(nuiModule *module);
+    nuiModule *createPipeline(nuiModuleDescriptor* descriptor);
+    void loadSettings(nuiModule* module, nuiModuleDescriptor* descriptor);
 private:
-	nuiFactory();
-	std::map<std::string, nuiModuleDescriptor*> pipelineDescriptors;
-	std::map<std::string, nuiModuleDescriptor*> moduleDescriptors;
-	friend class nuiFrameworkManager;
+    nuiFactory();
+    std::map<std::string, nuiModuleDescriptor*> pipelineDescriptors;
+    std::map<std::string, nuiModuleDescriptor*> moduleDescriptors;
+    friend class nuiFrameworkManager;
 };
 
 #endif

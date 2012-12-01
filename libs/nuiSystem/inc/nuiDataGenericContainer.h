@@ -23,13 +23,13 @@
 
 class nuiProperty;
 
-class nuiDataGenericContainer 
+class nuiDataGenericContainer
 {
 public:
-	nuiDataGenericContainer();
-	virtual ~nuiDataGenericContainer();
-	bool hasProperty(const std::string &name);
-	std::map<std::string, nuiProperty*> properties;
+    nuiDataGenericContainer();
+    virtual ~nuiDataGenericContainer();
+    bool hasProperty(const std::string &name);
+    std::map<std::string, nuiProperty*> properties;
     nuiDataGenericContainer* clone();
 };
 

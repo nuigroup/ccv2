@@ -14,9 +14,6 @@
 #include <getopt.h>
 #endif
 
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <sys/queue.h>
 #include <signal.h>
 
 #ifndef WIN32
@@ -31,17 +28,9 @@
 #include <map>
 #include <algorithm>
 
-// libevent
-#include "event.h"
-#include "evhttp.h"
-
 // JSON
 #include "cJSON.h"
 #include "json/json.h"
-
-// boost
-//#include "boost/property_tree/json_parser.hpp"
-//#include "boost/property_tree/ptree.hpp"
 
 // NUI
 #include "nuiFramework.h"
@@ -50,7 +39,7 @@
 
 // assert
 #include <assert.h>
-#include "../../libs/nuiFramework/inc/nuiFrameworkManager.h"
+#include "nuiFrameworkManager.h"
 
 #ifdef WIN32
 #define SLEEP( milliseconds ) Sleep( (DWORD) milliseconds ) 

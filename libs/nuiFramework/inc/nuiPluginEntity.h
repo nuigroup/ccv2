@@ -12,26 +12,20 @@
 
 #include "nuiPlugin.h"
 
-namespace nuiPluginFramework
+class nuiPluginEntity
 {
-	class nuiPluginManager;
-	class nuiDynamicLibrary;
-
-	class nuiPluginEntity
-	{
-	public:
-		const void* getEntity() { return entity; }
-		const char* getName() { return name; }
-		const bool isInitialized() { return initialized; }
-		~nuiPluginEntity();
-	private:
-		nuiPluginEntity(const char* entityName,void* wrappedEntity, nuiReleaseInterface releaseInterface);
-		void* entity;
-		bool initialized;
-		const char* name;
-		nuiReleaseInterface releaseInterfaceFunc;
-		friend class nuiPluginManager;
-	};
-}
+public:
+	const void* getEntity() { return entity; }
+	const char* getName() { return name; }
+	const bool isInitialized() { return initialized; }
+	~nuiPluginEntity();
+private:
+	nuiPluginEntity(const char* entityName,void* wrappedEntity, nuiReleaseInterface releaseInterface);
+	void* entity;
+	bool initialized;
+	const char* name;
+	nuiReleaseInterface releaseInterfaceFunc;
+	friend class nuiPluginManager;
+};
 
 #endif//_NUI_PLUGIN_WRAPPER_

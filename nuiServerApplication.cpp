@@ -10,6 +10,7 @@ static void signal_term(int signal)
 	nuiJsonRpcApi::getInstance()->stopApi(true);
 }
 
+//! Entrance point
 int main(int argc, char **argv) 
 {
 	int exit_ret = 0;

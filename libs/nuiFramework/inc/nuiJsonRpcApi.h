@@ -1,8 +1,8 @@
 #ifndef NUI_JSONAPI_H
 #define NUI_JSONAPI_H
+
 #pragma once
 
-//#include "boost/cstdint.hpp"
 #include "pasync.h"
 
 #include <sstream>
@@ -19,7 +19,6 @@
 #include "nuiEndpoint.h"
 #include "nuiDebugLogger.h"
 
-//! TODO : optional arguments methods
 class nuiJsonRpcApi : public pt::thread
 {
 public:

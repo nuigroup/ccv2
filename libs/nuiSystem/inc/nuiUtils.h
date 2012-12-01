@@ -29,15 +29,15 @@
 
 class nuiUtils {
 public:
-	static std::vector<std::string> tokenize(const std::string& str, const std::string& delimiters);
-	static double time();
-	static bool inList(const std::string &pattern, const std::string &str, const std::string &delimiters = ",");
-	static double degToRad(double deg);
-	static double radToDeg(double rad);
-	static int getRandomNumber();
-	template<class Iterator, class Function> static Function for_each(Iterator first, Iterator last, Function f);
+    static std::vector<std::string> tokenize(const std::string& str, const std::string& delimiters);
+    static double time();
+    static bool inList(const std::string &pattern, const std::string &str, const std::string &delimiters = ",");
+    static double degToRad(double deg);
+    static double radToDeg(double rad);
+    static int getRandomNumber();
+    template<class Iterator, class Function> static Function for_each(Iterator first, Iterator last, Function f);
 private:
-	static bool isRandInitialized;
+    static bool isRandInitialized;
 };
 
 #endif

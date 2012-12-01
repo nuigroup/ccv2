@@ -20,22 +20,19 @@
   static std::string dynamicLibraryExtension("dll");
 #endif
 
-namespace nuiPluginFramework
+class nuiDynamicLibrary
 {
-	class nuiDynamicLibrary
-	{
-	public:
-	  static nuiDynamicLibrary * load(const std::string & path, 
-								   std::string &errorString);
-	  ~nuiDynamicLibrary();
-	  void * getSymbol(const std::string & name);
-	private:
-	  nuiDynamicLibrary();
-	  nuiDynamicLibrary(void * handle);
-	  nuiDynamicLibrary(const nuiDynamicLibrary &);
-	private:
-	  void * handle_;
-	};
-}
+public:
+	static nuiDynamicLibrary * load(const std::string & path, 
+								  std::string &errorString);
+	~nuiDynamicLibrary();
+	void * getSymbol(const std::string & name);
+private:
+	nuiDynamicLibrary();
+	nuiDynamicLibrary(void * handle);
+	nuiDynamicLibrary(const nuiDynamicLibrary &);
+private:
+	void * handle_;
+};
 
 #endif//_NUI_DYNAMIC_LIBRARY_

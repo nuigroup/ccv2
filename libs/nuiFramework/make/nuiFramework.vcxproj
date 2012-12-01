@@ -81,7 +81,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;NUIFRAMEWORK_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\..\..\libs\nuiModule\inc;..\..\..\libs\nuiSystem\inc;..\..\..\libs\3rdParty\json-cpp\include;..\inc;..\..\..\libs\3rdParty\json-rpc\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\..\libs\nuiFramework\inc;..\..\..\libs\nuiModule\inc;..\..\..\libs\nuiSystem\inc;..\..\..\libs\3rdParty\json-cpp\include;..\inc;..\..\..\libs\3rdParty\json-rpc\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>

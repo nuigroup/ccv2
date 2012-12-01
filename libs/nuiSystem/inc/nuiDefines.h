@@ -1,5 +1,5 @@
 /* nuiDefines.h
-*  
+*
 *  Created on 02/01/12.
 *  Copyright 2012 NUI Group. All rights reserved.
 *  Community Core Fusion
