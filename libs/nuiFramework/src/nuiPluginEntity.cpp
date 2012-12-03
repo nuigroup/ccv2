@@ -1,13 +1,15 @@
 #include "nuiPluginEntity.h"
 #include <memory>
 
-nuiPluginEntity::nuiPluginEntity(const char* entityName,void* wrappedEntity, nuiReleaseInterface releaseInterface)
+nuiPluginEntity::nuiPluginEntity(const char* entityName, void* wrappedEntity, nuiReleaseInterface releaseInterface)
 {
 	this->entity = wrappedEntity;
 	this->releaseInterfaceFunc = releaseInterface;
 	this->name = entityName;
-	initialized = (wrappedEntity!=NULL);
-}
+    //! TODO : is this good check? 03.12.12 AnatolyL
+	initialized = (wrappedEntity != NULL);
+};
+
 nuiPluginEntity::~nuiPluginEntity()
 {
 	if ((releaseInterfaceFunc!=NULL) && (initialized))
@@ -15,4 +17,4 @@ nuiPluginEntity::~nuiPluginEntity()
 		releaseInterfaceFunc(entity);
 		initialized = false;
 	}
-}
+};

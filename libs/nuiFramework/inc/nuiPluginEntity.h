@@ -7,25 +7,36 @@
 *
 */
 
-#ifndef _NUI_PLUGIN_WRAPPER_
-#define _NUI_PLUGIN_WRAPPER_
+#ifndef NUI_PLUGIN_ENTITY_H
+#define NUI_PLUGIN_ENTITY_H
 
 #include "nuiPlugin.h"
 
+//! \class nuiPluginEntity
+//! Holds wrapped plugin from dll
 class nuiPluginEntity
 {
 public:
+    //! simple getter
 	const void* getEntity() { return entity; }
+
+    //! simple getter
 	const char* getName() { return name; }
+
+    //! simple getter
 	const bool isInitialized() { return initialized; }
+
 	~nuiPluginEntity();
 private:
-	nuiPluginEntity(const char* entityName,void* wrappedEntity, nuiReleaseInterface releaseInterface);
+    // Can only be called from nuiPluginManager
+	nuiPluginEntity(const char* entityName, void* wrappedEntity, nuiReleaseInterface releaseInterface);
+
 	void* entity;
 	bool initialized;
 	const char* name;
 	nuiReleaseInterface releaseInterfaceFunc;
+
 	friend class nuiPluginManager;
 };
 
-#endif//_NUI_PLUGIN_WRAPPER_
+#endif//NUI_PLUGIN_ENTITY_H

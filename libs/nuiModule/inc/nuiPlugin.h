@@ -122,6 +122,19 @@ extern "C" DLLEXPORT nuiDynamicLibraryFreeFunc nuiDynamicLibraryLoad(const nuiPl
     return descriptor##type;												\
 }																			\
 
+/** \def START_MODULE_REGISTRATION()
+ *  Starts module registration i.e. filling structure, containing pointers
+ *  to core plugin management functions
+ */
+#define START_MODULE_REGISTRATION()											                                        \
+    extern "C" DLLEXPORT nuiDynamicLibraryFreeFunc nuiDynamicLibraryLoad(const nuiPluginFrameworkService *params)	\
+{																													\
+    nuiRegisterPluginParameters *registerParams = new nuiRegisterPluginParameters();								\
+
+/** \def REGISTER_PLUGIN()
+ *  Fills module registration parameters
+ *  I.e. structure with plugin controlling functions
+ */
 #define REGISTER_PLUGIN(type,description,majorValue,minorValue)				\
     registerParams->version.major = majorValue;								\
     registerParams->version.minor = minorValue;								\
@@ -132,20 +145,25 @@ extern "C" DLLEXPORT nuiDynamicLibraryFreeFunc nuiDynamicLibraryLoad(const nuiPl
     return NULL;															\
     registerParams = new nuiRegisterPluginParameters();						\
 
-#define START_MODULE_REGISTRATION()											                                        \
-    extern "C" DLLEXPORT nuiDynamicLibraryFreeFunc nuiDynamicLibraryLoad(const nuiPluginFrameworkService *params)	\
-{																													\
-    nuiRegisterPluginParameters *registerParams = new nuiRegisterPluginParameters();								\
-
+/** \def END_MODULE_REGISTRATION()
+ *  Finalizes module registration function
+ */
 #define END_MODULE_REGISTRATION()																					\
     delete registerParams;																							\
     return (nuiDynamicLibraryFreeFunc)ExitFunc;																		\
 }																													\
 
+/** \def START_MODULE_EXIT()
+ *  Starts module exit function
+ *  One can add exit logic between this and END_MODULE_EXIT() macro
+ */
 #define START_MODULE_EXIT()																							\
     extern "C" DLLEXPORT nuiPluginFrameworkErrorCode ExitFunc()														\
 {																													\
 
+/** \def END_MODULE_EXIT()
+ *  Finalizes module exit function
+ */
 #define END_MODULE_EXIT()																							\
     return nuiPluginFrameworkOK;																					\
 }																													\

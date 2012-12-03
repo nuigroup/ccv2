@@ -35,7 +35,7 @@ nuiDynamicLibrary *nuiDynamicLibrary::load(const std::string & name,  std::strin
   
 	void * handle = NULL;
 
-	#ifdef WIN32
+#ifdef WIN32
 	handle = LoadLibrary(name.c_str());
 	if (handle == NULL)
 	{
@@ -46,7 +46,7 @@ nuiDynamicLibrary *nuiDynamicLibrary::load(const std::string & name,  std::strin
 			<< errorCode; 
 		errorString = ss.str();
 	}
-	#else
+#else
 	handle = dlopen(name.c_str(), RTLD_NOW);
 	if (!handle) 
 	{
@@ -59,17 +59,17 @@ nuiDynamicLibrary *nuiDynamicLibrary::load(const std::string & name,  std::strin
 		errorString += ": " + dlErrorString;
 		return NULL;
 	}
-	#endif
+#endif
 	return new nuiDynamicLibrary(handle);
 }
 
 void *nuiDynamicLibrary::getSymbol(const std::string &symbol)
 {
 	if (handle_ == NULL)
-	return NULL;
-	#ifdef WIN32
+	    return NULL;
+#ifdef WIN32
 	return GetProcAddress((HMODULE)handle_, symbol.c_str());
-	#else
+#else
 	return dlsym(handle_, symbol.c_str());
-	#endif
+#endif
 }

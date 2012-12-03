@@ -7,8 +7,8 @@
 *
 */
 
-#ifndef _NUI_DYNAMIC_LIBRARY_
-#define _NUI_DYNAMIC_LIBRARY_
+#ifndef NUI_DYNAMIC_LIBRARY_H
+#define NUI_DYNAMIC_LIBRARY_H
 
 #include <string>
  
@@ -35,4 +35,4 @@ private:
 	void * handle_;
 };
 
-#endif//_NUI_DYNAMIC_LIBRARY_
+#endif//NUI_DYNAMIC_LIBRARY_H
