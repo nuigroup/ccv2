@@ -49,11 +49,6 @@ void nuiFactory::cleanup()
 
 void nuiFactory::loadDynamicModules()
 {
-  /* REMOVED FILE SYSTEM READING - REPLACES WITH JSON DATA		
-  //!add platform specific code for searching flies
-  std::list<nuiFileSystem::nuiFile>* files = nuiFileSystem::nuiFilesystem::read_directory(pathLocation, "(.*\\.dll)");
-  for (std::list<nuiFileSystem::nuiFile>::iterator iter = files->begin();iter!=files->end();iter++)
-  nuiPluginManager::getInstance()->loadLibrary(std::string(iter->fullName));*/
   nuiPluginManager::getInstance()->loadPluginsFromLoadedLibraries();
   moduleDescriptors.clear();
   for (nuiRegisterPluginParamsMap::iterator iter = nuiPluginManager::getInstance()->registerPluginParamsMap.begin();iter!=nuiPluginManager::getInstance()->registerPluginParamsMap.end();iter++)

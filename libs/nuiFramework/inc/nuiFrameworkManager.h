@@ -22,15 +22,12 @@
 typedef enum nuiFrameworkManagerErrorCode
 {
     NUI_FRAMEWORK_MANAGER_OK,
-    //NUI_FRAMEWORK_WRONG_FILE,
     NUI_FRAMEWORK_PIPELINE_STRUCTURE_LOOP,
     NUI_FRAMEWORK_ERROR_SAVING_FILE,
     NUI_FRAMEWORK_ROOT_ACCESS_DENIED,
     NUI_FRAMEWORK_OBJECT_NOT_EXIST,
     NUI_FRAMEWORK_ROOT_INITIALIZATION_FAILED,
 } nuiFrameworkManagerErrorCode;
-
-//typedef 
 
 struct nuiModuleRuntimeDescriptor
 {
@@ -59,7 +56,7 @@ public:
 private:
     nuiFrameworkManager();
 public:
-    nuiFrameworkManagerErrorCode init();
+    //nuiFrameworkManagerErrorCode init();
     nuiFrameworkManagerErrorCode initializeFrameworkManager();
     nuiFrameworkManagerErrorCode loadAddonsAtPath(const char *addonsPath);
     std::vector<std::string> *listDynamicModules();

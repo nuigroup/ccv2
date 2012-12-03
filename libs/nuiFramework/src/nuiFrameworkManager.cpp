@@ -28,25 +28,6 @@ nuiFrameworkManager *nuiFrameworkManager::getInstance()
 	return instance;
 }
 
-nuiFrameworkManagerErrorCode nuiFrameworkManager::init() {
-	nuiFactory::getInstance()->init();
-	nuiModuleDescriptor* rootDescriptor = new nuiModuleDescriptor();
-	rootDescriptor->setAuthor("Scott Halstvedt");
-	rootDescriptor->setDescription("This is the root pipeline initialized within the workflow");
-	rootDescriptor->setName("root");
-	this->rootPipeline = dynamic_cast<nuiPipelineModule*>(nuiFactory::getInstance()->createPipeline(rootDescriptor));
-	nuiTreeNode<int, nuiModule*> *temp;
-	if(rootPipeline != NULL) 
-		temp = new nuiTreeNode<int, nuiModule*>(rootPipeline->property("id").asInteger(), rootPipeline);
-	else {
-		return NUI_FRAMEWORK_ROOT_INITIALIZATION_FAILED;
-	}
-	if(temp != NULL)
-		this->dataObjectTree = new nuiTree<int, nuiModule*>(temp);
-	else return NUI_FRAMEWORK_ROOT_INITIALIZATION_FAILED;
-	return NUI_FRAMEWORK_MANAGER_OK;
-}
-
 nuiFrameworkManagerErrorCode nuiFrameworkManager::initializeFrameworkManager()
 {
 	nuiFactory::getInstance()->init();

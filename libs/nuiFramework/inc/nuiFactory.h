@@ -9,8 +9,6 @@
 #include "nuiModule.h"
 #include "nuiPluginManager.h"
 
-class nuiDynamicLibrary;
-
 class nuiFactory 
 {
 public:

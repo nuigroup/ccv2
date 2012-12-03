@@ -2,6 +2,10 @@
 
 LOG_DECLARE("RPC");
 
+//! \def ADDRPCMETHOD(FUNC, RPCCALL)
+//! Shortcut to easier add/control methods of JsonRpcApi
+#define ADDRPCMETHOD(FUNC, RPCCALL) server->AddMethod(new Json::Rpc::RpcMethod<nuiJsonRpcApi>(*this, &nuiJsonRpcApi::##FUNC,std::string("##RPCCALL")));
+
 nuiJsonRpcApi *nuiJsonRpcApi::getInstance()
 {
 	static nuiJsonRpcApi *instance = NULL;
@@ -36,7 +40,7 @@ bool nuiJsonRpcApi::init(std::string address, int port)
 #endif
 
 	if(server == NULL)
-		server = new Json::Rpc::TcpServer(std::string("127.0.0.1"), 7500);
+		server = new Json::Rpc::TcpServer(address, port);
 
 	if(!server->Bind())
 	{
@@ -54,31 +58,57 @@ bool nuiJsonRpcApi::init(std::string address, int port)
 	this->finished = false;
 	LOG(NUI_DEBUG, "running");
 
-	server->AddMethod(new Json::Rpc::RpcMethod<nuiJsonRpcApi>(*this, &nuiJsonRpcApi::nui_list_dynamic,std::string("nui_list_dynamic")));
-	server->AddMethod(new Json::Rpc::RpcMethod<nuiJsonRpcApi>(*this, &nuiJsonRpcApi::nui_list_pipelines,std::string("nui_list_pipelines")));
-	server->AddMethod(new Json::Rpc::RpcMethod<nuiJsonRpcApi>(*this, &nuiJsonRpcApi::nui_workflow_start,std::string("nui_workflow_start")));
-	server->AddMethod(new Json::Rpc::RpcMethod<nuiJsonRpcApi>(*this, &nuiJsonRpcApi::nui_workflow_stop,std::string("nui_workflow_stop")));
-	server->AddMethod(new Json::Rpc::RpcMethod<nuiJsonRpcApi>(*this, &nuiJsonRpcApi::nui_workflow_quit,std::string("nui_workflow_quit")));
-	server->AddMethod(new Json::Rpc::RpcMethod<nuiJsonRpcApi>(*this, &nuiJsonRpcApi::nui_create_pipeline,std::string("nui_create_pipeline")));
-	server->AddMethod(new Json::Rpc::RpcMethod<nuiJsonRpcApi>(*this, &nuiJsonRpcApi::nui_create_module,std::string("nui_create_module")));
-	server->AddMethod(new Json::Rpc::RpcMethod<nuiJsonRpcApi>(*this, &nuiJsonRpcApi::nui_create_connection,std::string("nui_create_connection")));
-	server->AddMethod(new Json::Rpc::RpcMethod<nuiJsonRpcApi>(*this, &nuiJsonRpcApi::nui_update_pipeline,std::string("nui_update_pipeline")));
-	server->AddMethod(new Json::Rpc::RpcMethod<nuiJsonRpcApi>(*this, &nuiJsonRpcApi::nui_update_pipelineProperty,std::string("nui_update_pipelineProperty")));
-	server->AddMethod(new Json::Rpc::RpcMethod<nuiJsonRpcApi>(*this, &nuiJsonRpcApi::nui_update_moduleProperty,std::string("nui_update_moduleProperty")));
-	server->AddMethod(new Json::Rpc::RpcMethod<nuiJsonRpcApi>(*this, &nuiJsonRpcApi::nui_update_endpoint,std::string("nui_update_endpoint")));
-	server->AddMethod(new Json::Rpc::RpcMethod<nuiJsonRpcApi>(*this, &nuiJsonRpcApi::nui_update_connection,std::string("nui_update_connection")));
-	server->AddMethod(new Json::Rpc::RpcMethod<nuiJsonRpcApi>(*this, &nuiJsonRpcApi::nui_update_endpointCount,std::string("nui_update_endpointCount")));
-	server->AddMethod(new Json::Rpc::RpcMethod<nuiJsonRpcApi>(*this, &nuiJsonRpcApi::nui_delete_pipeline,std::string("nui_delete_pipeline")));
-	server->AddMethod(new Json::Rpc::RpcMethod<nuiJsonRpcApi>(*this, &nuiJsonRpcApi::nui_delete_module,std::string("nui_delete_module")));
-	server->AddMethod(new Json::Rpc::RpcMethod<nuiJsonRpcApi>(*this, &nuiJsonRpcApi::nui_delete_endpoint,std::string("nui_delete_endpoint")));
-	server->AddMethod(new Json::Rpc::RpcMethod<nuiJsonRpcApi>(*this, &nuiJsonRpcApi::nui_delete_connection,std::string("nui_delete_connection")));
-	server->AddMethod(new Json::Rpc::RpcMethod<nuiJsonRpcApi>(*this, &nuiJsonRpcApi::nui_get_current,std::string("nui_get_current")));
-	server->AddMethod(new Json::Rpc::RpcMethod<nuiJsonRpcApi>(*this, &nuiJsonRpcApi::nui_get_pipeline,std::string("nui_get_pipeline")));
-	server->AddMethod(new Json::Rpc::RpcMethod<nuiJsonRpcApi>(*this, &nuiJsonRpcApi::nui_get_module,std::string("nui_get_module")));
-	server->AddMethod(new Json::Rpc::RpcMethod<nuiJsonRpcApi>(*this, &nuiJsonRpcApi::nui_get_connection,std::string("nui_get_connection")));
-	server->AddMethod(new Json::Rpc::RpcMethod<nuiJsonRpcApi>(*this, &nuiJsonRpcApi::nui_navigate_push,std::string("nui_navigate_push")));
-	server->AddMethod(new Json::Rpc::RpcMethod<nuiJsonRpcApi>(*this, &nuiJsonRpcApi::nui_navigate_pop,std::string("nui_navigate_pop")));
-	server->AddMethod(new Json::Rpc::RpcMethod<nuiJsonRpcApi>(*this, &nuiJsonRpcApi::nui_save_workflow,std::string("nui_save_workflow")));
+    ADDRPCMETHOD(nui_list_dynamic, nui_list_dynamic)
+    ADDRPCMETHOD(nui_list_pipelines, nui_list_pipelines)
+    ADDRPCMETHOD(nui_workflow_start, nui_workflow_start)
+ 	ADDRPCMETHOD(nui_workflow_stop, nui_workflow_stop)
+    ADDRPCMETHOD(nui_workflow_quit, nui_workflow_quit)
+    ADDRPCMETHOD(nui_create_pipeline, nui_create_pipeline)
+    ADDRPCMETHOD(nui_create_module, nui_create_module)
+    ADDRPCMETHOD(nui_create_connection, nui_create_connection)
+    ADDRPCMETHOD(nui_update_pipeline, nui_update_pipeline)
+    ADDRPCMETHOD(nui_update_pipelineProperty, nui_update_pipelineProperty)
+    ADDRPCMETHOD(nui_update_moduleProperty, nui_update_moduleProperty)
+    ADDRPCMETHOD(nui_update_endpoint, nui_update_endpoint)
+    ADDRPCMETHOD(nui_update_connection, nui_update_connection)
+    ADDRPCMETHOD(nui_update_endpointCount, nui_update_endpointCount)
+    ADDRPCMETHOD(nui_delete_pipeline, nui_delete_pipeline)
+    ADDRPCMETHOD(nui_delete_module, nui_delete_module)
+    ADDRPCMETHOD(nui_delete_endpoint, nui_delete_endpoint)
+    ADDRPCMETHOD(nui_delete_connection, nui_delete_connection)	
+    ADDRPCMETHOD(nui_get_current, nui_get_current)
+    ADDRPCMETHOD(nui_get_pipeline, nui_get_pipeline)
+    ADDRPCMETHOD(nui_get_module, nui_get_module)
+    ADDRPCMETHOD(nui_get_connection, nui_get_connection)
+    ADDRPCMETHOD(nui_navigate_push, nui_navigate_push)
+    ADDRPCMETHOD(nui_navigate_pop, nui_navigate_pop)
+    ADDRPCMETHOD(nui_save_workflow, nui_save_workflow)
+
+	//server->AddMethod(new Json::Rpc::RpcMethod<nuiJsonRpcApi>(*this, &nuiJsonRpcApi::nui_save_workflow,std::string("nui_save_workflow")));
+    //server->AddMethod(new Json::Rpc::RpcMethod<nuiJsonRpcApi>(*this, &nuiJsonRpcApi::nui_list_dynamic,std::string("nui_list_dynamic")));
+    //server->AddMethod(new Json::Rpc::RpcMethod<nuiJsonRpcApi>(*this, &nuiJsonRpcApi::nui_list_pipelines,std::string("nui_list_pipelines")));
+    //server->AddMethod(new Json::Rpc::RpcMethod<nuiJsonRpcApi>(*this, &nuiJsonRpcApi::nui_workflow_start,std::string("nui_workflow_start")));
+    //server->AddMethod(new Json::Rpc::RpcMethod<nuiJsonRpcApi>(*this, &nuiJsonRpcApi::nui_workflow_stop,std::string("nui_workflow_stop")));
+    //server->AddMethod(new Json::Rpc::RpcMethod<nuiJsonRpcApi>(*this, &nuiJsonRpcApi::nui_workflow_quit,std::string("nui_workflow_quit")));
+    //server->AddMethod(new Json::Rpc::RpcMethod<nuiJsonRpcApi>(*this, &nuiJsonRpcApi::nui_create_pipeline,std::string("nui_create_pipeline")));
+    //server->AddMethod(new Json::Rpc::RpcMethod<nuiJsonRpcApi>(*this, &nuiJsonRpcApi::nui_create_module,std::string("nui_create_module")));
+    //server->AddMethod(new Json::Rpc::RpcMethod<nuiJsonRpcApi>(*this, &nuiJsonRpcApi::nui_create_connection,std::string("nui_create_connection")));
+    //server->AddMethod(new Json::Rpc::RpcMethod<nuiJsonRpcApi>(*this, &nuiJsonRpcApi::nui_update_pipeline,std::string("nui_update_pipeline")));
+    //server->AddMethod(new Json::Rpc::RpcMethod<nuiJsonRpcApi>(*this, &nuiJsonRpcApi::nui_update_pipelineProperty,std::string("nui_update_pipelineProperty")));
+    //server->AddMethod(new Json::Rpc::RpcMethod<nuiJsonRpcApi>(*this, &nuiJsonRpcApi::nui_update_moduleProperty,std::string("nui_update_moduleProperty")));
+    //server->AddMethod(new Json::Rpc::RpcMethod<nuiJsonRpcApi>(*this, &nuiJsonRpcApi::nui_update_endpoint,std::string("nui_update_endpoint")));
+    //server->AddMethod(new Json::Rpc::RpcMethod<nuiJsonRpcApi>(*this, &nuiJsonRpcApi::nui_update_connection,std::string("nui_update_connection")));
+    //server->AddMethod(new Json::Rpc::RpcMethod<nuiJsonRpcApi>(*this, &nuiJsonRpcApi::nui_update_endpointCount,std::string("nui_update_endpointCount")));
+    //server->AddMethod(new Json::Rpc::RpcMethod<nuiJsonRpcApi>(*this, &nuiJsonRpcApi::nui_delete_pipeline,std::string("nui_delete_pipeline")));
+    //server->AddMethod(new Json::Rpc::RpcMethod<nuiJsonRpcApi>(*this, &nuiJsonRpcApi::nui_delete_module,std::string("nui_delete_module")));
+    //server->AddMethod(new Json::Rpc::RpcMethod<nuiJsonRpcApi>(*this, &nuiJsonRpcApi::nui_delete_endpoint,std::string("nui_delete_endpoint")));
+    //server->AddMethod(new Json::Rpc::RpcMethod<nuiJsonRpcApi>(*this, &nuiJsonRpcApi::nui_delete_connection,std::string("nui_delete_connection")));
+    //server->AddMethod(new Json::Rpc::RpcMethod<nuiJsonRpcApi>(*this, &nuiJsonRpcApi::nui_get_current,std::string("nui_get_current")));
+    //server->AddMethod(new Json::Rpc::RpcMethod<nuiJsonRpcApi>(*this, &nuiJsonRpcApi::nui_get_pipeline,std::string("nui_get_pipeline")));
+    //server->AddMethod(new Json::Rpc::RpcMethod<nuiJsonRpcApi>(*this, &nuiJsonRpcApi::nui_get_module,std::string("nui_get_module")));
+    //server->AddMethod(new Json::Rpc::RpcMethod<nuiJsonRpcApi>(*this, &nuiJsonRpcApi::nui_get_connection,std::string("nui_get_connection")));
+    //server->AddMethod(new Json::Rpc::RpcMethod<nuiJsonRpcApi>(*this, &nuiJsonRpcApi::nui_navigate_push,std::string("nui_navigate_push")));
+    //server->AddMethod(new Json::Rpc::RpcMethod<nuiJsonRpcApi>(*this, &nuiJsonRpcApi::nui_navigate_pop,std::string("nui_navigate_pop")));
 
 	return true;
 };
@@ -99,7 +129,11 @@ void nuiJsonRpcApi::startApi()
 void nuiJsonRpcApi::stopApi(bool killServer)
 {
 	this->want_quit = true;
-	//if(killServer) cleanup();
+};
+
+bool nuiJsonRpcApi::isFinished()
+{
+    return finished;
 };
 
 void nuiJsonRpcApi::execute()
@@ -108,16 +142,16 @@ void nuiJsonRpcApi::execute()
 	{
 		server->WaitMessage(1000);
 	} while(!want_quit);
-}
+};
 
 void nuiJsonRpcApi::cleanup() {
 	if (this->server != NULL)
 		server->Close();
 	delete server;
-	finished = true;
 #ifdef _WIN32
 	WSACleanup();
 #endif
+    finished = true;
 };
 
 nuiJsonRpcApi::nuiJsonRpcApi() : pt::thread(false) 
@@ -820,9 +854,4 @@ void nuiJsonRpcApi::setFailure( Json::Value &response, std::string message )
 void nuiJsonRpcApi::setSuccess( Json::Value &response )
 {
 	response["result"] = "success";
-}
-
-bool nuiJsonRpcApi::isFinished()
-{
-	return finished;
 }
