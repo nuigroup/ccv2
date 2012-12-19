@@ -41,7 +41,10 @@ typedef std::vector<nuiDynamicLibraryFreeFunc> nuiDynamicLibraryFreeVec;
 //! maps plugin_names to structures, containing pointers to core plugin functions
 typedef std::map<std::string, nuiRegisterPluginParameters> nuiRegisterPluginParamsMap;
 
-//! Singleton class 
+/** \class nuiPluginManager
+ *  Singleton class. Used to store information about loaded dlls with plugins,
+ *  plugins, hold poitners to functions for plugin allocation/deallocation
+ */
 class nuiPluginManager
 {
 public:
@@ -55,6 +58,10 @@ public:
      */
     static nuiPluginFrameworkErrorCode registerPluginType(const char *pluginType, const nuiRegisterPluginParameters *params);
 
+    /** \fn bool isValid(const char* objectType, const nuiRegisterPluginParameters *params)
+     *  checks whether registerPluginParams were filled correctly
+     */
+    static bool isValid(const char* objectType, const nuiRegisterPluginParameters *params);
 private:
 	//! private constructor
 	nuiPluginManager();

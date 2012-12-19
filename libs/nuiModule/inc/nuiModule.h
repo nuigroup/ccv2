@@ -56,34 +56,53 @@ class nuiEndpointDescriptor;
 
 class nuiModuleDescriptor
 {
-public:	
+public:
+    //! no checks, just add this descriptor
 	void addChildModuleDescriptor(nuiModuleDescriptor* moduleDescriptor);
+    //! remove from list if exists
 	void removeChildModuleDescriptor(nuiModuleDescriptor* moduleDescriptor);
-	void addDataStreamDescriptor(nuiDataStreamDescriptor* connection);
-	void removeDataStreamDescriptor(nuiDataStreamDescriptor* connection);
-	int getDataStreamDescriptorCount();
-	nuiDataStreamDescriptor* getDataStreamDescriptor(int index);
+    //! gets count of child modules
+    int getChildModulesCount();
+    //! gets child module at specified index
+    nuiModuleDescriptor* getChildModuleDescriptor(int index);
 
-	nuiModuleDescriptor* getChildModuleDescriptor(int index);
-	int getChildModulesCount();
+    //! no checks, just add this connection
+	void addDataStreamDescriptor(nuiDataStreamDescriptor* connection);
+    //! remove from list if exists
+	void removeDataStreamDescriptor(nuiDataStreamDescriptor* connection);
+    //! gets count of attached connetion descriptors
+    int getDataStreamDescriptorCount();
+    //! return speicfied connection descriptor
+    nuiDataStreamDescriptor* getDataStreamDescriptor(int index);
+	
 	int getInputEndpointsCount();
 	int getOutputEndpointsCount();
+    
+    //! TODO : can we do this in module??? should be moved to pipeline.
 	void setInputEndpointsCount(int count);
 	void setOutputEndpointsCount(int count);
-	void addInputEndpointDescriptor(nuiEndpointDescriptor* descriptor,int index);
-	void addOutputEndpointDescriptor(nuiEndpointDescriptor* descriptor,int index);
+
+    //! TODO : wtf ?!?! set any provided index to endpoint descriptor, add endpoint to list
+	void addInputEndpointDescriptor(nuiEndpointDescriptor* descriptor, int index);
+    //! TODO : wtf ?!?! set any provided index to endpoint descriptor, add endpoint to list
+	void addOutputEndpointDescriptor(nuiEndpointDescriptor* descriptor, int index);
+
 	void removeInputEndpointDescriptor(nuiEndpointDescriptor* descriptor);
 	void removeOutputEndpointDescriptor(nuiEndpointDescriptor* descriptor);
 	nuiEndpointDescriptor *getInputEndpointDescriptor(int index);
 	nuiEndpointDescriptor *getOutputEndpointDescriptor(int index);
-	//void setIsPipeline(bool isPipeline);
-	//bool getIsPipeline(); do these belong here?
+
+    //! update module name
 	void setName(std::string name);
+    //! update module description
 	void setDescription(std::string description);
+    //! update module author
 	void setAuthor(std::string author);
+
 	std::string getName(); 
 	std::string getDescription(); 
 	std::string getAuthor();
+
     nuiProperty &property(std::string name);
 	std::map<std::string, nuiProperty*> &getProperties();
 

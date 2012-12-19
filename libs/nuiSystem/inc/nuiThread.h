@@ -13,7 +13,6 @@
  ** WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  **********************************************************************/
 
-
 #ifndef NUI_THREAD_H
 #define NUI_THREAD_H
 
@@ -40,8 +39,6 @@ private:
     void *userdata;
     bool want_quit;
 };
-
-
 
 class nuiMultithreadable
 {

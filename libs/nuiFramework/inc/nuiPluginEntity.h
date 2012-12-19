@@ -13,7 +13,7 @@
 #include "nuiPlugin.h"
 
 //! \class nuiPluginEntity
-//! Holds wrapped plugin from dll
+//! Holds instantiated plugin
 class nuiPluginEntity
 {
 public:

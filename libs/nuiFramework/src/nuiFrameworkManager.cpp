@@ -30,7 +30,6 @@ nuiFrameworkManager *nuiFrameworkManager::getInstance()
 
 nuiFrameworkManagerErrorCode nuiFrameworkManager::initializeFrameworkManager()
 {
-	nuiFactory::getInstance()->init();
     this->rootPipeline = (nuiPipelineModule*)(nuiFactory::getInstance()->create("root"));
 	if(rootPipeline != NULL) {
 		nuiTreeNode<int, nuiModule*> *temp = new nuiTreeNode<int, nuiModule*>(rootPipeline->property("id").asInteger(), rootPipeline);
@@ -39,55 +38,57 @@ nuiFrameworkManagerErrorCode nuiFrameworkManager::initializeFrameworkManager()
 		}
 		dataObjectTree = new nuiTree<int, nuiModule*>(temp);
 	}
-	return (rootPipeline != NULL) ? NUI_FRAMEWORK_MANAGER_OK : NUI_FRAMEWORK_ROOT_INITIALIZATION_FAILED;
+	return (rootPipeline != NULL) ? 
+        NUI_FRAMEWORK_MANAGER_OK : NUI_FRAMEWORK_ROOT_INITIALIZATION_FAILED;
 }
 
 nuiFrameworkManagerErrorCode nuiFrameworkManager::loadSettingsFromJson(const char* fileName) {
-	// OPEN FILE
+	// Open file
 	std::ifstream settingsFile(fileName);
 	Json::Value root;
 	Json::Reader reader;
 	bool parsingSuccessful = reader.parse(settingsFile, root);
-	if(!parsingSuccessful) return NUI_FRAMEWORK_ROOT_INITIALIZATION_FAILED;
+	if(!parsingSuccessful) 
+        return NUI_FRAMEWORK_ROOT_INITIALIZATION_FAILED;
+
 	// LOAD MODULE LIBRARY FROM JSON
 	Json::Value modules = root.get("module_library", NULL);
 	for (Json::Value::iterator i = modules.begin(); i != modules.end(); i++) 
 	{
 		std::string path = (*i).get("path", NULL).asString();
 		nuiPluginManager::getInstance()->loadLibrary(path);
-
-		//Json::Value moduleNames = (*i).get("modules", NULL).asString();
-		//for (Json::Value::iterator j = moduleNames.begin(); j != moduleNames.end(); j++) 
-		//{
-		//	nuiPluginManager::getInstance()->loadPluginFromLibrary(path, (*j).get("name", NULL).asString());
-		//}
 	}
 	nuiFactory::getInstance()->loadDynamicModules();
-	//nuiPluginManager::getInstance()->loadPluginsFromLoadedLibraries();
-	//
+
 	return loadSettingsFromJson(&root);
 }
 
 nuiFrameworkManagerErrorCode nuiFrameworkManager::loadSettingsFromJson(Json::Value *root) {
 	Json::Value pipelines = root->get("pipelines", NULL);
 	std::map<std::string,nuiModuleDescriptor*> pipelineDescriptorsMap;
-	for(Json::Value::iterator i = pipelines.begin(); i != pipelines.end(); i++) {
+
+	for(Json::Value::iterator i = pipelines.begin(); i != pipelines.end(); i++) 
+    {
 		nuiModuleDescriptor *parsedDescriptor = parseModuleDescriptor(&*i);
 		if(parsedDescriptor != NULL)
 		{
-			std::map<std::string,nuiModuleDescriptor*>::iterator pipelineSearch = pipelineDescriptorsMap.find(parsedDescriptor->getName());
+			std::map<std::string,nuiModuleDescriptor*>::iterator pipelineSearch; 
+            pipelineSearch = pipelineDescriptorsMap.find(parsedDescriptor->getName());
 			//if the pipeline is already in the dictionary, ignore it
 			if(pipelineSearch == pipelineDescriptorsMap.end())
 				pipelineDescriptorsMap[parsedDescriptor->getName()] = parsedDescriptor;
 		}
 	}
-
-	for(std::map<std::string,nuiModuleDescriptor*>::iterator iter = pipelineDescriptorsMap.begin(); iter != pipelineDescriptorsMap.end(); iter++)
+    std::map<std::string,nuiModuleDescriptor*>::iterator iter;
+	for( iter = pipelineDescriptorsMap.begin(); iter != pipelineDescriptorsMap.end(); iter++)
 	{
 		nuiFactory::getInstance()->pipelineDescriptors[iter->first] = iter->second;
 	}
-	nuiFrameworkManagerErrorCode isGraphCorrect = NUI_FRAMEWORK_MANAGER_OK; // in the future, implement checkPipelineGraphForLoop(pipelineDescriptorsMap);
-	return nuiFactory::getInstance()->pipelineDescriptors.size() > 0 ? NUI_FRAMEWORK_MANAGER_OK : NUI_FRAMEWORK_ROOT_INITIALIZATION_FAILED;
+    // in the future, implement checkPipelineGraphForLoop(pipelineDescriptorsMap);
+	nuiFrameworkManagerErrorCode isGraphCorrect = NUI_FRAMEWORK_MANAGER_OK;
+
+	return (nuiFactory::getInstance()->pipelineDescriptors.size() > 0) ? 
+        NUI_FRAMEWORK_MANAGER_OK : NUI_FRAMEWORK_ROOT_INITIALIZATION_FAILED;
 }
 
 
@@ -97,35 +98,20 @@ nuiFrameworkManagerErrorCode nuiFrameworkManager::saveSettingsToJson(const char 
 	nuiFrameworkManagerErrorCode error = saveSettingsToJson(root, descriptors);
 	// write the file
 	bool written = false;
-	return (error == NUI_FRAMEWORK_MANAGER_OK && written) ? NUI_FRAMEWORK_MANAGER_OK : NUI_FRAMEWORK_ERROR_SAVING_FILE;
+	return (error == NUI_FRAMEWORK_MANAGER_OK && written) ? 
+        NUI_FRAMEWORK_MANAGER_OK : NUI_FRAMEWORK_ERROR_SAVING_FILE;
 }
 
 nuiFrameworkManagerErrorCode nuiFrameworkManager::saveSettingsToJson(Json::Value *root, std::list<nuiModuleDescriptor*>* descriptors)
 {
-	/*
-	Json::Value pipelines = new Json::Value();
-	(*root)["pipelines"] = pipelines;
-	
-	std::list<nuiModuleDescriptor*>::iterator it;
-	int pipeline = 0;
-	for (it = descriptors->begin(); it != descriptors->end(); it++)
-	{
-		Json::Value pipeline = serialize_pipeline(*it);
-	}
-	*/
 	root = &nuiJsonRpcApi::serialize_workflow(this->getWorkflowRoot());
 	return NUI_FRAMEWORK_MANAGER_OK;
 }
 
-
-
-nuiFrameworkManagerErrorCode nuiFrameworkManager::loadAddonsAtPath(const char *addonsPath)
-{
-	//
-	// nuiFactory::getInstance()->loadDynamicModules((char*)addonsPath);
-	return NUI_FRAMEWORK_MANAGER_OK;
-	//
-}
+// nuiFrameworkManagerErrorCode nuiFrameworkManager::loadAddonsAtPath(const char *addonsPath)
+// {
+// 	return NUI_FRAMEWORK_MANAGER_OK;
+// }
 
 nuiFrameworkManagerErrorCode nuiFrameworkManager::saveSettingsToJson( const char* fileName, std::string& pipelineName )
 {
@@ -142,8 +128,6 @@ nuiFrameworkManagerErrorCode nuiFrameworkManager::saveSettingsToJson( Json::Valu
 	descriptors.push_back(pipeline);
 	return saveSettingsToJson(root, &descriptors);
 }
-
-
 
 nuiModuleDescriptor *nuiFrameworkManager::parseModuleDescriptor(Json::Value *root) {
 	nuiModuleDescriptor* moduleDescriptor = new nuiModuleDescriptor();
@@ -249,17 +233,18 @@ std::vector<std::string> *nuiFrameworkManager::listPipelines(std::string &hosted
 	std::vector<std::string> deniedPipelines;
 	deniedPipelines.push_back("root");
 	deniedPipelines.push_back(hostedPipelineName);
-	while (deniedPipelines.size()>0)
+	while (deniedPipelines.size() > 0)
 	{
 		std::string currentString = deniedPipelines.back();
 		deniedPipelines.pop_back();
-		for (int i=pipelines->size()-1;i>=0;i--)
+		for (int i=pipelines->size() - 1 ; i>=0 ; i--)
 		{
 			bool needToBeDeleted = false;
-			nuiModuleDescriptor* currentModuleDescriptor = nuiFactory::getInstance()->getDescriptor((*pipelines)[i]);
+			nuiModuleDescriptor* currentModuleDescriptor = 
+                nuiFactory::getInstance()->getDescriptor( (*pipelines)[i] );
 			if (currentModuleDescriptor==NULL)
 				continue;
-			for (int j=0;j<currentModuleDescriptor->getChildModulesCount();j++)
+			for (int j=0; j<currentModuleDescriptor->getChildModulesCount(); j++)
 			{
 				if (currentModuleDescriptor->getChildModuleDescriptor(j)->getName() == currentString)
 				{

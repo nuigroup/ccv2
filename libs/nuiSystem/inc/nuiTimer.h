@@ -7,8 +7,8 @@
 *
 */
 
-#ifndef _NUI_TIMER_H_
-#define _NUI_TIMER_H_
+#ifndef NUI_TIMER_H
+#define NUI_TIMER_H
 
 #include "nuiUtils.h"
 
@@ -38,4 +38,4 @@ private:
 
 
 
-#endif//_NUI_TIMER_H_
+#endif// NUI_TIMER_H

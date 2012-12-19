@@ -11,9 +11,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\inc\nuiDataGenericContainer.h" />
     <ClInclude Include="..\inc\nuiDebugLogger.h" />
-    <ClInclude Include="..\inc\nuiDefines.h" />
     <ClInclude Include="..\inc\nuiProperty.h" />
     <ClInclude Include="..\inc\nuiThread.h" />
     <ClInclude Include="..\inc\nuiTimer.h" />
@@ -21,9 +19,7 @@
     <ClInclude Include="..\inc\nuiUtils.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\src\nuiDataGenericContainer.cpp" />
     <ClCompile Include="..\src\nuiDebugLogger.cpp" />
-    <ClCompile Include="..\src\nuiDefines.cpp" />
     <ClCompile Include="..\src\nuiProperty.cpp" />
     <ClCompile Include="..\src\nuiThread.cpp" />
     <ClCompile Include="..\src\nuiTimer.cpp" />

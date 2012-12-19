@@ -15,12 +15,10 @@
 #define _NUI_FRAMEWORK_H
 
 #include "nuiDebugLogger.h"
-//#include "nuiDaemon.h"
 #include "nuiPipeline.h"
 #include "nuiModule.h"
 #include "nuiFactory.h"
 #include "nuiProperty.h"
 #include "nuiDataStream.h"
-#include "nuiDataGenericContainer.h"
 
 #endif

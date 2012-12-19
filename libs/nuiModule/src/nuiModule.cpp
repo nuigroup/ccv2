@@ -394,9 +394,11 @@ void nuiModuleDescriptor::addChildModuleDescriptor(nuiModuleDescriptor* moduleDe
 
 void nuiModuleDescriptor::removeChildModuleDescriptor(nuiModuleDescriptor* moduleDescriptor)
 {
-	if (moduleDescriptor!=NULL)
+	if (moduleDescriptor != NULL)
 	{
-		for (std::vector<nuiModuleDescriptor*>::iterator iter = childrenModuleDescriptions.begin(); iter != childrenModuleDescriptions.end(); iter++)
+        std::vector<nuiModuleDescriptor*>::iterator iter;
+		for ( iter = childrenModuleDescriptions.begin(); 
+            iter != childrenModuleDescriptions.end(); iter++)
 		{
 			if (moduleDescriptor == *iter)
 			{
@@ -428,13 +430,13 @@ int nuiModuleDescriptor::getOutputEndpointsCount()
 	return outputDescriptions.size();
 }
 
-void nuiModuleDescriptor::addInputEndpointDescriptor(nuiEndpointDescriptor* descriptor,int index)
+void nuiModuleDescriptor::addInputEndpointDescriptor(nuiEndpointDescriptor* descriptor, int index)
 {
 	descriptor->setIndex(index);
 	inputDescriptions.push_back(descriptor);
 }
 
-void nuiModuleDescriptor::addOutputEndpointDescriptor(nuiEndpointDescriptor* descriptor,int index)
+void nuiModuleDescriptor::addOutputEndpointDescriptor(nuiEndpointDescriptor* descriptor, int index)
 {
 	descriptor->setIndex(index);
 	outputDescriptions.push_back(descriptor);
@@ -443,7 +445,8 @@ void nuiModuleDescriptor::addOutputEndpointDescriptor(nuiEndpointDescriptor* des
 void nuiModuleDescriptor::removeInputEndpointDescriptor(nuiEndpointDescriptor* descriptor)
 {
 	int currentIndex = descriptor->getIndex();
-	for (std::vector<nuiEndpointDescriptor*>::iterator iter = inputDescriptions.begin(); iter != inputDescriptions.end(); iter++)
+    std::vector<nuiEndpointDescriptor*>::iterator iter;
+	for (iter = inputDescriptions.begin(); iter != inputDescriptions.end(); iter++)
 	{
 		if ((*iter == descriptor))
 		{
@@ -451,7 +454,8 @@ void nuiModuleDescriptor::removeInputEndpointDescriptor(nuiEndpointDescriptor* d
 			break;
 		}
 	}
-	for (std::vector<nuiEndpointDescriptor*>::iterator iter = inputDescriptions.begin(); iter != inputDescriptions.end(); iter++)
+
+	for (iter = inputDescriptions.begin(); iter != inputDescriptions.end(); iter++)
 	{
 		if ((*iter)->getIndex() >= currentIndex)
 			(*iter)->setIndex((*iter)->getIndex() - 1);
@@ -461,7 +465,8 @@ void nuiModuleDescriptor::removeInputEndpointDescriptor(nuiEndpointDescriptor* d
 void nuiModuleDescriptor::removeOutputEndpointDescriptor(nuiEndpointDescriptor* descriptor)
 {	
 	int currentIndex = descriptor->getIndex();
-	for (std::vector<nuiEndpointDescriptor*>::iterator iter = outputDescriptions.begin(); iter != outputDescriptions.end(); iter++)
+    std::vector<nuiEndpointDescriptor*>::iterator iter;
+	for (iter = outputDescriptions.begin(); iter != outputDescriptions.end(); iter++)
 	{
 		if ((*iter == descriptor))
 		{
@@ -469,7 +474,8 @@ void nuiModuleDescriptor::removeOutputEndpointDescriptor(nuiEndpointDescriptor* 
 			break;
 		}
 	}
-	for (std::vector<nuiEndpointDescriptor*>::iterator iter = outputDescriptions.begin(); iter != outputDescriptions.end(); iter++)
+
+	for (iter = outputDescriptions.begin(); iter != outputDescriptions.end(); iter++)
 	{
 		if ((*iter)->getIndex() >= currentIndex)
 			(*iter)->setIndex((*iter)->getIndex() - 1);
@@ -478,7 +484,8 @@ void nuiModuleDescriptor::removeOutputEndpointDescriptor(nuiEndpointDescriptor* 
 
 nuiEndpointDescriptor *nuiModuleDescriptor::getInputEndpointDescriptor(int index)
 {
-	for (std::vector<nuiEndpointDescriptor*>::iterator iter = inputDescriptions.begin(); iter != inputDescriptions.end(); iter++)
+    std::vector<nuiEndpointDescriptor*>::iterator iter;
+	for (iter = inputDescriptions.begin(); iter != inputDescriptions.end(); iter++)
 	{
 		if ((*iter)->getIndex() == index)
 			return *iter;
@@ -488,7 +495,8 @@ nuiEndpointDescriptor *nuiModuleDescriptor::getInputEndpointDescriptor(int index
 
 nuiEndpointDescriptor *nuiModuleDescriptor::getOutputEndpointDescriptor(int index)
 {
-	for (std::vector<nuiEndpointDescriptor*>::iterator iter = outputDescriptions.begin(); iter != outputDescriptions.end(); iter++)
+    std::vector<nuiEndpointDescriptor*>::iterator iter;
+	for (iter = outputDescriptions.begin(); iter != outputDescriptions.end(); iter++)
 	{
 		if ((*iter)->getIndex() == index)
 			return *iter;
@@ -540,7 +548,9 @@ void nuiModuleDescriptor::addDataStreamDescriptor(nuiDataStreamDescriptor* conne
 
 void nuiModuleDescriptor::removeDataStreamDescriptor(nuiDataStreamDescriptor* connection)
 {
-	for (std::vector<nuiDataStreamDescriptor*>::iterator iter = connectionDescriptors.begin();iter!=connectionDescriptors.end();iter++)
+    std::vector<nuiDataStreamDescriptor*>::iterator iter;
+	for (iter = connectionDescriptors.begin();
+        iter != connectionDescriptors.end(); iter++)
 	{
 		if (connection == *iter)
 		{
@@ -566,7 +576,8 @@ void nuiModuleDescriptor::setInputEndpointsCount(int count)
 		return;
 	if (count < getInputEndpointsCount())
 	{
-		for (std::vector<nuiEndpointDescriptor*>::iterator iter = inputDescriptions.end()-1; iter != inputDescriptions.begin();)
+        std::vector<nuiEndpointDescriptor*>::iterator iter;
+		for ( iter = inputDescriptions.end() - 1; iter != inputDescriptions.begin();)
 		{
 			if ((*iter)->getIndex() >= count)
 				inputDescriptions.erase(iter);
@@ -576,10 +587,12 @@ void nuiModuleDescriptor::setInputEndpointsCount(int count)
 	}
 	else
 	{
-		for (int i = inputDescriptions.size();i<count;i++)
+		for (int i = inputDescriptions.size(); i<count; i++)
 		{
-			nuiEndpointDescriptor* endpointDescription = new nuiEndpointDescriptor("*");
+			nuiEndpointDescriptor* endpointDescription 
+                = new nuiEndpointDescriptor("*");
 			endpointDescription->setIndex(i);
+
 			inputDescriptions.push_back(endpointDescription);
 		}
 	}
@@ -591,7 +604,8 @@ void nuiModuleDescriptor::setOutputEndpointsCount(int count)
 		return;
 	if (count < getOutputEndpointsCount())
 	{
-		for (std::vector<nuiEndpointDescriptor*>::iterator iter = outputDescriptions.end()-1; iter != outputDescriptions.begin();)
+        std::vector<nuiEndpointDescriptor*>::iterator iter;
+		for ( iter = outputDescriptions.end()-1; iter != outputDescriptions.begin();)
 		{
 			if ((*iter)->getIndex() >= count)
 				outputDescriptions.erase(iter);
