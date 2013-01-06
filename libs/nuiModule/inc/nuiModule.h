@@ -103,7 +103,7 @@ public:
 	std::string getDescription(); 
 	std::string getAuthor();
 
-    nuiProperty &property(std::string name);
+  nuiProperty &property(std::string name);
 	std::map<std::string, nuiProperty*> &getProperties();
 
 private:
@@ -121,27 +121,28 @@ class nuiModule
 public:	
 	nuiModule();
 	virtual ~nuiModule();
-public:
+
 	virtual void start();
 	virtual void stop();
 	virtual void update() = 0;
 	void trigger();
 	virtual void notifyDataReceived(nuiEndpoint *endpoint);
 	bool needUpdate(bool isAsyncMode = false);
-public:
-	bool hasInputEnpoints();
-	bool hasOutputEnpoints();
+
 	virtual void setInputEndpointCount(int n);
 	virtual void setOutputEndpointCount(int n);
+  virtual void setInputEndpoint(int n, nuiEndpoint *endpoint);
+  virtual void setOutputEndpoint(int n, nuiEndpoint *endpoint);
+
+
 	int getInputEndpointCount();
 	int getOutputEndpointCount();
-	virtual void setInputEndpoint(int n, nuiEndpoint *endpoint);
-	virtual void setOutputEndpoint(int n, nuiEndpoint *endpoint);
-	nuiEndpoint *getInputEndpoint(int n=0);
-	nuiEndpoint *getOutputEndpoint(int n=0);
+
+	nuiEndpoint *getInputEndpoint(int n);
+	nuiEndpoint *getOutputEndpoint(int n);
 	int getInputEndpointIndex(nuiEndpoint *stream);
 	int getOutputEndpointIndex(nuiEndpoint *stream);
-public:
+
 	nuiProperty &property(std::string name);
 	std::map<std::string, nuiProperty*> &getProperties();
 	bool isStarted();

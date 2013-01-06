@@ -29,12 +29,12 @@ public:
 	~nuiPluginEntity();
 private:
     // Can only be called from nuiPluginManager
-	nuiPluginEntity(const char* entityName, void* wrappedEntity, nuiReleaseInterface releaseInterface);
+	nuiPluginEntity(const char* entityName, void* wrappedEntity, nuiDeallocateFunc releaseInterface);
 
 	void* entity;
 	bool initialized;
 	const char* name;
-	nuiReleaseInterface releaseInterfaceFunc;
+	nuiDeallocateFunc deallocateFunc;
 
 	friend class nuiPluginManager;
 };

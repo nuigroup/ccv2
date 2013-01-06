@@ -29,8 +29,8 @@ nuiDynamicLibrary *nuiDynamicLibrary::load(const std::string & name,  std::strin
 {
 	if (name.empty()) 
 	{
-	errorString = "Empty path.";
-	return NULL;
+        errorString = "Empty path.";
+        return NULL;
 	}
   
 	void * handle = NULL;

@@ -183,7 +183,6 @@ void nuiModule::stop()
 void nuiModule::trigger()
 {
 	if (!this->isStarted())
-		//this->start();
 		return;
 	this->need_update = true;
 	if ( this->use_thread)
@@ -360,16 +359,6 @@ int nuiModule::getOutputEndpointIndex(nuiEndpoint *stream)
 		}
 	}
 	return result;
-}
-
-bool nuiModule::hasInputEnpoints()
-{
-	return getInputEndpointCount() > 0;
-}
-
-bool nuiModule::hasOutputEnpoints()
-{
-	return getOutputEndpointCount() > 0;
 }
 
 bool nuiModule::isStarted()
@@ -633,13 +622,3 @@ std::string nuiModuleDescriptor::getAuthor()
 {
     return author;
 }
-
-/*void nuiModuleDescriptor::setIsPipeline(bool isPipeline)
-{
-	this->isPipeline = isPipeline;
-}
-
-bool nuiModuleDescriptor::getIsPipeline()
-{
-	return isPipeline;
-} do these belong here? */

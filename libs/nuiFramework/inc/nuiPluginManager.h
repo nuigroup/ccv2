@@ -43,7 +43,7 @@ typedef std::map<std::string, nuiRegisterPluginParameters> nuiRegisterPluginPara
 
 /** \class nuiPluginManager
  *  Singleton class. Used to store information about loaded dlls with plugins,
- *  plugins, hold poitners to functions for plugin allocation/deallocation
+ *  plugins, hold pointers to functions for plugin and dll allocation/deallocation
  */
 class nuiPluginManager
 {
@@ -51,12 +51,12 @@ public:
 	//! gets instance of nuiPluginManager
 	static nuiPluginManager *getInstance();
 
-    /** \fn nuiPluginFrameworkErrorCode registerPluginType(const char *pluginType, const nuiRegisterPluginParameters *params)
+    /** \fn nuiPluginFrameworkErrorCode pluginRegisterFunc(const char *pluginType, const nuiRegisterPluginParameters *params)
      *  Called by dynamic library and used for sending data about plugin to nuiPluginManager. 
      *  Can be called several times by each dll if it contains more than one plugin.
      *  \return result of this operation to dynamic library
      */
-    static nuiPluginFrameworkErrorCode registerPluginType(const char *pluginType, const nuiRegisterPluginParameters *params);
+    static nuiPluginFrameworkErrorCode pluginRegisterFunc(const char *pluginType, const nuiRegisterPluginParameters *params);
 
     /** \fn bool isValid(const char* objectType, const nuiRegisterPluginParameters *params)
      *  checks whether registerPluginParams were filled correctly
@@ -103,7 +103,7 @@ public:
 	nuiPluginFrameworkErrorCode unloadPlugin(const std::string &pluginName);
 
     //! \return map plugin_name - structure, containing core plugin management functions
-	nuiRegisterPluginParamsMap *getRigisteredPlugins();
+	nuiRegisterPluginParamsMap *getRegisteredPlugins();
 
     //! creates plugin instance, pushes it to pluginInstanceMap
 	nuiPluginFrameworkErrorCode queryPluginObject(const nuiPluginEntity **pluginObject,const std::string& pluginTypeName);

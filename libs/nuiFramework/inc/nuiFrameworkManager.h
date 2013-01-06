@@ -48,6 +48,9 @@ public:
     bool isRunning;
 };
 
+/** \class nuiFrameworkManager
+ *  Provides API for workflow manipulations
+ */
 class nuiFrameworkManager
 {
 public:

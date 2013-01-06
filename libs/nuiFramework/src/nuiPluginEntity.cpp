@@ -1,20 +1,20 @@
 #include "nuiPluginEntity.h"
 #include <memory>
 
-nuiPluginEntity::nuiPluginEntity(const char* entityName, void* wrappedEntity, nuiReleaseInterface releaseInterface)
+nuiPluginEntity::nuiPluginEntity(const char* entityName, void* wrappedEntity, nuiDeallocateFunc releaseInterface)
 {
 	this->entity = wrappedEntity;
-	this->releaseInterfaceFunc = releaseInterface;
+	this->deallocateFunc = releaseInterface;
 	this->name = entityName;
-    //! TODO : is this good check? 03.12.12 AnatolyL
+  //! TODO : is this good check? 03.12.12 AnatolyL
 	initialized = (wrappedEntity != NULL);
 };
 
 nuiPluginEntity::~nuiPluginEntity()
 {
-	if ((releaseInterfaceFunc!=NULL) && (initialized))
+	if ((deallocateFunc!=NULL) && (initialized))
 	{
-		releaseInterfaceFunc(entity);
+		deallocateFunc(entity);
 		initialized = false;
 	}
 };

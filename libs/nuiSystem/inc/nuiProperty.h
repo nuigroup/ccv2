@@ -27,21 +27,21 @@
 
 #include "nuiUtils.h"
 
-typedef struct _nuiPoint {
+typedef struct nuiPoint {
     double x;
     double y;
-} nuiPoint;
+};
 
 typedef std::vector<nuiPoint> nuiPointList;
 
-typedef enum _nuiPropertyType {
+typedef enum nuiPropertyType {
     NUI_PROPERTY_NONE,
     NUI_PROPERTY_BOOL,
     NUI_PROPERTY_STRING,
     NUI_PROPERTY_INTEGER,
     NUI_PROPERTY_DOUBLE,
     NUI_PROPERTY_POINTLIST,
-} nuiPropertyType;
+};
 
 class nuiProperty;
 

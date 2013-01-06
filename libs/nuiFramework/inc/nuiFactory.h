@@ -53,8 +53,6 @@ private:
     //! Creates pipeline given pipeline descriptor
     nuiModule *createPipeline(nuiModuleDescriptor* descriptor);
 
-    void remove(nuiModule *module);
-
     friend class nuiFrameworkManager;
 };
 

@@ -55,7 +55,7 @@ class nuiDataStream
 public:
 	nuiDataStream(bool asyncMode = false, nuiDataSendCallback defaultCallback = NULL, bool deepCopy = true,  bool bufferedMode = false, int bufferSize = MIN_NUI_STREAM_BUFFER_SIZE, bool lastPacketProprity = true);
 	~nuiDataStream();
-public:
+
 	inline bool isDeepCopy();
 	inline bool isLastPacketPriority();
 	inline bool isAsyncMode();
@@ -71,7 +71,7 @@ public:
 	void setBufferSize(int bufferSize);
 	void setDeepCopy(bool deepCopy);
 	void setLastPacketPriority(bool lastPacketPriority);
-public:
+
 	void startStream();
 	void stopStream();
 	void sendData(nuiDataPacket *dataPacket, nuiDataSendCallback callback = NULL, int timelimit = 0);
@@ -80,9 +80,9 @@ private:
 	void cleanStream();
 	bool hasDataToSent(bool isAsyncMode = false);
 	void processData();
-private:
+
 	static void _thread_process(nuiThread *thread);
-private:
+
 	nuiThread* asyncThread;
 	nuiDataSendCallback defaultCallback;
 	std::queue<nuiDataSendCallback> callbackQueue;

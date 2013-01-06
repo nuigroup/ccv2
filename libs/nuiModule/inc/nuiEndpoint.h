@@ -31,6 +31,7 @@ public:
 	void setIndex(int index);
 	void setParentModuleDescriptor(nuiModuleDescriptor* parentModuleDescriptor);
 	nuiModuleDescriptor* getParentModuleDescriptor();
+
 private:
 	std::string typeDescriptor;
 	nuiModuleDescriptor* parentModuleDescriptor;
@@ -42,14 +43,14 @@ class nuiEndpoint
 public:
 	nuiEndpoint(nuiModule *hostModule);
 	virtual ~nuiEndpoint();
-public:
+
 	void transmitData();
 	nuiDataStream *addConnection(nuiEndpoint *endpoint);
 	nuiDataStreamErrorCode removeConnection(nuiEndpoint *endpoint);
 	void removeConnections();
 	nuiDataStream *getDataStreamForEndpoint(nuiEndpoint *endpoint);
 	unsigned int getConnectionCount();
-public:
+
 	void setTypeDescriptor(std::string typeDescriptor);
 	void setData(nuiDataPacket *dataPacket);
 	void setModuleHoster(nuiModule *moduleHoster);
@@ -64,7 +65,7 @@ private:
 	bool canBePairedWithEndpoint(nuiEndpoint *endpoint);
 	bool canBeSettedData(nuiDataPacket *dataPacket);
 	nuiDataStreamErrorCode writeData(nuiDataPacket *dataPacket);
-private:
+
 	std::map<nuiEndpoint*,nuiDataStream*> dataStreams;
 	pt::mutex *mtx;
 	std::string typeDescriptor;

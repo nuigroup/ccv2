@@ -80,7 +80,7 @@ std::vector<std::string> *nuiFactory::listPipelineNames()
 std::vector<std::string> *nuiFactory::listModuleNames()
 {
     std::vector<std::string>* list = new std::vector<std::string>();
-    nuiRegisterPluginParamsMap* plugins = nuiPluginManager::getInstance()->getRigisteredPlugins();
+    nuiRegisterPluginParamsMap* plugins = nuiPluginManager::getInstance()->getRegisteredPlugins();
     nuiRegisterPluginParamsMap::iterator it;
     for ( it = plugins->begin(); it != plugins->end(); it++ )
         list->push_back(it->first);
