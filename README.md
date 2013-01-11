@@ -24,6 +24,14 @@ We currently recommend using VS2010 to compile. The following solutions are prov
   - **nuiCVModuleLibrary** (Compiles associated CV modules)
      - **Dependencies:** nuiModule.lib/nuiSystem.lib
 
+Terms and definitions for developers
+------------
+In the past there were great misunderstanding and mess with definitions used 
+around the project. Currently the following definitions are proposed:
+1. Plugin - shared library, that may contain 1 or more funcitonal modules.
+2. Module - functional part of system, providing some processing functionality.
+3. Pipeline - functional part of system that can consist of one or more modules.
+
 Changelog
 ------------
 View CHANGES.md for latest updates.

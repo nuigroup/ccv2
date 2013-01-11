@@ -1,209 +1,181 @@
 #include "nuiDynamicLibrary.h"
 #include "nuiPluginManager.h"
 #include <string>
+#include <guiddef.h>
 
-nuiPluginManager *nuiPluginManager::getInstance()
+nuiPluginManager& nuiPluginManager::getInstance()
 {
-    static nuiPluginManager *instance = NULL;
-    if (instance == NULL)
-        instance = new nuiPluginManager();
-    return instance;
-}
-
-bool nuiPluginManager::isValid(const char *objectType, const nuiRegisterPluginParameters *params)
-{
-    // TODO: wtf?
-    if (!objectType || !(*objectType))
-        return false;
-    return !((params == NULL) || 
-        (params->allocateFunc == NULL) || 
-        (params->deallocateFunc == NULL) || 
-        (params->queryModuleDescriptorFunc==NULL));
+  static nuiPluginManager* instance = NULL;
+  if(!instance)
+    instance = new nuiPluginManager();
+  return *instance;
 }
 
 nuiPluginManager::nuiPluginManager()
 {
-	pluginFrameworkService.version.major = MAJOR_VERSION;
-	pluginFrameworkService.version.minor = MINOR_VERSION;
-	pluginFrameworkService.pluginRegisterFunc = pluginRegisterFunc;
+  pluginFrameworkService.version.major = MAJOR_VERSION;
+  pluginFrameworkService.version.minor = MINOR_VERSION;
+  pluginFrameworkService.registerModule = registerModule;
+
+//   assignedPluginId = 0;
+//   assignedModuleId = 0;
+
+  loadingPlugin = NULL;
+  loadingModules.clear();
 }
 
-nuiPluginManager::~nuiPluginManager()
+//! \todo destructor realization needed?
+// nuiPluginManager::~nuiPluginManager()
+// {
+//   shutdown();
+// };
+
+nuiPluginFrameworkErrorCode::err nuiPluginManager::shutdown()
 {
-	shutdown();
+  // 	nuiPluginFrameworkErrorCode result = nuiPluginFrameworkOK;
+  //     nuiDynamicLibraryMap::iterator i;
+  // 	for ( i = dynamicLibraryMap.begin(); i != dynamicLibraryMap.end(); i++)
+  // 		unloadLibrary(i->second);
+  //     nuiDynamicLibraryFreeVec::iterator func;
+  // 
+  // 	for (func = dynamicLibraryFreeVector.begin(); func != dynamicLibraryFreeVector.end(); ++func)
+  // 	{
+  // 		try	{  result = (*func)();	}
+  // 		catch (...)	{  result = nuiDynamicLibraryAlreadyUnloaded;	}
+  // 	}
+  // 
+  // 	registerPluginParamsMap.clear();
+  // 	dynamicLibraryFreeVector.clear();
+  // 	return result;
+  return nuiPluginFrameworkErrorCode::Success;
 }
 
-nuiPluginFrameworkErrorCode nuiPluginManager::shutdown()
+bool nuiPluginManager::validate(const nuiRegisterModuleParameters *params)
 {
-	nuiPluginFrameworkErrorCode result = nuiPluginFrameworkOK;
-    nuiDynamicLibraryMap::iterator i;
-	for ( i = dynamicLibraryMap.begin(); i != dynamicLibraryMap.end(); i++)
-		unloadLibrary(i->second);
-    nuiDynamicLibraryFreeVec::iterator func;
-
-    //! TODO : rewrite without try catch
-	for (func = dynamicLibraryFreeVector.begin(); func != dynamicLibraryFreeVector.end(); ++func)
-	{
-		try	{  result = (*func)();	}
-		catch (...)	{  result = nuiDynamicLibraryAlreadyUnloaded;	}
-	}
-
-	registerPluginParamsMap.clear();
-	dynamicLibraryFreeVector.clear();
-	return result;
+  return 
+   !((params == NULL) || 
+    (params->allocateFunc == NULL) || 
+    (params->deallocateFunc == NULL) || 
+    (params->getDescriptorFunc == NULL));
 }
 
-nuiPluginFrameworkErrorCode nuiPluginManager::pluginRegisterFunc(const char *pluginType, const nuiRegisterPluginParameters *params)
+nuiPluginFrameworkErrorCode::err nuiPluginManager::registerModule(const nuiRegisterModuleParameters *params)
 {
-  // perform checks whether we can register plugin
-	if (!nuiPluginManager::isValid(pluginType, params))
-		return nuiPluginRegistrationFailed;
+  nuiPluginManager pm = nuiPluginManager::getInstance();
+  
+  if(!pm.loadingPlugin)
+    return nuiPluginFrameworkErrorCode::UnexpectedError;
+  //if unexpected error occured
+  
+  if (!nuiPluginManager::validate(params))
+    return nuiPluginFrameworkErrorCode::ModuleRegistrationFailed;
 
-	nuiPluginManager* pm = nuiPluginManager::getInstance();
-	nuiPluginFrameworkVersion version = pm->pluginFrameworkService.version;
+  nuiPluginFrameworkVersion version = pm.pluginFrameworkService.version;
 
-	if (version.major != params->version.major)
-		return nuiPluginNonCompatibleVersion;
+  if (version.major != params->version.major)
+    return nuiPluginFrameworkErrorCode::IncompatibleVersion;
+  // perform checks whether we can register module
 
-	std::string key((const char *)pluginType);
-	if (pm->registerPluginParamsMap.find(key) != pm->registerPluginParamsMap.end())
-		return nuiPluginAlreadyRegistered;
+  for (int i=0; i<pm.modulesLoaded.size(); i++)
+  {
+    if(params->guid == pm.modulesLoaded[i]->guid)
+    {
+      return nuiPluginFrameworkErrorCode::RepeatingGUID;
+    }
+  }
+  // check if already registered module
 
-  // try to register plugin
-	pm->registerPluginParamsMap[key] = *params;
-	pm->pluginInstanceMap[key] = new std::vector<void*>();
-  //! TODO: how can we get here, having currently currentlyLoadingLibary == NULL?
-	if (pm->currentlyLoadingLibary != NULL)
-	{
-		if (pm->dynamicLibraryPluginMap.find(pm->currentlyLoadingLibary) == pm->dynamicLibraryPluginMap.end())
-			pm->dynamicLibraryPluginMap[pm->currentlyLoadingLibary] = new std::vector<std::string>();
-		pm->dynamicLibraryPluginMap[pm->currentlyLoadingLibary]->push_back(key);
-		if (pm->pluginInstanceMap.find(key) == pm->pluginInstanceMap.end())
-			pm->pluginInstanceMap[key] = new std::vector<void*>();
-	}
-	return nuiPluginFrameworkOK;
+  nuiModuleLoaded* module = new nuiModuleLoaded(params);
+  module->setParentPlugin(pm.loadingPlugin);
+  // create wrapper for module management
+
+  pm.loadingModules.push_back(module);
+  // load module wrapper to list of currently loading modules
+
+  return nuiPluginFrameworkErrorCode::Success;
 }
 
-nuiPluginFrameworkErrorCode nuiPluginManager::queryPluginObject(const nuiPluginEntity **pluginObject,const std::string& objectType)
+nuiPluginFrameworkErrorCode::err nuiPluginManager::unloadModule(GUID guid)
 {
-	*pluginObject = NULL;
-	nuiObjectParameters np;
-	np.objectType = (const char*)objectType.c_str();
-	np.frameworkServices = &pluginFrameworkService;
-	if (registerPluginParamsMap.find(objectType) != registerPluginParamsMap.end())
-	{
-		nuiRegisterPluginParameters* rp = &registerPluginParamsMap[objectType];
-		void * object = rp->allocateFunc(&np);
-		if (object == NULL)
-			return nuiPluginObjectQueryingFailed;
-		pluginInstanceMap[objectType]->push_back((void*)object);
-
-        // confirm that plugin was registered
-		*pluginObject = new nuiPluginEntity(objectType.c_str(),object,rp->deallocateFunc);
-		if (*pluginObject == NULL)
-			return nuiPluginNotRegistered;
-		return nuiPluginFrameworkOK;
-	}
-	return nuiPluginNotRegistered;
+  for(int i=modulesLoaded.size()-1 ; i>=0 ; i--)
+    if(modulesLoaded[i]->guid == guid)
+    {
+      modulesLoaded[i]->clearInstances();
+      //! \todo remove module from parent plugin
+      modulesLoaded.erase(modulesLoaded.begin() + i - 1);
+    }
+  return nuiPluginFrameworkErrorCode::Success;
 }
-	
-nuiRegisterPluginParamsMap *nuiPluginManager::getRegisteredPlugins()
+
+nuiPluginFrameworkErrorCode::err nuiPluginManager::loadLibrary(const std::string path)
 {
-	return &registerPluginParamsMap;
+  if(loadingPlugin)
+    return nuiPluginFrameworkErrorCode::UnexpectedError;
+  
+  //! \todo better error handling - consider using something better than string
+  std::string errorString;
+  nuiDynamicLibrary *library = nuiDynamicLibrary::load(path, errorString);
+  if (!library)
+    return nuiPluginFrameworkErrorCode::PluginLoadingFailed;
+  else
+  {
+    loadingPlugin = new nuiPluginLoaded(library);
+  }
+
+  nuiLibraryLoadFunc initFunc = 
+    (nuiLibraryLoadFunc)(library->getSymbol("nuiLibraryLoad"));
+
+  if (initFunc == NULL)
+    return nuiPluginFrameworkErrorCode::EntryPointNotFound;
+
+  //send plugin framework service to plugin so modules could register themselves
+  nuiPluginFrameworkErrorCode::err error = initFunc(&pluginFrameworkService);
+  
+  if(error == nuiPluginFrameworkErrorCode::Success)
+  {
+    // move loaded Module to modules
+    modulesLoaded.insert(modulesLoaded.end(), loadingModules.begin(), 
+      loadingModules.end());
+    pluginsLoaded.push_back(loadingPlugin);
+  }
+  // check whether plugins were loaded correctly
+
+  loadingModules.clear();
+  loadingPlugin = NULL;
+  
+  return nuiPluginFrameworkErrorCode::Success;
 }
 
-nuiPluginFrameworkErrorCode nuiPluginManager::loadLibrary(const std::string &path)
+nuiPluginFrameworkErrorCode::err nuiPluginManager::unloadLibrary(const std::string path)
 {
-	std::string errorString;
-	nuiDynamicLibrary *d = nuiDynamicLibrary::load(path, errorString);
-	if (!d)
-		return nuiDynamicLibraryLoadingFailed;
-	if (dynamicLibraryMap.find(path) != dynamicLibraryMap.end())
-		return nuiDynamicLibraryAlreadyLoaded;
-	dynamicLibraryMap[path] = d;
-	return nuiPluginFrameworkOK;
+  //! \todo realization
+//   if (dynamicLibraryMap.find(path) != dynamicLibraryMap.end())   
+//   {
+//     return unloadLibrary(dynamicLibraryMap[path]);
+//   }
+//   return nuiDynamicLibraryAlreadyUnloaded;
+   return nuiPluginFrameworkErrorCode::Success;
 }
 
-nuiPluginFrameworkErrorCode nuiPluginManager::loadPluginsFromLibrary(nuiDynamicLibrary *dynamicLibrary)
-{
-	if (dynamicLibrary == NULL)
-		return nuiDynamicLibraryAlreadyUnloaded;
-
-	nuiDynamicLibraryLoadFunc initFunc = 
-        (nuiDynamicLibraryLoadFunc)(dynamicLibrary->getSymbol("nuiDynamicLibraryLoad"));
-	
-    if (initFunc == NULL)
-		return nuiDynamicLibraryEntryPointLoadingFailed;
-    
-	currentlyLoadingLibary = dynamicLibrary;
-    // send plugin framework service to plugin so it could register itself
-	nuiDynamicLibraryFreeFunc exitFunc = initFunc(&pluginFrameworkService);
-	currentlyLoadingLibary = NULL;
-
-	if (exitFunc == NULL)
-		return nuiDynamicLibraryExitPointLoadingFailed;
-
-	dynamicLibraryFreeVector.push_back(exitFunc);
-
-	return nuiPluginFrameworkOK;
-}
-
-nuiPluginFrameworkErrorCode nuiPluginManager::loadPluginsFromLoadedLibraries()
-{
-	for (nuiDynamicLibraryMap::iterator i = dynamicLibraryMap.begin();i != dynamicLibraryMap.end();i++)
-	{
-		loadPluginsFromLibrary(i->second);
-	}
-	return nuiPluginFrameworkOK;
-}
-
-nuiPluginFrameworkErrorCode nuiPluginManager::unloadPlugin(const std::string &pluginName)
-{
-	if (pluginInstanceMap.find(pluginName) == pluginInstanceMap.end())   
-		return nuiPluginIstancesAlreadyRemoved;
-	std::vector<void*>* instances = pluginInstanceMap[pluginName];
-	if (registerPluginParamsMap.find(pluginName) != registerPluginParamsMap.end())
-	{
-		nuiRegisterPluginParameters &rp = registerPluginParamsMap[pluginName];
-		for ( std::vector<void*>::iterator i = instances->begin(); i != instances->end(); i++)
-			rp.deallocateFunc(*i);
-	}
-	pluginInstanceMap.erase(pluginName);
-	instances->clear();
-	return nuiPluginFrameworkOK;
-}
-
-nuiPluginFrameworkErrorCode nuiPluginManager::unloadLibrary(nuiDynamicLibrary *dynamicLibrary)
-{
-	std::string address = "";
-	for ( nuiDynamicLibraryMap::iterator i = dynamicLibraryMap.begin(); i != dynamicLibraryMap.end(); i++)
-	{
-		if (i->second == dynamicLibrary)
-		{
-			address = i->first;
-			break;
-		}
-	}
-	if (address == "")
-		return nuiDynamicLibraryAlreadyUnloaded;
-	dynamicLibraryMap.erase(address);
-	if (dynamicLibraryPluginMap.find(dynamicLibrary) == dynamicLibraryPluginMap.end())   
-		return nuiPluginDescriptionAlreadyRemoved;
-	std::vector<std::string>* pluginNames = dynamicLibraryPluginMap[dynamicLibrary];
-	dynamicLibraryPluginMap.erase(dynamicLibrary);
-	for ( std::vector<std::string>::iterator i = pluginNames->begin(); i != pluginNames->end(); i++)
-		unloadPlugin(*i);
-	pluginNames->clear();
-	delete pluginNames;
-	delete dynamicLibrary;
-	return nuiPluginFrameworkOK;
-}
-
-nuiPluginFrameworkErrorCode nuiPluginManager::unloadLibrary(const std::string &path)
-{
-	if (dynamicLibraryMap.find(path) != dynamicLibraryMap.end())   
-	{
-		return unloadLibrary(dynamicLibraryMap[path]);
-	}
-	return nuiDynamicLibraryAlreadyUnloaded;
-}
+// nuiPluginFrameworkErrorCode nuiPluginManager::queryPluginObject(const nuiPluginEntity **pluginObject,const std::string& objectType)
+// {
+//   *pluginObject = NULL;
+//   nuiObjectParameters np;
+//   np.objectType = (const char*)objectType.c_str();
+//   np.frameworkServices = &pluginFrameworkService;
+//   if (registerPluginParamsMap.find(objectType) != registerPluginParamsMap.end())
+//   {
+//     nuiRegisterModuleParameters* rp = &registerPluginParamsMap[objectType];
+//     void * object = rp->allocateFunc(&np);
+//     if (object == NULL)
+//       return nuiPluginObjectQueryingFailed;
+//     pluginInstanceMap[objectType]->push_back((void*)object);
+// 
+//     // confirm that plugin was registered
+//     *pluginObject = new nuiPluginEntity(objectType.c_str(),object,rp->deallocateFunc);
+//     if (*pluginObject == NULL)
+//       return nuiPluginNotRegistered;
+//     return nuiPluginFrameworkOK;
+//   }
+//   return nuiPluginNotRegistered;
+// }

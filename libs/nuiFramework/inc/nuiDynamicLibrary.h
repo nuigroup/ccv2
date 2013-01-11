@@ -23,16 +23,19 @@
 class nuiDynamicLibrary
 {
 public:
-	static nuiDynamicLibrary * load(const std::string & path, 
-								  std::string &errorString);
+	static nuiDynamicLibrary* load(const std::string path, std::string &errorString);
+  static bool unload(void* handle);
+
 	~nuiDynamicLibrary();
-	void * getSymbol(const std::string & name);
+	void* getSymbol(const std::string &name);
+  void* getHandle();
+  std::string getPath();
 private:
 	nuiDynamicLibrary();
-	nuiDynamicLibrary(void * handle);
-	nuiDynamicLibrary(const nuiDynamicLibrary &);
-private:
-	void * handle_;
+	nuiDynamicLibrary(void* handle, std::string path);
+
+	void* handle_;
+  std::string pathToLibrary;
 };
 
 #endif//NUI_DYNAMIC_LIBRARY_H

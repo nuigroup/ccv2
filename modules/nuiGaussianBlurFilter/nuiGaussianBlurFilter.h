@@ -53,12 +53,9 @@ descriptor->addOutputEndpointDescriptor(outputDescriptor,0);
 descriptor->property("use_thread").set(false);
 END_IMPLEMENT_DESCRIPTOR(nuiGaussianBlurFilter)	
 
-START_MODULE_EXIT()
-END_MODULE_EXIT()
-
-START_MODULE_REGISTRATION()	  
-REGISTER_PLUGIN(nuiGaussianBlurFilter,"nuiGaussianBlurFilter",1,0)
-END_MODULE_REGISTRATION()
+START_EXPORT_MODULES()	  
+REGISTER_MODULE(nuiGaussianBlurFilter,"nuiGaussianBlurFilter", 1, 0, "ef5c8522-3208-4dd8-a52a-9f6e9eaf552d")
+END_EXPORT_MODULES()
 
 #endif
 

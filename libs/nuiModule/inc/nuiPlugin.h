@@ -1,11 +1,3 @@
-/* nuiPlugin.h
-*  
-*  Created on 01/01/12.
-*  Copyright 2012 NUI Group. All rights reserved.
-*  Community Core Fusion
-*  Author: Anatoly Churikov
-*
-*/
 #ifndef NUI_PLUGIN_H
 #define NUI_PLUGIN_H
 
@@ -15,32 +7,60 @@
 #define DLLEXPORT
 #endif
 
-// Forward - declarations
+#ifdef WIN32
+#include <guiddef.h>
+#else
+//! \todo include headers for GUID
+#endif
+
 class nuiModuleDescriptor;
 struct nuiPluginFrameworkService;
 
-enum nuiPluginFrameworkErrorCode
+//! namespaced enum
+struct nuiPluginFrameworkErrorCode
 {
-  nuiPluginFrameworkOK,
-  nuiPluginRegistrationFailed,
-  nuiPluginNotRegistered,
-  nuiPluginObjectQueryingFailed,
-  nuiPluginObjectCastingFailed,
-  nuiPluginAlreadyRegistered,
-  nuiPluginNonCompatibleVersion,
-  nuiPluginCreationError,
-  nuiPluginReleaseError,
-  nuiPluginServiceNotFound,
-  nuiPluginServiceWrongObjectParams,
-  nuiPluginDescriptionAlreadyRemoved,
-  nuiPluginIstancesAlreadyRemoved,
-  nuiDynamicLibraryLoadingFailed,
-  nuiDynamicLibraryAlreadyLoaded,
-  nuiDynamicLibraryAlreadyUnloaded,
-  nuiDynamicLibraryEntryPointLoadingFailed,
-  nuiDynamicLibraryExitPointLoadingFailed
+  enum err
+  {
+    Success,
+    UnexpectedError,
+    ModuleRegistrationFailed,
+    PluginLoadingFailed,
+    EntryPointNotFound,
+    IncompatibleVersion,
+    RepeatingGUID,
+    nuiPluginRegistrationFailed,
+    nuiPluginNotRegistered,
+    nuiPluginObjectQueryingFailed,
+    nuiPluginObjectCastingFailed,
+    nuiPluginAlreadyRegistered,
+    nuiPluginNonCompatibleVersion,
+    nuiPluginCreationError,
+    nuiPluginReleaseError,
+    nuiPluginServiceNotFound,
+    nuiPluginServiceWrongObjectParams,
+    nuiPluginDescriptionAlreadyRemoved,
+    nuiPluginIstancesAlreadyRemoved,
+    nuiDynamicLibraryLoadingFailed,
+    nuiDynamicLibraryAlreadyLoaded,
+    nuiDynamicLibraryAlreadyUnloaded,
+    nuiDynamicLibraryEntryPointLoadingFailed,
+    nuiDynamicLibraryExitPointLoadingFailed
+  };
 };
 
+struct nuiObjectParameters;
+struct nuiPluginFrameworkVersion;
+struct nuiRegisterModuleParameters;
+struct nuiPluginFrameworkService;
+
+typedef nuiModuleDescriptor *(*nuiGetDescriptorFunc)();
+typedef void *(*nuiAllocateFunc)(nuiObjectParameters *); 
+typedef nuiPluginFrameworkErrorCode::err (*nuiDeallocateFunc)(void *);
+typedef nuiPluginFrameworkErrorCode::err (*nuiRegisterModuleFunc)(const nuiRegisterModuleParameters *params);
+typedef nuiPluginFrameworkErrorCode::err (*nuiLibraryFreeFunc)();
+typedef nuiPluginFrameworkErrorCode::err (*nuiLibraryLoadFunc)(const nuiPluginFrameworkService *);
+
+//! structure passed to create plugin objects
 struct nuiObjectParameters
 {
   const char *objectType;
@@ -53,53 +73,45 @@ struct nuiPluginFrameworkVersion
   int minor;
 };
 
-typedef void *(*nuiAllocateFunc)(nuiObjectParameters *); 
-typedef nuiPluginFrameworkErrorCode (*nuiDeallocateFunc)(void *);
-typedef nuiModuleDescriptor *(*nuiQueryDescriptor)();
-
-struct nuiRegisterPluginParameters
+struct nuiRegisterModuleParameters
 {
   nuiPluginFrameworkVersion version;
+  GUID guid;
   nuiAllocateFunc allocateFunc;
   nuiDeallocateFunc deallocateFunc;
-  nuiQueryDescriptor queryModuleDescriptorFunc;
+  nuiGetDescriptorFunc getDescriptorFunc;
 };
-
-typedef nuiPluginFrameworkErrorCode (*nuiRegisterPluginFunc)(const char *nodeType, const nuiRegisterPluginParameters *params);
-typedef nuiPluginFrameworkErrorCode (*nuiDynamicLibraryFreeFunc)();
-
-typedef nuiDynamicLibraryFreeFunc (*nuiDynamicLibraryLoadFunc)(const nuiPluginFrameworkService *);
 
 struct nuiPluginFrameworkService
 {
   nuiPluginFrameworkVersion version;
-  nuiRegisterPluginFunc pluginRegisterFunc; 
+  nuiRegisterModuleFunc registerModule; 
 };
 
 extern "C" DLLEXPORT 
-nuiDynamicLibraryFreeFunc nuiDynamicLibraryLoad(const nuiPluginFrameworkService *params);
+nuiPluginFrameworkErrorCode::err nuiLibraryLoad(const nuiPluginFrameworkService *params);
 
 #define IMPLEMENT_ALLOCATOR(type)						        \
-void *allocate##type(nuiObjectParameters* params)	  \
+static void* allocate##type##(nuiObjectParameters* params)	  \
 {														                        \
-  return (void*) (new type());						          \
+  return (void*)(new type());						          \
 }														                        \
 
 #define IMPLEMENT_DEALLOCATOR(type)											                       \
-nuiPluginFrameworkErrorCode deallocate##type(void *object)				             \
+static nuiPluginFrameworkErrorCode::err deallocate##type##(void *object)				             \
 {																			                                         \
   type* module = (type*)(object);											                         \
   if (module == NULL)														                               \
-    return nuiPluginReleaseError;										                           \
+    return nuiPluginFrameworkErrorCode::Success;										                           \
   delete module;															                                 \
-  return nuiPluginFrameworkOK;											                           \
+  return nuiPluginFrameworkErrorCode::Success;											                           \
 }																			                                         \
 
 #define START_IMPLEMENT_DESCRIPTOR(type,author,description)					           \
 nuiModuleDescriptor* descriptor##type = NULL;							                     \
 nuiModuleDescriptor* get##type##Descriptor()							                     \
 {																			                                         \
-  if (descriptor##type==NULL)												                           \
+  if (descriptor##type == NULL)												                           \
   {																			                                       \
     descriptor##type = new nuiModuleDescriptor();							                 \
     nuiModuleDescriptor* descriptor = descriptor##type;						             \
@@ -116,53 +128,46 @@ nuiModuleDescriptor* get##type##Descriptor()							                     \
   return descriptor##type;												                             \
 }																			                                         \
 
-/** \def START_MODULE_REGISTRATION()
-*  Starts module registration i.e. filling structure, containing pointers
-*  to core plugin management functions
+/** \def START_EXPORT_MODULES()
+*  Starts plugin registration
 */
-#define START_MODULE_REGISTRATION()											                       \
+#define START_EXPORT_MODULES()									                               \
 extern "C" DLLEXPORT                                                           \
-nuiDynamicLibraryFreeFunc nuiDynamicLibraryLoad(const nuiPluginFrameworkService *params) \
+nuiPluginFrameworkErrorCode::err nuiLibraryLoad(const nuiPluginFrameworkService *params)\
 {																													                     \
-  nuiRegisterPluginParameters *registerParams = new nuiRegisterPluginParameters();\
+  GUID moduleGuid;                                                             \
+  nuiRegisterModuleParameters *registerParams = new nuiRegisterModuleParameters();\
+  nuiPluginFrameworkErrorCode::err error =                                     \
+    nuiPluginFrameworkErrorCode::Success;                                      \
 
-/** \def REGISTER_PLUGIN()
+//! \todo rewrite plugin to handle multiple modules and register each of them
+/** \def REGISTER_MODULE()
 *  Fills module registration parameters
-*  I.e. structure with plugin controlling functions
+*  I.e. structure with module controlling functions
 */
-#define REGISTER_PLUGIN(type,description,majorValue,minorValue)				         \
+#define REGISTER_MODULE(type,description,majorValue,minorValue,_guid)				         \
   registerParams->version.major = majorValue;								                   \
   registerParams->version.minor = minorValue;								                   \
-  registerParams->allocateFunc = allocate##type;				                       \
-  registerParams->deallocateFunc = deallocate##type;				                   \
-  registerParams->queryModuleDescriptorFunc = get##type##Descriptor;		       \
-  if (params->pluginRegisterFunc(description, registerParams) != nuiPluginFrameworkOK)	\
-    return NULL;														                                   \
-  registerParams = new nuiRegisterPluginParameters();						               \
+  registerParams->allocateFunc = allocate##type##;				                       \
+  registerParams->deallocateFunc = deallocate##type##;				                   \
+  registerParams->getDescriptorFunc = get##type##Descriptor;		               \
+  sscanf(_guid, "{%8X-%4hX-%4hX-%2hX%2hX-%2hX%2hX%2hX%2hX%2hX%2hX}", &moduleGuid.Data1, &moduleGuid.Data2, &moduleGuid.Data3, &moduleGuid.Data4[0], &moduleGuid.Data4[1], &moduleGuid.Data4[2], &moduleGuid.Data4[3], &moduleGuid.Data4[4], &moduleGuid.Data4[5], &moduleGuid.Data4[6], &moduleGuid.Data4[7]);\
+  registerParams->guid = moduleGuid;                                                 \
+  error = params->registerModule(registerParams);                  \
+  if (error != nuiPluginFrameworkErrorCode::Success)	       \
+    return error;														                                   \
 
-/** \def END_MODULE_REGISTRATION()
+/** \def END_EXPORT_MODULES()
 *  Finalizes module registration function
 */
-#define END_MODULE_REGISTRATION()																					     \
+#define END_EXPORT_MODULES()																					     \
   delete registerParams;																							         \
-  return (nuiDynamicLibraryFreeFunc)ExitFunc;																	 \
+  return error;																	 \
 }																													                     \
 
-/** \def START_MODULE_EXIT()
-*  Starts module exit function
-*  One can add exit logic between this and END_MODULE_EXIT() macro
-*/
-#define START_MODULE_EXIT()																							       \
-extern "C" DLLEXPORT                                                           \
-nuiPluginFrameworkErrorCode ExitFunc()														             \
-{																													                     \
-
-/** \def END_MODULE_EXIT()
-*  Finalizes module exit function
-*/
-#define END_MODULE_EXIT()																							         \
-  return nuiPluginFrameworkOK;																					       \
-}																													                     \
+/** \todo we can add some functions like onLoading, onLoaded, onUnloading, 
+ ** onUnloaded to get some control over plugin loading process.
+ */
 
 #endif//NUI_PLUGIN_H
 
