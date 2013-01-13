@@ -26,6 +26,7 @@ nuiFactory *nuiFactory::getInstance()
 {
   if ( instance == NULL )
     instance = new nuiFactory();
+  nuiPluginManager::getInstance();
   return instance;
 }
 
@@ -37,6 +38,7 @@ void nuiFactory::cleanup()
 
 nuiModule *nuiFactory::create(const std::string &name)
 {
+  nuiPluginManager pm = nuiPluginManager::getInstance();
 //   nuiPluginManager pm = nuiPluginManager::getInstance();
 //   if (pipelineDescriptors.find(name) != pipelineDescriptors.end())
 //   {

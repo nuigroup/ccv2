@@ -1,8 +1,8 @@
-#include "nuiPluginManager.h"
+#include "nuiFramework.h"
 
 int main()
 {
-  nuiPluginManager pm = nuiPluginManager::getInstance();
-  pm.loadLibrary("modules\\nuiGaussianBlurFilter.dll");
+  nuiPluginManager::getInstance().loadLibrary("modules\\nuiGaussianBlurFilter.dll");
+  auto pm = nuiPluginManager::getInstance();
   return 0;
 }

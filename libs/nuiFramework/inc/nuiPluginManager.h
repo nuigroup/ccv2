@@ -182,6 +182,6 @@ private:
   //! currently loading plugin
   nuiPluginLoaded* loadingPlugin;
   //! modules being loaded from loadingPlugin
-  std::vector<nuiModuleLoaded*> loadingModules;
+  // std::vector<nuiModuleLoaded*> loadingModules;
 };
 #endif//NUI_PLUGIN_MANAGER_H

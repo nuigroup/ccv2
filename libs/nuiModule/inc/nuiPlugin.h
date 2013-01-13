@@ -7,7 +7,10 @@
 #define DLLEXPORT
 #endif
 
+#include <string>
+
 #ifdef WIN32
+#include <windows.h>
 #include <guiddef.h>
 #else
 //! \todo include headers for GUID
@@ -128,6 +131,7 @@ nuiModuleDescriptor* get##type##Descriptor()							                     \
   return descriptor##type;												                             \
 }																			                                         \
 
+//! \todo add plugin name registration - through descriptor or registerParams
 /** \def START_EXPORT_MODULES()
 *  Starts plugin registration
 */
@@ -136,6 +140,7 @@ extern "C" DLLEXPORT                                                           \
 nuiPluginFrameworkErrorCode::err nuiLibraryLoad(const nuiPluginFrameworkService *params)\
 {																													                     \
   GUID moduleGuid;                                                             \
+  int res;                                                                     \
   nuiRegisterModuleParameters *registerParams = new nuiRegisterModuleParameters();\
   nuiPluginFrameworkErrorCode::err error =                                     \
     nuiPluginFrameworkErrorCode::Success;                                      \
@@ -145,17 +150,16 @@ nuiPluginFrameworkErrorCode::err nuiLibraryLoad(const nuiPluginFrameworkService 
 *  Fills module registration parameters
 *  I.e. structure with module controlling functions
 */
-#define REGISTER_MODULE(type,description,majorValue,minorValue,_guid)				         \
-  registerParams->version.major = majorValue;								                   \
-  registerParams->version.minor = minorValue;								                   \
-  registerParams->allocateFunc = allocate##type##;				                       \
-  registerParams->deallocateFunc = deallocate##type##;				                   \
-  registerParams->getDescriptorFunc = get##type##Descriptor;		               \
-  sscanf(_guid, "{%8X-%4hX-%4hX-%2hX%2hX-%2hX%2hX%2hX%2hX%2hX%2hX}", &moduleGuid.Data1, &moduleGuid.Data2, &moduleGuid.Data3, &moduleGuid.Data4[0], &moduleGuid.Data4[1], &moduleGuid.Data4[2], &moduleGuid.Data4[3], &moduleGuid.Data4[4], &moduleGuid.Data4[5], &moduleGuid.Data4[6], &moduleGuid.Data4[7]);\
-  registerParams->guid = moduleGuid;                                                 \
-  error = params->registerModule(registerParams);                  \
-  if (error != nuiPluginFrameworkErrorCode::Success)	       \
-    return error;														                                   \
+#define REGISTER_MODULE(type,description,majorValue,minorValue,sguid) \
+  registerParams->version.major = majorValue; \
+  registerParams->version.minor = minorValue;	\
+  registerParams->allocateFunc = allocate##type##; \
+  registerParams->deallocateFunc = deallocate##type##; \
+  registerParams->getDescriptorFunc = get##type##Descriptor; \
+  res = sscanf(sguid, "%8X-%4hX-%4hX-%2hX%2hX-%2hX%2hX%2hX%2hX%2hX%2hX", &(registerParams->guid.Data1), &(registerParams->guid.Data2), &(registerParams->guid.Data3), &(registerParams->guid.Data4[0]), &(registerParams->guid.Data4[1]), &(registerParams->guid.Data4[2]), &(registerParams->guid.Data4[3]), &(registerParams->guid.Data4[4]), &(registerParams->guid.Data4[5]), &(registerParams->guid.Data4[6]), &(registerParams->guid.Data4[7])); \
+  error = params->registerModule(registerParams); \
+  if (error != nuiPluginFrameworkErrorCode::Success) \
+    return error; \
 
 /** \def END_EXPORT_MODULES()
 *  Finalizes module registration function

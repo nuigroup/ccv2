@@ -1,14 +1,18 @@
 #include "nuiDynamicLibrary.h"
 #include "nuiPluginManager.h"
 #include <string>
+
+#ifdef WIN32
 #include <guiddef.h>
+#include <cguid.h>
+#else
+  //! \todo other include headers
+#endif
 
 nuiPluginManager& nuiPluginManager::getInstance()
 {
-  static nuiPluginManager* instance = NULL;
-  if(!instance)
-    instance = new nuiPluginManager();
-  return *instance;
+  static nuiPluginManager instance;
+  return instance;
 }
 
 nuiPluginManager::nuiPluginManager()
@@ -21,7 +25,6 @@ nuiPluginManager::nuiPluginManager()
 //   assignedModuleId = 0;
 
   loadingPlugin = NULL;
-  loadingModules.clear();
 }
 
 //! \todo destructor realization needed?
@@ -53,10 +56,11 @@ nuiPluginFrameworkErrorCode::err nuiPluginManager::shutdown()
 bool nuiPluginManager::validate(const nuiRegisterModuleParameters *params)
 {
   return 
-   !((params == NULL) || 
-    (params->allocateFunc == NULL) || 
-    (params->deallocateFunc == NULL) || 
-    (params->getDescriptorFunc == NULL));
+    params && 
+    params->allocateFunc &&
+    params->deallocateFunc &&
+    params->getDescriptorFunc &&
+    params->guid != GUID_NULL ;
 }
 
 nuiPluginFrameworkErrorCode::err nuiPluginManager::registerModule(const nuiRegisterModuleParameters *params)
@@ -85,12 +89,10 @@ nuiPluginFrameworkErrorCode::err nuiPluginManager::registerModule(const nuiRegis
   }
   // check if already registered module
 
-  nuiModuleLoaded* module = new nuiModuleLoaded(params);
+  nuiModuleLoaded* module;
+  module = new nuiModuleLoaded(params);
   module->setParentPlugin(pm.loadingPlugin);
   // create wrapper for module management
-
-  pm.loadingModules.push_back(module);
-  // load module wrapper to list of currently loading modules
 
   return nuiPluginFrameworkErrorCode::Success;
 }
@@ -134,13 +136,13 @@ nuiPluginFrameworkErrorCode::err nuiPluginManager::loadLibrary(const std::string
   if(error == nuiPluginFrameworkErrorCode::Success)
   {
     // move loaded Module to modules
-    modulesLoaded.insert(modulesLoaded.end(), loadingModules.begin(), 
-      loadingModules.end());
+    modulesLoaded.insert(modulesLoaded.end(), 
+      loadingPlugin->loadedModules.begin(), 
+      loadingPlugin->loadedModules.end());
     pluginsLoaded.push_back(loadingPlugin);
   }
   // check whether plugins were loaded correctly
-
-  loadingModules.clear();
+  
   loadingPlugin = NULL;
   
   return nuiPluginFrameworkErrorCode::Success;

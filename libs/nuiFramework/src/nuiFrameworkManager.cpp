@@ -58,7 +58,7 @@ nuiFrameworkManagerErrorCode nuiFrameworkManager::loadSettingsFromJson(const cha
 		std::string path = (*i).get("path", NULL).asString();
 		nuiPluginManager::getInstance().loadLibrary(path);
 	}
-	nuiFactory::getInstance()->loadDynamicModules();
+	//nuiFactory::getInstance()->loadDynamicModules();
 
 	return loadSettingsFromJson(&root);
 }
