@@ -1,12 +1,10 @@
-/* nuiPluginManager.h
-*  
-*  Created on 01/01/12.
-*  Copyright 2012 NUI Group. All rights reserved.
-*  Community Core Fusion
-*  Author: Anatoly Churikov
-*
-*/
-
+/** 
+ * \file      nuiPluginManager.h
+ * \author    Anatoly Churikov
+ * \author    Anatoly Lushnikov
+ * \date      2012-2013
+ * \copyright Copyright 2012 NUI Group. All rights reserved.
+ */
 #ifndef NUI_PLUGIN_MANAGER_H
 #define NUI_PLUGIN_MANAGER_H
 
@@ -35,7 +33,7 @@ class nuiDynamicLibrary;
 struct nuiPluginLoaded;
 struct nuiModuleLoaded;
 
-//! Holds information about loaded plugins
+//! Facade. Holds information about loaded plugins
 struct nuiPluginLoaded
 {
   //! string plugin location. As 2 plugins can't have the same address we can 
@@ -53,7 +51,14 @@ struct nuiPluginLoaded
 
   void loadModule(nuiModuleLoaded* module)
   {
-    loadedModules.push_back(module);
+    this->loadedModules.push_back(module);
+  };
+
+  void unloadModule(nuiModuleLoaded* module)
+  {
+    for(int i=this->loadedModules.size() - 1; i>=0; i--)
+      if (this->loadedModules[i] == module)
+        this->loadedModules.erase(this->loadedModules.begin() + i);
   };
 
   nuiPluginLoaded(nuiDynamicLibrary* lib)
@@ -67,7 +72,7 @@ struct nuiPluginLoaded
   };
 };
 
-//! Holds information about modules loaded from plugins
+//! Facade. Holds information about modules loaded from plugins
 struct nuiModuleLoaded
 {
   //! unique module identifier within application
@@ -104,6 +109,15 @@ struct nuiModuleLoaded
   {
     this->parentPlugin = parentPlugin;
     parentPlugin->loadModule(this);
+  };
+
+  //! unregister from parent plugin
+  void unregisterParent()
+  {
+    if(! this->parentPlugin)
+      return;
+    else
+      this->parentPlugin->unloadModule(this);
   };
 
   void clearInstances()

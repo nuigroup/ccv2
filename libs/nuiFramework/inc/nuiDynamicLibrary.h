@@ -1,12 +1,10 @@
-/* nuiDynamicLibrary.h
-*  
-*  Created on 01/01/12.
-*  Copyright 2012 NUI Group. All rights reserved.
-*  Community Core Fusion
-*  Author: Anatoly Churikov
-*
-*/
-
+/** 
+ * \file      nuiDynamicLibrary.h
+ * \author    Anatoly Churikov
+ * \author    Anatoly Lushnikov
+ * \date      2012-2013
+ * \copyright Copyright 2012 NUI Group. All rights reserved.
+ */
 #ifndef NUI_DYNAMIC_LIBRARY_H
 #define NUI_DYNAMIC_LIBRARY_H
 

@@ -1,3 +1,10 @@
+/** 
+ * \file      nuiFactory.h
+ * \author    Anatoly Churikov
+ * \author    Anatoly Lushnikov
+ * \date      2012-2013
+ * \copyright Copyright 2012 NUI Group. All rights reserved.
+ */
 #ifndef NUI_FACTORY_H
 #define NUI_FACTORY_H
 
@@ -10,7 +17,7 @@
 #include "nuiModule.h"
 #include "nuiPluginManager.h"
 
-//! TODO: rework singleton
+//! \todo rework singleton
 static nuiFactory *instance = NULL;
 
 /** \class nuiFactory

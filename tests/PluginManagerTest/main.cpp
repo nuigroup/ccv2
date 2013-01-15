@@ -2,7 +2,8 @@
 
 int main()
 {
-  nuiPluginManager::getInstance().loadLibrary("modules\\nuiGaussianBlurFilter.dll");
-  auto pm = nuiPluginManager::getInstance();
+  nuiPluginManager& pm = nuiPluginManager::getInstance();
+  pm.loadLibrary("modules\\nuiGaussianBlurFilter.dll");
+  pm.unloadLibrary("modules\\nuiGaussianBlurFilter.dll");
   return 0;
 }

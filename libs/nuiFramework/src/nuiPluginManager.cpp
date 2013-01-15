@@ -65,7 +65,7 @@ bool nuiPluginManager::validate(const nuiRegisterModuleParameters *params)
 
 nuiPluginFrameworkErrorCode::err nuiPluginManager::registerModule(const nuiRegisterModuleParameters *params)
 {
-  nuiPluginManager pm = nuiPluginManager::getInstance();
+  nuiPluginManager& pm = nuiPluginManager::getInstance();
   
   if(!pm.loadingPlugin)
     return nuiPluginFrameworkErrorCode::UnexpectedError;
@@ -89,8 +89,7 @@ nuiPluginFrameworkErrorCode::err nuiPluginManager::registerModule(const nuiRegis
   }
   // check if already registered module
 
-  nuiModuleLoaded* module;
-  module = new nuiModuleLoaded(params);
+  nuiModuleLoaded* module = new nuiModuleLoaded(params);
   module->setParentPlugin(pm.loadingPlugin);
   // create wrapper for module management
 
@@ -103,8 +102,8 @@ nuiPluginFrameworkErrorCode::err nuiPluginManager::unloadModule(GUID guid)
     if(modulesLoaded[i]->guid == guid)
     {
       modulesLoaded[i]->clearInstances();
-      //! \todo remove module from parent plugin
-      modulesLoaded.erase(modulesLoaded.begin() + i - 1);
+      modulesLoaded[i]->unregisterParent();
+      modulesLoaded.erase(modulesLoaded.begin() + i);
     }
   return nuiPluginFrameworkErrorCode::Success;
 }
@@ -135,7 +134,7 @@ nuiPluginFrameworkErrorCode::err nuiPluginManager::loadLibrary(const std::string
   
   if(error == nuiPluginFrameworkErrorCode::Success)
   {
-    // move loaded Module to modules
+    // move loaded modules to modules
     modulesLoaded.insert(modulesLoaded.end(), 
       loadingPlugin->loadedModules.begin(), 
       loadingPlugin->loadedModules.end());
@@ -150,13 +149,27 @@ nuiPluginFrameworkErrorCode::err nuiPluginManager::loadLibrary(const std::string
 
 nuiPluginFrameworkErrorCode::err nuiPluginManager::unloadLibrary(const std::string path)
 {
-  //! \todo realization
-//   if (dynamicLibraryMap.find(path) != dynamicLibraryMap.end())   
-//   {
-//     return unloadLibrary(dynamicLibraryMap[path]);
-//   }
-//   return nuiDynamicLibraryAlreadyUnloaded;
-   return nuiPluginFrameworkErrorCode::Success;
+  for(int i=pluginsLoaded.size()-1; i>=0 ; i--)
+  {
+    std::vector<nuiModuleLoaded*>& modules = pluginsLoaded[i]->loadedModules;
+    for(int j=modules.size()-1 ; j>=0 ; j--)
+    {
+      unloadModule(modules[j]->guid);
+    }
+  }
+  // unload all loaded modules
+  
+  for(int i=pluginsLoaded.size()-1; i>=0 ; i--)
+  {
+    std::vector<nuiModuleLoaded*>& modules = pluginsLoaded[i]->loadedModules;
+    for(int j=modules.size()-1 ; j>=0 ; j--)
+    {
+      unloadModule(modules[j]->guid);
+    }
+  }
+
+
+  return nuiPluginFrameworkErrorCode::Success;
 }
 
 // nuiPluginFrameworkErrorCode nuiPluginManager::queryPluginObject(const nuiPluginEntity **pluginObject,const std::string& objectType)

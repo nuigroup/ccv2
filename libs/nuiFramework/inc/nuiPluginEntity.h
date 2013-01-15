@@ -1,12 +1,10 @@
-/* nuiPluginManager.h
-*  
-*  Created on 01/01/12.
-*  Copyright 2012 NUI Group. All rights reserved.
-*  Community Core Fusion
-*  Author: Anatoly Churikov
-*
-*/
-
+/** 
+ * \file      nuiPluginEntity.h
+ * \author    Anatoly Churikov
+ * \author    Anatoly Lushnikov
+ * \date      2012-2013
+ * \copyright Copyright 2012 NUI Group. All rights reserved.
+ */
 #ifndef NUI_PLUGIN_ENTITY_H
 #define NUI_PLUGIN_ENTITY_H
 

@@ -1,5 +1,14 @@
-#ifndef _NUI_FRAMEWORK_MANAGER_
-#define _NUI_FRAMEWORK_MANAGER_
+/** 
+ * \file      nuiFrameworkManager.h
+ * \author    Anatoly Lushnikov
+ * \author    Scott Halstvedt
+ * \author    Anatoly Churikov
+ * \date      2012-2013
+ * \copyright Copyright 2012 NUI Group. All rights reserved.
+ */
+
+#ifndef NUI_FRAMEWORK_MANAGER_H
+#define NUI_FRAMEWORK_MANAGER_H
 #define _WINSOCKAPI_
 
 #include <string>
@@ -134,4 +143,4 @@ private:
     void parseModuleDescriptorParameters(nuiModuleDescriptor &moduleDescriptor, Json::Value *root);
 };
 
-#endif//_NUI_FRAMEWORK_MANAGER_
+#endif//NUI_FRAMEWORK_MANAGER_H

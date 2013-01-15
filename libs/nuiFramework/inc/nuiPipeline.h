@@ -1,5 +1,14 @@
-#ifndef _NUI_PIPELINE_
-#define _NUI_PIPELINE_
+/** 
+ * \file      nuiPipeline.h
+ * \author    Anatoly Churikov
+ * \author    Anatoly Lushnikov
+ * \author    Scott Halstvedt
+ * \date      2012-2013
+ * \copyright Copyright 2012 NUI Group. All rights reserved.
+ */
+
+#ifndef NUI_PIPELINE_H
+#define NUI_PIPELINE_H
 
 #include <vector>
 #include <string>
@@ -44,4 +53,4 @@ protected:
 	friend class nuiFrameworkManager;
 };
 
-#endif//_NUI_PIPELINE_
+#endif// NUI_PIPELINE_H
