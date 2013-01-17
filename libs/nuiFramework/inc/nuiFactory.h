@@ -13,12 +13,15 @@
 #include <string>
 #include <list>
 
+#ifdef WIN32
+#include <guiddef.h>
+#else
+//! \todo include for GUID
+#endif
+
 #include "nuiDebugLogger.h"
 #include "nuiModule.h"
 #include "nuiPluginManager.h"
-
-//! \todo rework singleton
-static nuiFactory *instance = NULL;
 
 /** \class nuiFactory
  *  Singleton class. Provides methods for plugin creation and removal
@@ -28,39 +31,40 @@ class nuiFactory
 {
 public:
     //! Singleton wrapper
-    static nuiFactory *getInstance();
+    static nuiFactory& getInstance();
 
-    //! Function for factory removal
-    static void cleanup();
+    //! lists available pipelines GUID-pipeline_name
+    std::vector<std::pair<GUID, std::string>>& listPipelines();
+    //! lists available modules GUID-module_name
+    std::vector<std::pair<GUID, std::string>>& listModules();
 
-    //! Forces PluginManager to load plugins from loaded dlls and obtains descriptors
-    void loadDynamicModules();
+    //! gets descriptor for a module or pipeline with specified GUID
+    nuiModuleDescriptor* getDescriptor(const GUID& guid);
 
-    //! lists available pipeline names
-    std::vector<std::string> *listPipelineNames();
-    //! lists available module names
-    std::vector<std::string> *listModuleNames();
-    //! lists available modules and pipelines
-    std::vector<std::string> *listAllNames();
+    //! Set module instance params just like in descriptor
+    void applyDescriptor(nuiModule* module, nuiModuleDescriptor* descriptor);
 
-    nuiModuleDescriptor* getDescriptor(const std::string &name);
-    nuiModuleDescriptor* getDescriptor(const std::string &pipelineName, int id);
+    //! Creates pipeline or module with specified GUID
+    nuiModule* create(const GUID& guid);
 
 private:
     nuiFactory();
+    nuiFactory(const nuiFactory&);
 
-    std::map<std::string, nuiModuleDescriptor*> pipelineDescriptors;
-    std::map<std::string, nuiModuleDescriptor*> moduleDescriptors;
-
-    //! Set module instance params just like in descriptor
-    void loadSettings(nuiModule* module, nuiModuleDescriptor* descriptor);
-
-    //! Creates pipeline or module with specified name
-    nuiModule *create(const std::string &name);
     //! Creates pipeline given pipeline descriptor
-    nuiModule *createPipeline(nuiModuleDescriptor* descriptor);
+    nuiModule* createPipeline(nuiModuleDescriptor* descriptor);
+    //! Creates module given module descriptor
+    nuiModule* createModule(nuiModuleDescriptor* descriptor);
 
-    friend class nuiFrameworkManager;
+    //! pipeline Descriptors
+    //std::map<std::string, nuiModuleDescriptor*> pipelineDescriptors;
+    // should be obtained directly from container (either Factory or PluginManager)
+
+    //! module Descriptors
+    //std::map<std::string, nuiModuleDescriptor*> moduleDescriptors;
+    // should be obtained directly from container (PluginManager)
+
+    // friend class nuiFrameworkManager;
 };
 
 #endif //NUI_FACTORY_H

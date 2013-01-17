@@ -21,10 +21,12 @@ nuiPluginManager::nuiPluginManager()
   pluginFrameworkService.version.minor = MINOR_VERSION;
   pluginFrameworkService.registerModule = registerModule;
 
-//   assignedPluginId = 0;
-//   assignedModuleId = 0;
-
   loadingPlugin = NULL;
+}
+
+nuiPluginManager::nuiPluginManager(const nuiPluginManager&)
+{
+
 }
 
 //! \todo destructor realization needed?

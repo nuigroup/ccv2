@@ -33,6 +33,7 @@ class nuiDynamicLibrary;
 struct nuiPluginLoaded;
 struct nuiModuleLoaded;
 
+//! \todo Move to separate file and split with realization
 //! Facade. Holds information about loaded plugins
 struct nuiPluginLoaded
 {
@@ -43,11 +44,6 @@ struct nuiPluginLoaded
   void* handle;
   //! guids of modules, loaded from plugin
   std::vector<nuiModuleLoaded*> loadedModules;
-
-  nuiPluginLoaded()
-  {
-
-  };
 
   void loadModule(nuiModuleLoaded* module)
   {
@@ -66,12 +62,9 @@ struct nuiPluginLoaded
     this->pluginPath = lib->getPath();
     this->handle = lib->getHandle();
   };
-
-  ~nuiPluginLoaded()
-  {
-  };
 };
 
+//! \todo Move to separate file and split with realization
 //! Facade. Holds information about modules loaded from plugins
 struct nuiModuleLoaded
 {
@@ -89,11 +82,6 @@ struct nuiModuleLoaded
   nuiGetDescriptorFunc getDescriptor;
   //! created module instances
   std::vector<void*> instances;
-
-  nuiModuleLoaded()
-  {
-    this->instances.clear();
-  };
 
   nuiModuleLoaded(const nuiRegisterModuleParameters* registerParams)
   {
@@ -132,7 +120,6 @@ struct nuiModuleLoaded
   ~nuiModuleLoaded()
   {
     clearInstances();
-    this->instances.clear();
   };
 };
 
@@ -168,6 +155,7 @@ public:
 
 private:
   nuiPluginManager();
+  nuiPluginManager(const nuiPluginManager&);
 
   //! plugin manager shutdown logic
   nuiPluginFrameworkErrorCode::err shutdown();
@@ -187,15 +175,8 @@ private:
   std::vector<nuiPluginLoaded*> pluginsLoaded;
   //! loaded modules
   std::vector<nuiModuleLoaded*> modulesLoaded;
-  
-  //last id assigned to module
-  //int assignedModuleId;
-  //last id assigned to plugin
-  //int assignedPluginId;
 
   //! currently loading plugin
   nuiPluginLoaded* loadingPlugin;
-  //! modules being loaded from loadingPlugin
-  // std::vector<nuiModuleLoaded*> loadingModules;
 };
 #endif//NUI_PLUGIN_MANAGER_H
