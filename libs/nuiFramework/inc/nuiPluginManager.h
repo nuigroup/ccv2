@@ -12,6 +12,8 @@
 #include "nuiPluginEntity.h"
 #include "nuiDynamicLibrary.h"
 
+#include "json\json.h"
+
 #include <map>
 #include <vector>
 #include <string>
@@ -68,12 +70,10 @@ struct nuiPluginLoaded
 //! Facade. Holds information about modules loaded from plugins
 struct nuiModuleLoaded
 {
-  //! unique module identifier within application
-  GUID guid;
+  //! module Name. Should be uniq within application.
+  std::string name;
   //! parent plugin
   nuiPluginLoaded* parentPlugin;
-  //! module Name
-  char* name;
   //! allocate Module
   nuiAllocateFunc allocate;
   //! destroy Module
@@ -85,10 +85,10 @@ struct nuiModuleLoaded
 
   nuiModuleLoaded(const nuiRegisterModuleParameters* registerParams)
   {
-    this->guid = registerParams->guid;
     this->allocate = registerParams->allocateFunc;
     this->deallocate = registerParams->deallocateFunc;
     this->getDescriptor = registerParams->getDescriptorFunc;
+    this->name = registerParams->name;
     this->instances.clear();
   };
 
@@ -153,6 +153,22 @@ public:
   */
   nuiPluginFrameworkErrorCode::err unloadLibrary(const std::string path);
 
+  /** loads default configuration (basic modules and sample pipeline)
+   */
+  nuiPluginFrameworkErrorCode::err loadDefaultConfiguration();
+
+  /** loads specified pipelines. Currently only json is supported.
+   */
+  nuiPluginFrameworkErrorCode::err loadPipelines(Json::Value& root);
+
+  /** loads specified pipelines from file. Currently only json is supported.
+   */
+  nuiModuleDescriptor* loadPipeline(Json::Value& root);
+
+  /** unloads specified pipeline from dictionary
+   */
+  nuiPluginFrameworkErrorCode::err unloadPipeline(const GUID& guid);
+
 private:
   nuiPluginManager();
   nuiPluginManager(const nuiPluginManager&);
@@ -168,13 +184,19 @@ private:
   /** unload specified module and delete all previously allocated instances of this module
   *  \return result of this operation
   */
-  nuiPluginFrameworkErrorCode::err unloadModule(GUID guid);
+  nuiPluginFrameworkErrorCode::err unloadModule(std::string name);
+
+  /** loads settings to module Descriptor from json
+   */
+  void parseDescriptor(nuiModuleDescriptor &moduleDescriptor, const Json::Value& root);
 
   nuiPluginFrameworkService pluginFrameworkService;
   //! loaded shared libraries
   std::vector<nuiPluginLoaded*> pluginsLoaded;
   //! loaded modules
   std::vector<nuiModuleLoaded*> modulesLoaded;
+  //! loaded pipelines
+  std::vector<nuiModuleDescriptor*> pipelinesLoaded;
 
   //! currently loading plugin
   nuiPluginLoaded* loadingPlugin;

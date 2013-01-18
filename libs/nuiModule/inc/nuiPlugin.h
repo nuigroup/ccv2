@@ -9,13 +9,6 @@
 
 #include <string>
 
-#ifdef WIN32
-#include <windows.h>
-#include <guiddef.h>
-#else
-//! \todo include headers for GUID
-#endif
-
 class nuiModuleDescriptor;
 struct nuiPluginFrameworkService;
 
@@ -30,7 +23,8 @@ struct nuiPluginFrameworkErrorCode
     PluginLoadingFailed,
     EntryPointNotFound,
     IncompatibleVersion,
-    RepeatingGUID,
+    RepeatingModule,
+    DefaultSettingsCorrupted,
     nuiPluginRegistrationFailed,
     nuiPluginNotRegistered,
     nuiPluginObjectQueryingFailed,
@@ -79,7 +73,7 @@ struct nuiPluginFrameworkVersion
 struct nuiRegisterModuleParameters
 {
   nuiPluginFrameworkVersion version;
-  GUID guid;
+  std::string name;
   nuiAllocateFunc allocateFunc;
   nuiDeallocateFunc deallocateFunc;
   nuiGetDescriptorFunc getDescriptorFunc;
@@ -139,8 +133,6 @@ nuiModuleDescriptor* get##type##Descriptor()							                     \
 extern "C" DLLEXPORT                                                           \
 nuiPluginFrameworkErrorCode::err nuiLibraryLoad(const nuiPluginFrameworkService *params)\
 {																													                     \
-  GUID moduleGuid;                                                             \
-  int res;                                                                     \
   nuiRegisterModuleParameters *registerParams = new nuiRegisterModuleParameters();\
   nuiPluginFrameworkErrorCode::err error =                                     \
     nuiPluginFrameworkErrorCode::Success;                                      \
@@ -150,13 +142,13 @@ nuiPluginFrameworkErrorCode::err nuiLibraryLoad(const nuiPluginFrameworkService 
 *  Fills module registration parameters
 *  I.e. structure with module controlling functions
 */
-#define REGISTER_MODULE(type,description,majorValue,minorValue,sguid) \
+#define REGISTER_MODULE(type,description,majorValue,minorValue) \
   registerParams->version.major = majorValue; \
   registerParams->version.minor = minorValue;	\
   registerParams->allocateFunc = allocate##type##; \
   registerParams->deallocateFunc = deallocate##type##; \
   registerParams->getDescriptorFunc = get##type##Descriptor; \
-  res = sscanf(sguid, "%8X-%4hX-%4hX-%2hX%2hX-%2hX%2hX%2hX%2hX%2hX%2hX", &(registerParams->guid.Data1), &(registerParams->guid.Data2), &(registerParams->guid.Data3), &(registerParams->guid.Data4[0]), &(registerParams->guid.Data4[1]), &(registerParams->guid.Data4[2]), &(registerParams->guid.Data4[3]), &(registerParams->guid.Data4[4]), &(registerParams->guid.Data4[5]), &(registerParams->guid.Data4[6]), &(registerParams->guid.Data4[7])); \
+  registerParams->name = ##type##; \
   error = params->registerModule(registerParams); \
   if (error != nuiPluginFrameworkErrorCode::Success) \
     return error; \
