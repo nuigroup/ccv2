@@ -13,12 +13,6 @@
 #include <string>
 #include <list>
 
-#ifdef WIN32
-#include <guiddef.h>
-#else
-//! \todo include for GUID
-#endif
-
 #include "nuiDebugLogger.h"
 #include "nuiModule.h"
 #include "nuiPluginManager.h"
@@ -32,37 +26,35 @@ class nuiFactory
 public:
     //! Singleton wrapper
     static nuiFactory& getInstance();
+    
+    //! Initialize with PluginManager to obtain loaded modules
+    void init(const nuiPluginManager* pm);
 
-    //! lists available pipelines GUID-pipeline_name
-    std::vector<std::pair<GUID, std::string>>& listPipelines();
-    //! lists available modules GUID-module_name
-    std::vector<std::pair<GUID, std::string>>& listModules();
+    //! lists available pipeline names
+    std::vector<std::string>& listPipelines();
+    //! lists available module names
+    std::vector<std::string>& listModules();
 
-    //! gets descriptor for a module or pipeline with specified GUID
-    nuiModuleDescriptor* getDescriptor(const GUID& guid);
+    //! gets descriptor for a module or pipeline with specified name
+    nuiModuleDescriptor* getDescriptor(const std::string& name);
 
     //! Set module instance params just like in descriptor
     void applyDescriptor(nuiModule* module, nuiModuleDescriptor* descriptor);
 
-    //! Creates pipeline or module with specified GUID
-    nuiModule* create(const GUID& guid);
+    //! Creates pipeline or module with specified name
+    nuiModule* create(const std::string& moduleName);
 
 private:
     nuiFactory();
     nuiFactory(const nuiFactory&);
 
+    //! plugin manager to obtain loaded modules or plugins
+    const nuiPluginManager* pm;
+
     //! Creates pipeline given pipeline descriptor
     nuiModule* createPipeline(nuiModuleDescriptor* descriptor);
     //! Creates module given module descriptor
-    nuiModule* createModule(nuiModuleDescriptor* descriptor);
-
-    //! pipeline Descriptors
-    //std::map<std::string, nuiModuleDescriptor*> pipelineDescriptors;
-    // should be obtained directly from container (either Factory or PluginManager)
-
-    //! module Descriptors
-    //std::map<std::string, nuiModuleDescriptor*> moduleDescriptors;
-    // should be obtained directly from container (PluginManager)
+    nuiModule* createModule(nuiModuleLoaded* module);
 
     // friend class nuiFrameworkManager;
 };

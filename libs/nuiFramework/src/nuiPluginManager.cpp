@@ -6,13 +6,6 @@
 #include <string>
 #include <fstream>
 
-#ifdef WIN32
-#include <guiddef.h>
-#include <cguid.h>
-#else
-  //! \todo other include headers
-#endif
-
 nuiPluginManager& nuiPluginManager::getInstance()
 {
   static nuiPluginManager instance;
@@ -176,7 +169,6 @@ nuiPluginFrameworkErrorCode::err nuiPluginManager::unloadLibrary(const std::stri
     }
   }
 
-
   return nuiPluginFrameworkErrorCode::Success;
 };
 
@@ -206,9 +198,25 @@ nuiPluginFrameworkErrorCode::err nuiPluginManager::loadPipelines( Json::Value& p
 {
   for(Json::Value::iterator i = pipelines.begin(); i != pipelines.end(); i++) 
   {
-    this->loadPipeline(*i);
-    // check if already loaded by GUID
-    // save or refuse
+    //! \todo maybe should continue loading if has error?
+    nuiModuleDescriptor* pipelineDescr = loadPipeline(*i);
+    if(!pipelineDescr)
+      return nuiPluginFrameworkErrorCode::UnexpectedError;
+    // check for NULL-ness
+
+    for (int i=0 ; i<modulesLoaded.size() ; i++)
+    {
+      if(pipelineDescr->getName() == modulesLoaded[i]->name)
+        return nuiPluginFrameworkErrorCode::RepeatingModule;
+    }
+    for (int i=0 ; i<pipelines.size() ; i++)
+    {
+      if(pipelineDescr->getName() == pipelinesLoaded[i]->getName())
+        return nuiPluginFrameworkErrorCode::RepeatingModule;
+    }
+    // check for duplicates
+
+    pipelinesLoaded.push_back(pipelineDescr);
   }
 
   return nuiPluginFrameworkErrorCode::Success;
@@ -295,7 +303,7 @@ nuiModuleDescriptor* nuiPluginManager::loadPipeline(Json::Value& root)
   return moduleDescriptor;
 };
 
-nuiPluginFrameworkErrorCode::err nuiPluginManager::unloadPipeline( const GUID& guid )
+nuiPluginFrameworkErrorCode::err nuiPluginManager::unloadPipeline( const std::string& name )
 {
   return nuiPluginFrameworkErrorCode::Success;
 };
@@ -332,3 +340,39 @@ void nuiPluginManager::parseDescriptor( nuiModuleDescriptor &moduleDescriptor, c
     }
   }
 };
+
+std::vector<std::string>& nuiPluginManager::listLoadedModules()
+{
+  std::vector<std::string> modules;
+  for(int i = 0 ; i<this->modulesLoaded.size() ; i++)
+    modules.push_back(this->modulesLoaded[i]->name);
+  return modules;
+}
+
+std::vector<std::string>& nuiPluginManager::listLoadedPipelines()
+{
+  std::vector<std::string> pipelines;
+  for(int i = 0 ; i<this->pipelinesLoaded.size() ; i++)
+    pipelines.push_back(this->pipelinesLoaded[i]->getName());
+  return pipelines;
+}
+
+nuiModuleDescriptor* nuiPluginManager::getDescriptor( const std::string name )
+{
+  std::vector<nuiModuleLoaded*>::iterator it1;
+  for (it1 = modulesLoaded.begin() ; it1 != modulesLoaded.end(); it1++)
+  {
+    if((*it1)->name == name)
+      return (*it1)->getDescriptor();
+  }
+  std::vector<nuiModuleDescriptor*>::iterator it2;
+  for (it2 = pipelinesLoaded.begin(); it2 != pipelinesLoaded.end() ; it2++)
+  {
+    if((*it2)->getName() == name)
+      return (*it2);
+  }
+  //trying to find such name among modules or pipelines
+
+  return NULL;
+  //if search resulted in nothing;
+}

@@ -11,18 +11,13 @@
 #include "nuiPlugin.h"
 #include "nuiPluginEntity.h"
 #include "nuiDynamicLibrary.h"
+#include "nuiModule.h"
 
 #include "json\json.h"
 
 #include <map>
 #include <vector>
 #include <string>
-
-#ifdef WIN32
-#include <guiddef.h>
-#else
-//! \todo include headers for GUID
-#endif
 
 //! \def MAJOR_VERSION defines major version of service that loads plugins
 #define MAJOR_VERSION 1
@@ -75,19 +70,19 @@ struct nuiModuleLoaded
   //! parent plugin
   nuiPluginLoaded* parentPlugin;
   //! allocate Module
-  nuiAllocateFunc allocate;
+  nuiAllocateFunc allocateF;
   //! destroy Module
-  nuiDeallocateFunc deallocate;
+  nuiDeallocateFunc deallocateF;
   //! get Module descriptor
-  nuiGetDescriptorFunc getDescriptor;
+  nuiGetDescriptorFunc getDescriptorF;
   //! created module instances
   std::vector<void*> instances;
 
   nuiModuleLoaded(const nuiRegisterModuleParameters* registerParams)
   {
-    this->allocate = registerParams->allocateFunc;
-    this->deallocate = registerParams->deallocateFunc;
-    this->getDescriptor = registerParams->getDescriptorFunc;
+    this->allocateF = registerParams->allocateFunc;
+    this->deallocateF = registerParams->deallocateFunc;
+    this->getDescriptorF = registerParams->getDescriptorFunc;
     this->name = registerParams->name;
     this->instances.clear();
   };
@@ -108,11 +103,44 @@ struct nuiModuleLoaded
       this->parentPlugin->unloadModule(this);
   };
 
+  nuiModule* allocate(nuiObjectParameters* params)
+  {
+    if(this->allocateF)
+    {
+      nuiModule* module = (nuiModule*)this->allocateF(params); 
+      this->instances.push_back(module);
+      return module;
+    }
+    else
+      return NULL;
+  };
+
+  void deallocate(nuiModule* module)
+  {
+    if(this->deallocateF)
+    {
+      std::vector<void*>::iterator it;
+      //! \todo don't forget to test
+      for( it = instances.begin(); it != instances.end() ; it++)
+      {
+        if(*it == module)
+          instances.erase(it);
+      }
+      // deallocate previously allocated module
+      this->deallocate(module);
+    }
+  };
+
+  nuiModuleDescriptor* getDescriptor()
+  {
+    return this->getDescriptorF();
+  }
+
   void clearInstances()
   {
     for(int i=instances.size()-1 ; i>=0; i--)
     {
-      this->deallocate(instances[i]);
+      this->deallocate((nuiModule*)instances[i]);
     }
     instances.clear();
   };
@@ -167,7 +195,17 @@ public:
 
   /** unloads specified pipeline from dictionary
    */
-  nuiPluginFrameworkErrorCode::err unloadPipeline(const GUID& guid);
+  nuiPluginFrameworkErrorCode::err unloadPipeline(const std::string& name);
+
+  /** lists names of loaded modules
+   */
+  std::vector<std::string>& listLoadedModules();
+
+  /** lists names of loaded pipelines
+   */
+  std::vector<std::string>& listLoadedPipelines();
+
+  nuiModuleDescriptor* getDescriptor(const std::string name);
 
 private:
   nuiPluginManager();
