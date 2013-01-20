@@ -29,7 +29,7 @@ int main(int argc, char **argv)
   nuiDebugLogger::init(config_syslog);
 
   /// Initialize JSON Configuration
-  nuiFrameworkManagerErrorCode loadCode = nuiFrameworkManager::getInstance()->loadSettingsFromJson("data/default_config.json");
+  nuiFrameworkManagerErrorCode loadCode = nuiFrameworkManager::getInstance().loadSettingsFromJson("data/default_config.json");
   if(loadCode != NUI_FRAMEWORK_MANAGER_OK)
   {
     LOG(NUI_CRITICAL, "Failed to Initialize Configuration"); 
@@ -47,14 +47,14 @@ int main(int argc, char **argv)
 
 
   /// Initialize Framework
-  nuiFrameworkManagerErrorCode frameworkInitStatus = nuiFrameworkManager::getInstance()->initializeFrameworkManager();
+  nuiFrameworkManagerErrorCode frameworkInitStatus = nuiFrameworkManager::getInstance().initializeFrameworkManager();
   if(frameworkInitStatus != NUI_FRAMEWORK_MANAGER_OK) 
   {
     if(frameworkInitStatus == NUI_FRAMEWORK_ROOT_INITIALIZATION_FAILED) 
       LOG(NUI_CRITICAL, "Failed to Initialize framework root");
   } 
   else 
-    nuiFrameworkManager::getInstance()->workflowStart();
+    nuiFrameworkManager::getInstance().workflowStart();
 
   /// Update cycle 
   do 
@@ -65,8 +65,8 @@ int main(int argc, char **argv)
 
 
   /// Stop Framework
-  nuiFrameworkManager::getInstance()->workflowStop();
-  nuiFrameworkManager::getInstance()->workflowQuit();
+  nuiFrameworkManager::getInstance().workflowStop();
+  nuiFrameworkManager::getInstance().workflowQuit();
 
 exit_standard:
   /// No cleanup required - Thread is done.

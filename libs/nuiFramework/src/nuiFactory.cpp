@@ -46,15 +46,6 @@ std::vector<std::string>& nuiFactory::listModules()
   return pm.listLoadedModules();
 };
 
-nuiModule* nuiFactory::createModule(nuiModuleLoaded* module)
-{
-  nuiPluginManager& pm = nuiPluginManager::getInstance();
-  //! \todo pass nuiObjectCreateParams ? 
-  //! Is it really necessary? We can do everything from properties
-  nuiModule* instance = module->allocate(NULL);
-  return instance;
-};
-
 nuiModuleDescriptor* nuiFactory::getDescriptor(const std::string& name)
 {
   nuiPluginManager& pm = nuiPluginManager::getInstance();
@@ -62,7 +53,15 @@ nuiModuleDescriptor* nuiFactory::getDescriptor(const std::string& name)
   return pm.getDescriptor(name);
 };
 
-//! \todo rewrite method - it's crappy. this of holding instances of pipelines 
+nuiModule* nuiFactory::createModule(nuiModuleLoaded* module)
+{
+  //! \todo pass nuiObjectCreateParams ? 
+  //! Is it really necessary? We can do everything from properties
+  nuiModule* instance = module->allocate(NULL);
+  return instance;
+};
+
+//! \todo rewrite method - it's crappy. Think of holding instances of pipelines 
 //! in one place, better with descriptors.
 nuiModule* nuiFactory::createPipeline(nuiModuleDescriptor* descriptor)
 {
@@ -85,7 +84,7 @@ nuiModule* nuiFactory::createPipeline(nuiModuleDescriptor* descriptor)
       nuiModule* childModule = create(childDescriptor->getName());
       if (childModule == NULL)
         continue;
-      applyDescriptor(childModule, childDescriptor);
+      applyDescriptorProps(childModule, childDescriptor);
       pipeline->addChildModule(childDescriptor->property("id").asInteger(), childModule);
     }
   }
@@ -202,14 +201,14 @@ pipeline : pipeline->getChildModuleAtIndex(dataStreamDescriptor->destinationModu
   }
   printf("---------------\n");
 
-  applyDescriptor(pipeline, descriptor);
+  applyDescriptorProps(pipeline, descriptor);
   //! \todo wtf?! we are always overwriting descriptor of pipeline when instantiating it?
   //pipelineDescriptors[descriptor->getName()] = descriptor;
 
   return pipeline;
 };
 
-void nuiFactory::applyDescriptor(nuiModule* module, nuiModuleDescriptor* descriptor)
+void nuiFactory::applyDescriptorProps(nuiModule* module, nuiModuleDescriptor* descriptor)
 {
   for (std::map<std::string, nuiProperty*>::iterator iter = descriptor->getProperties().begin();iter!= descriptor->getProperties().end();iter++)
   {
@@ -219,11 +218,26 @@ void nuiFactory::applyDescriptor(nuiModule* module, nuiModuleDescriptor* descrip
 
 nuiModule* nuiFactory::create( const std::string& moduleName )
 {
+  nuiPluginManager& pm = nuiPluginManager::getInstance();
+  std::vector<std::string>& modules = pm.listLoadedModules();
+  for (std::vector<std::string>::iterator it = modules.begin() ; it != modules.end(); it++)
+  {
+    if((*it) == moduleName)
+      return createModule(pm.getLoadedModule(moduleName));
+  }
+
+  std::vector<std::string>& pipelines = pm.listLoadedPipelines();
+  for (std::vector<std::string>::iterator it = pipelines.begin() ; it != pipelines.end(); it++)
+  {
+    if((*it) == moduleName)
+      return createPipeline(pm.getDescriptor(moduleName));
+  }
+
   return NULL;
 };
 
-void nuiFactory::init( const nuiPluginManager* pm )
+nuiPluginFrameworkErrorCode::err nuiFactory::registerPipelineDescriptor( nuiModuleDescriptor* descriptor )
 {
-  this->pm = pm;
+  return nuiPluginManager::getInstance().registerPipeline(descriptor);
 }
 

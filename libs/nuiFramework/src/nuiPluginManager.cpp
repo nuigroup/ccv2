@@ -376,3 +376,26 @@ nuiModuleDescriptor* nuiPluginManager::getDescriptor( const std::string name )
   return NULL;
   //if search resulted in nothing;
 }
+
+nuiPluginFrameworkErrorCode::err nuiPluginManager::registerPipeline( nuiModuleDescriptor* descr )
+{
+  std::vector<nuiModuleDescriptor*>::iterator it;
+  for (it = pipelinesLoaded.begin(); it != pipelinesLoaded.end() ; it++)
+  {
+    if((*it)->getName() == descr->getName())
+      return nuiPluginFrameworkErrorCode::RepeatingModule;
+  }
+  pipelinesLoaded.push_back(descr);
+  return nuiPluginFrameworkErrorCode::Success;
+}
+
+nuiModuleLoaded* nuiPluginManager::getLoadedModule( const std::string name )
+{
+  std::vector<nuiModuleLoaded*>::iterator it;
+  for (it = modulesLoaded.begin(); it != modulesLoaded.end() ; it++)
+  {
+    if(name == (*it)->name)
+      return *it;
+  }
+  return NULL;
+}

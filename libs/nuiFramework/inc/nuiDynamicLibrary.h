@@ -18,6 +18,7 @@
   static std::string dynamicLibraryExtension("dll");
 #endif
 
+//! cross platform dynamic library wrapper
 class nuiDynamicLibrary
 {
 public:

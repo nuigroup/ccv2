@@ -64,12 +64,16 @@ struct nuiObjectParameters
   const struct nuiPluginFrameworkService *frameworkServices;
 };
 
+//! structure holding version information
 struct nuiPluginFrameworkVersion
 {
+  //! major changes affect plugin compatibility. Older plugins must be rebuilt with newer version of nuiModule
   int major;
+  //! minor changes should not affect plugin compatibility
   int minor;
 };
 
+//! structure holding all information required to give framework control over module
 struct nuiRegisterModuleParameters
 {
   nuiPluginFrameworkVersion version;
@@ -79,6 +83,7 @@ struct nuiRegisterModuleParameters
   nuiGetDescriptorFunc getDescriptorFunc;
 };
 
+//! services exposed by framework to plugin
 struct nuiPluginFrameworkService
 {
   nuiPluginFrameworkVersion version;

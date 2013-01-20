@@ -54,6 +54,7 @@ typedef nuiModule* (*nuiFactoryCreateCallback)();
 
 class nuiEndpointDescriptor;
 
+//! holds information about module like children modules, endpoints, properties and so on
 class nuiModuleDescriptor
 {
 public:

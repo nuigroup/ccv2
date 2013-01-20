@@ -30,10 +30,10 @@ class nuiDynamicLibrary;
 struct nuiPluginLoaded;
 struct nuiModuleLoaded;
 
-//! \todo Move to separate file and split with realization
 //! Facade. Holds information about loaded plugins
 struct nuiPluginLoaded
 {
+  //! \todo Move to separate file and split with realization
   //! string plugin location. As 2 plugins can't have the same address we can 
   //! consider pluginAddress as unique id.
   std::string pluginPath;
@@ -61,10 +61,10 @@ struct nuiPluginLoaded
   };
 };
 
-//! \todo Move to separate file and split with realization
 //! Facade. Holds information about modules loaded from plugins
 struct nuiModuleLoaded
 {
+  //! \todo Move to separate file and split with realization
   //! module Name. Should be uniq within application.
   std::string name;
   //! parent plugin
@@ -152,7 +152,7 @@ struct nuiModuleLoaded
 };
 
 /** \class nuiPluginManager
-*  Singleton class. Used to store information about loaded dlls with plugins,
+*  \brief Used to store information about loaded dlls with plugins,
 *  plugins, hold pointers to functions for plugin and dll allocation/deallocation
 */
 class nuiPluginManager
@@ -162,7 +162,7 @@ public:
   static nuiPluginManager& getInstance();
 
   /** \fn nuiPluginFrameworkErrorCode registerModule(const char *moduleName, const nuiRegisterModuleParameters *params)
-  *  Called by dynamic library and used for sending data about module to nuiPluginManager. 
+  *  \brief Called by dynamic library and used for sending data about module to nuiPluginManager. 
   *  Can be called several times by each dll if it contains more than one module.
   *  \return result of this operation to dynamic library
   */
@@ -170,42 +170,40 @@ public:
 
 //==============================================================================
   /*! \fn nuiPluginFrameworkErrorCode loadLibrary(const std::string &path)
-  *  load dynamic library with specific path and add to internal collection
+  *  \brief load dynamic library with specific path and add to internal collection
   *  \return result of this operation
   */
   nuiPluginFrameworkErrorCode::err loadLibrary(const std::string path);
 
-  /** unload specified library and delete all previously allocated instances 
-  *  and plugin infos stored in this library
-  *  \return result of this operation
-  */
+  //! unload specified library and delete all previously allocated instances and plugin infos stored in this library
   nuiPluginFrameworkErrorCode::err unloadLibrary(const std::string path);
 
-  /** loads default configuration (basic modules and sample pipeline)
-   */
+  //! loads default configuration (basic modules and sample pipeline)
   nuiPluginFrameworkErrorCode::err loadDefaultConfiguration();
 
-  /** loads specified pipelines. Currently only json is supported.
-   */
+  //! loads specified pipelines. Currently only json is supported.
   nuiPluginFrameworkErrorCode::err loadPipelines(Json::Value& root);
 
-  /** loads specified pipelines from file. Currently only json is supported.
-   */
+  //! loads specified pipelines from file. Currently only json is supported.
   nuiModuleDescriptor* loadPipeline(Json::Value& root);
 
-  /** unloads specified pipeline from dictionary
-   */
+  //! unloads specified pipeline from dictionary
   nuiPluginFrameworkErrorCode::err unloadPipeline(const std::string& name);
 
-  /** lists names of loaded modules
-   */
+  //! lists names of loaded modules
   std::vector<std::string>& listLoadedModules();
 
-  /** lists names of loaded pipelines
-   */
+  //! lists names of loaded pipelines
   std::vector<std::string>& listLoadedPipelines();
 
+  //! registers newly created descriptor
+  nuiPluginFrameworkErrorCode::err registerPipeline(nuiModuleDescriptor* descr);
+
+  //! gets descriptor for module or pipeline with specified name
   nuiModuleDescriptor* getDescriptor(const std::string name);
+
+  //! gets control structure for loaded module
+  nuiModuleLoaded* getLoadedModule(const std::string name);
 
 private:
   nuiPluginManager();

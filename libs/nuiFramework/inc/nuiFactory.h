@@ -18,6 +18,7 @@
 #include "nuiPluginManager.h"
 
 /** \class nuiFactory
+ *  \brief Provides methods for plugin creation and removal
  *  Singleton class. Provides methods for plugin creation and removal
  *  Also allows to get descriptors for already created plugins
  */
@@ -27,8 +28,8 @@ public:
     //! Singleton wrapper
     static nuiFactory& getInstance();
     
-    //! Initialize with PluginManager to obtain loaded modules
-    void init(const nuiPluginManager* pm);
+    //! Set module instance properties just like in descriptor
+    static void applyDescriptorProps(nuiModule* module, nuiModuleDescriptor* descriptor);
 
     //! lists available pipeline names
     std::vector<std::string>& listPipelines();
@@ -38,18 +39,15 @@ public:
     //! gets descriptor for a module or pipeline with specified name
     nuiModuleDescriptor* getDescriptor(const std::string& name);
 
-    //! Set module instance params just like in descriptor
-    void applyDescriptor(nuiModule* module, nuiModuleDescriptor* descriptor);
-
     //! Creates pipeline or module with specified name
     nuiModule* create(const std::string& moduleName);
+    
+    //! registers pipeline descriptor
+    nuiPluginFrameworkErrorCode::err registerPipelineDescriptor(nuiModuleDescriptor* descriptor);
 
 private:
     nuiFactory();
     nuiFactory(const nuiFactory&);
-
-    //! plugin manager to obtain loaded modules or plugins
-    const nuiPluginManager* pm;
 
     //! Creates pipeline given pipeline descriptor
     nuiModule* createPipeline(nuiModuleDescriptor* descriptor);
