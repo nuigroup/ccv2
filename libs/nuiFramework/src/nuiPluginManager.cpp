@@ -399,3 +399,8 @@ nuiModuleLoaded* nuiPluginManager::getLoadedModule( const std::string name )
   }
   return NULL;
 }
+
+std::vector<nuiModuleDescriptor*>& nuiPluginManager::getPipelineDescriptors()
+{
+  return pipelinesLoaded;
+}

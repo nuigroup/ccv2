@@ -196,6 +196,9 @@ public:
   //! lists names of loaded pipelines
   std::vector<std::string>& listLoadedPipelines();
 
+  //! get pipeline descriptors
+  std::vector<nuiModuleDescriptor*>& getPipelineDescriptors();
+
   //! registers newly created descriptor
   nuiPluginFrameworkErrorCode::err registerPipeline(nuiModuleDescriptor* descr);
 

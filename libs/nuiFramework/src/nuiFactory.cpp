@@ -46,13 +46,6 @@ std::vector<std::string>& nuiFactory::listModules()
   return pm.listLoadedModules();
 };
 
-nuiModuleDescriptor* nuiFactory::getDescriptor(const std::string& name)
-{
-  nuiPluginManager& pm = nuiPluginManager::getInstance();
-  
-  return pm.getDescriptor(name);
-};
-
 nuiModule* nuiFactory::createModule(nuiModuleLoaded* module)
 {
   //! \todo pass nuiObjectCreateParams ? 
@@ -240,4 +233,3 @@ nuiPluginFrameworkErrorCode::err nuiFactory::registerPipelineDescriptor( nuiModu
 {
   return nuiPluginManager::getInstance().registerPipeline(descriptor);
 }
-

@@ -4,6 +4,7 @@
 #include "nuiDataStream.h"
 #include "nuiFactory.h"
 #include "nuiUtils.h"
+#include "nuiPluginManager.h"
 
 LOG_DECLARE("FrameworkManager");
 
@@ -96,7 +97,7 @@ nuiFrameworkManagerErrorCode::err nuiFrameworkManager::workflowStop(int moduleIn
 nuiModuleDescriptor* nuiFrameworkManager::createNewPipelineTemplate(const std::string& pipelineName)
 {
   std::string newPipelineName = pipelineName;
-  while (nuiFactory::getInstance().getDescriptor(newPipelineName) != NULL)
+  while (nuiPluginManager::getInstance().getDescriptor(newPipelineName) != NULL)
     newPipelineName += '_';
   // choose new name if there's a pipeline with the same name
 
@@ -120,8 +121,9 @@ nuiModuleDescriptor* nuiFrameworkManager::createNewPipelineTemplate(const std::s
 
 nuiModuleDescriptor *nuiFrameworkManager::createModule(std::string &pipelineName, std::string &moduleName)
 {
-  nuiModuleDescriptor* pipelineDescriptor = nuiFactory::getInstance().getDescriptor(pipelineName);
-  nuiModuleDescriptor* dafaultChildDescriptor = nuiFactory::getInstance().getDescriptor(moduleName);
+  nuiPluginManager& pm = nuiPluginManager::getInstance();
+  nuiModuleDescriptor* pipelineDescriptor = pm.getDescriptor(pipelineName);
+  nuiModuleDescriptor* dafaultChildDescriptor = pm.getDescriptor(moduleName);
   if ((pipelineDescriptor == NULL) || (dafaultChildDescriptor == NULL))
     return NULL;
   // obtains pipeline and module descriptor
@@ -177,7 +179,8 @@ nuiModuleDescriptor *nuiFrameworkManager::createModule(std::string &pipelineName
 
 nuiDataStreamDescriptor *nuiFrameworkManager::createConnection(std::string &pipelineName, int sourceModuleID, int destinationModuleID,int sourcePort, int destinationPort)
 {
-  nuiModuleDescriptor* pipelineDescriptor = nuiFactory::getInstance().getDescriptor(pipelineName);
+  nuiPluginManager& pm = nuiPluginManager::getInstance();
+  nuiModuleDescriptor* pipelineDescriptor = pm.getDescriptor(pipelineName);
   if (pipelineDescriptor == NULL)
     return NULL;
   nuiDataStreamDescriptor* existingDescriptor = getConnection(pipelineName, sourceModuleID, destinationModuleID, sourcePort, destinationPort);
@@ -205,8 +208,8 @@ nuiDataStreamDescriptor *nuiFrameworkManager::createConnection(std::string &pipe
     return NULL;
 
   //we need to get information about structure of connected modules - so let's ask nuiFactory
-  sourceModuleDescriptor = nuiFactory::getInstance().getDescriptor(sourceModuleDescriptor->getName());
-  destinationModuleDescriptor = nuiFactory::getInstance().getDescriptor(destinationModuleDescriptor->getName());
+  sourceModuleDescriptor = pm.getDescriptor(sourceModuleDescriptor->getName());
+  destinationModuleDescriptor = pm.getDescriptor(destinationModuleDescriptor->getName());
 
   if ((sourceModuleDescriptor->getOutputEndpointsCount() <= sourcePort) || (destinationModuleDescriptor->getInputEndpointsCount() <= destinationPort))
     return NULL;
@@ -261,7 +264,7 @@ nuiDataStreamDescriptor *nuiFrameworkManager::createConnection(std::string &pipe
     {
       for (std::map<int,nuiModule*>::iterator iter = currentPipeline->modules.begin();  iter != currentPipeline->modules.end();iter++)
       {
-        nuiModuleDescriptor* childDescriptor = nuiFactory::getInstance().getDescriptor(iter->second->getName());
+        nuiModuleDescriptor* childDescriptor = pm.getDescriptor(iter->second->getName());
         if (childDescriptor->getChildModulesCount() > 0)
         {
           stack->push_back((nuiPipelineModule*)iter->second);
@@ -276,38 +279,45 @@ nuiDataStreamDescriptor *nuiFrameworkManager::createConnection(std::string &pipe
 
 int nuiFrameworkManager::setInputEndpointCount(std::string &pipelineName,int count)
 {
-  nuiModuleDescriptor* pipelineDescriptor = nuiFactory::getInstance().getDescriptor(pipelineName);
+  nuiFactory& factory = nuiFactory::getInstance();
+  nuiPluginManager& pm = nuiPluginManager::getInstance();
+  nuiModuleDescriptor* pipelineDescriptor = pm.getDescriptor(pipelineName);
   if (pipelineDescriptor == NULL)
     return 0;
+  // find pipeline descriptor
+  
   if (count == pipelineDescriptor->getInputEndpointsCount())
     return count;
-  if (count < pipelineDescriptor->getInputEndpointsCount())
+  // do nothing if the same endpoint count
+
+  if (count < pipelineDescriptor->getInputEndpointsCount()) // if less - remove
   {
-    std::list<nuiPipelineModule*>* stack = new std::list<nuiPipelineModule*>();
-    if (rootPipeline!=NULL)
-      stack->push_back(rootPipeline);
-    while (!stack->empty())
+    std::list<nuiPipelineModule*> stack;
+    if (rootPipeline != NULL)
+      stack.push_back(rootPipeline);
+    while (!stack.empty()) // BFS over the pipelines?
     {
-      nuiPipelineModule* currentPipeline = stack->back();
-      nuiModuleDescriptor* currentPipelineDescriptor = nuiFactory::getInstance().getDescriptor(currentPipeline->getName());
-      stack->pop_back();
+      nuiPipelineModule* currentPipeline = stack.back();
+      nuiModuleDescriptor* currentPipelineDescriptor = pm.getDescriptor(currentPipeline->getName());
+      stack.pop_back();
       if (currentPipeline->getName() == pipelineName)
       {		
         currentPipeline->setInputEndpointCount(count);
       }
       else
       {
-        for (std::map<int,nuiModule*>::iterator iter = currentPipeline->modules.begin();  iter != currentPipeline->modules.end();iter++)
+        for (std::map<int,nuiModule*>::iterator iter = currentPipeline->modules.begin(); 
+          iter != currentPipeline->modules.end();iter++) // iterate over pipeline modules
         {
-          nuiModuleDescriptor* childDescriptor = nuiFactory::getInstance().getDescriptor(iter->second->getName());
+          nuiModuleDescriptor* childDescriptor = pm.getDescriptor(iter->second->getName());
           if (childDescriptor->getChildModulesCount() > 0)
           {
-            stack->push_back((nuiPipelineModule*)iter->second);
+            stack.push_back((nuiPipelineModule*)iter->second);
             if (childDescriptor->getName() == pipelineName)
             {
               //remove connections outside currentPipeline
               int pipelineModuleID = childDescriptor->property("id").asInteger();
-              for (int i=0;i<currentPipelineDescriptor->getDataStreamDescriptorCount();i++)
+              for (int i=0; i<currentPipelineDescriptor->getDataStreamDescriptorCount(); i++)
               {
                 nuiDataStreamDescriptor* connectionDescriptor = currentPipelineDescriptor->getDataStreamDescriptor(i);
                 if ((connectionDescriptor->destinationModuleID == pipelineModuleID) && (connectionDescriptor->destinationPort >= count))
@@ -330,42 +340,43 @@ int nuiFrameworkManager::setInputEndpointCount(std::string &pipelineName,int cou
         }
       }
     }
-    delete stack;
 
-    for (std::map<std::string, nuiModuleDescriptor*>::iterator iter = 
-      nuiFactory::getInstance().pipelineDescriptors.begin(); 
-      iter != nuiFactory::getInstance().pipelineDescriptors.end(); 
-      iter++)
+    std::vector<nuiModuleDescriptor*>::iterator pipe;
+    std::vector<nuiModuleDescriptor*>& pipes = pm.getPipelineDescriptors();
+    for (pipe = pipes.begin(); pipe != pipes.end() ; pipe++) //iterate over all pipes
     {
-      nuiModuleDescriptor *currentModuleDescriptor = iter->second;
-      for (int i=currentModuleDescriptor->getChildModulesCount()-1;i>=0;i--)
+      nuiModuleDescriptor *currentPipe = *pipe;
+      for (int i = currentPipe->getChildModulesCount() - 1 ; i>=0 ; i--)
       {
-        if (currentModuleDescriptor->getChildModuleDescriptor(i)->getName() == pipelineName)
+        if (currentPipe->getChildModuleDescriptor(i)->getName() == pipelineName)
         {
-          int id = currentModuleDescriptor->getChildModuleDescriptor(i)->property("id").asInteger();
-          for (int j=currentModuleDescriptor->getDataStreamDescriptorCount()-1;i>=0;i--)
+          int id = currentPipe->getChildModuleDescriptor(i)->property("id").asInteger();
+          for (int j = currentPipe->getDataStreamDescriptorCount() - 1 ; i>=0 ; i--)
           {
-            if (currentModuleDescriptor->getDataStreamDescriptor(j)->destinationModuleID == id) 
+            if (currentPipe->getDataStreamDescriptor(j)->destinationModuleID == id) 
             {
-              if (currentModuleDescriptor->getDataStreamDescriptor(j)->destinationPort >= count)
+              if (currentPipe->getDataStreamDescriptor(j)->destinationPort >= count)
               {
-                currentModuleDescriptor->removeDataStreamDescriptor(currentModuleDescriptor->getDataStreamDescriptor(j));
+                currentPipe->removeDataStreamDescriptor(currentPipe->getDataStreamDescriptor(j));
                 continue;
               }
             }
           }
         }
       }
-    }
+    } // remove datastream descriptors to pipe if exist
   }
+
   pipelineDescriptor->setInputEndpointsCount(count);
   return pipelineDescriptor->getInputEndpointsCount();
-  return 0;
 }
 
 int nuiFrameworkManager::setOutputEndpointCount(std::string &pipelineName,int count)
 {
-  nuiModuleDescriptor* pipelineDescriptor = nuiFactory::getInstance().getDescriptor(pipelineName);
+  nuiFactory& factory = nuiFactory::getInstance();
+  nuiPluginManager& pm = nuiPluginManager::getInstance();
+
+  nuiModuleDescriptor* pipelineDescriptor = pm.getDescriptor(pipelineName);
   if (pipelineDescriptor == NULL)
     return 0;
   if (count == pipelineDescriptor->getOutputEndpointsCount())
@@ -378,7 +389,7 @@ int nuiFrameworkManager::setOutputEndpointCount(std::string &pipelineName,int co
     while (!stack->empty())
     {
       nuiPipelineModule* currentPipeline = stack->back();
-      nuiModuleDescriptor* currentPipelineDescriptor = nuiFactory::getInstance().getDescriptor(currentPipeline->getName());
+      nuiModuleDescriptor* currentPipelineDescriptor = pm.getDescriptor(currentPipeline->getName());
       stack->pop_back();
       if (currentPipeline->getName() == pipelineName)
       {		
@@ -388,7 +399,7 @@ int nuiFrameworkManager::setOutputEndpointCount(std::string &pipelineName,int co
       {
         for (std::map<int,nuiModule*>::iterator iter = currentPipeline->modules.begin();  iter != currentPipeline->modules.end();iter++)
         {
-          nuiModuleDescriptor* childDescriptor = nuiFactory::getInstance().getDescriptor(iter->second->getName());
+          nuiModuleDescriptor* childDescriptor = pm.getDescriptor(iter->second->getName());
           if (childDescriptor->getChildModulesCount() > 0)
           {
             stack->push_back((nuiPipelineModule*)iter->second);
@@ -417,15 +428,15 @@ int nuiFrameworkManager::setOutputEndpointCount(std::string &pipelineName,int co
     }
     delete stack;
 
-    for (std::map<std::string, nuiModuleDescriptor*>::iterator iter = nuiFactory::getInstance().pipelineDescriptors.begin(); iter != nuiFactory::getInstance().pipelineDescriptors.end(); iter++)
+    for (std::vector<nuiModuleDescriptor*>::iterator iter = pm.getPipelineDescriptors().begin(); iter != pm.getPipelineDescriptors().end(); iter++)
     {
-      nuiModuleDescriptor *currentModuleDescriptor = iter->second;
-      for (int i=currentModuleDescriptor->getChildModulesCount()-1;i>=0;i--)
+      nuiModuleDescriptor *currentModuleDescriptor = *iter;
+      for (int i=currentModuleDescriptor->getChildModulesCount() - 1 ; i>=0 ; i--)
       {
         if (currentModuleDescriptor->getChildModuleDescriptor(i)->getName() == pipelineName)
         {
           int id = currentModuleDescriptor->getChildModuleDescriptor(i)->property("id").asInteger();
-          for (int j=currentModuleDescriptor->getDataStreamDescriptorCount()-1;i>=0;i--)
+          for (int j=currentModuleDescriptor->getDataStreamDescriptorCount()-1 ; i>=0 ; i--)
           {
             if (currentModuleDescriptor->getDataStreamDescriptor(j)->sourceModuleID == id) 
             {
@@ -443,749 +454,780 @@ int nuiFrameworkManager::setOutputEndpointCount(std::string &pipelineName,int co
 
   pipelineDescriptor->setOutputEndpointsCount(count);
   return pipelineDescriptor->getOutputEndpointsCount();
-  return 0;
 }
 
 nuiModuleDescriptor * nuiFrameworkManager::getCurrentPipeline()
 {
-//  return nuiFactory::getInstance().getDescriptor(getCurrent()->getName());
-  return NULL;
+  return nuiPluginManager::getInstance().getDescriptor(getCurrent()->getName());
 }
 
 nuiModuleDescriptor *nuiFrameworkManager::getWorkflowRoot()
 {
-//  return nuiFactory::getInstance().getDescriptor(this->rootPipeline->getName());
-  return NULL;
+  return nuiPluginManager::getInstance().getDescriptor(rootPipeline->getName());
 }
 
 nuiModuleDescriptor *nuiFrameworkManager::getPipeline(std::string &pipelineName)
 {
-  //return nuiFactory::getInstance().getDescriptor(pipelineName);
-  return NULL;
+  return nuiPluginManager::getInstance().getDescriptor(pipelineName);
 }
 
 nuiModuleDescriptor *nuiFrameworkManager::getModule(std::string &pipelineName, int index)
 {
-//   nuiModuleDescriptor* pipelineDescriptor = nuiFactory::getInstance().getDescriptor(pipelineName);
-//   if (pipelineDescriptor == NULL)
-//     return NULL;
-//   for (int i=0;i<pipelineDescriptor->getChildModulesCount();i++)
-//   {
-//     if (pipelineDescriptor->getChildModuleDescriptor(i)->property("id").asInteger() == index)
-//     {
-//       return pipelineDescriptor->getChildModuleDescriptor(i);
-//     }
-//   }
+  nuiPluginManager& pm = nuiPluginManager::getInstance();
+  nuiModuleDescriptor* pipelineDescriptor = pm.getDescriptor(pipelineName);
+  if (pipelineDescriptor == NULL)
+    return NULL;
+  for (int i=0; i<pipelineDescriptor->getChildModulesCount(); i++)
+  {
+    if (pipelineDescriptor->getChildModuleDescriptor(i)->property("id").asInteger() == index)
+    {
+      return pipelineDescriptor->getChildModuleDescriptor(i);
+    }
+  }
   return NULL;
 }
 
 nuiModuleDescriptor *nuiFrameworkManager::getModule(std::string &moduleName)
 {
-  //return nuiFactory::getInstance().getDescriptor(moduleName);
-  return NULL;
+  return nuiPluginManager::getInstance().getDescriptor(moduleName);
 }
 
 nuiEndpointDescriptor *nuiFrameworkManager::getInputEndpoint(std::string &pipelineName,int index)
 {
-//   nuiModuleDescriptor* pipelineDescriptor = nuiFactory::getInstance().getDescriptor(pipelineName);
-//   if (pipelineDescriptor == NULL)
-//     return NULL;
-//   if (pipelineDescriptor->getInputEndpointsCount() <= index)
-//     return NULL;
-//   return pipelineDescriptor->getInputEndpointDescriptor(index);
-  return NULL;
+  nuiPluginManager& pm = nuiPluginManager::getInstance();
+  nuiModuleDescriptor* pipelineDescriptor = pm.getDescriptor(pipelineName);
+  if (pipelineDescriptor == NULL)
+    return NULL;
+  if (pipelineDescriptor->getInputEndpointsCount() <= index)
+    return NULL;
+  return pipelineDescriptor->getInputEndpointDescriptor(index);
 }
 
 nuiEndpointDescriptor *nuiFrameworkManager::getOutputEndpoint(std::string &pipelineName,int index)
 {
-//   nuiModuleDescriptor* pipelineDescriptor = nuiFactory::getInstance().getDescriptor(pipelineName);
-//   if (pipelineDescriptor == NULL)
-//     return NULL;
-//   if (pipelineDescriptor->getOutputEndpointsCount() <= index)
-//     return NULL;
-//   return pipelineDescriptor->getOutputEndpointDescriptor(index);
-  return NULL;
+  nuiPluginManager& pm = nuiPluginManager::getInstance();
+  nuiModuleDescriptor* pipelineDescriptor = pm.getDescriptor(pipelineName);
+  if (pipelineDescriptor == NULL)
+    return NULL;
+  if (pipelineDescriptor->getOutputEndpointsCount() <= index)
+    return NULL;
+  return pipelineDescriptor->getOutputEndpointDescriptor(index);
 }
 
 nuiDataStreamDescriptor *nuiFrameworkManager::getConnection(std::string &pipelineName, int sourceModuleID, int destinationModuleID,int sourcePort, int destinationPort)
 {
-//   nuiModuleDescriptor* pipelineDescriptor = nuiFactory::getInstance().getDescriptor(pipelineName);
-//   if (pipelineDescriptor == NULL)
-//     return NULL;
-//   for (int i=0;i<pipelineDescriptor->getDataStreamDescriptorCount();i++)
-//   {
-//     if ((sourceModuleID == pipelineDescriptor->getDataStreamDescriptor(i)->sourceModuleID) && (destinationModuleID == pipelineDescriptor->getDataStreamDescriptor(i)->destinationModuleID) && (sourcePort == pipelineDescriptor->getDataStreamDescriptor(i)->sourcePort) && (sourcePort == pipelineDescriptor->getDataStreamDescriptor(i)->sourcePort))
-//       return pipelineDescriptor->getDataStreamDescriptor(i);
-//   }
-  return NULL;
+  nuiPluginManager& pm = nuiPluginManager::getInstance();
+  nuiModuleDescriptor* pipelineDescriptor = pm.getDescriptor(pipelineName);
+  if (pipelineDescriptor == NULL)
+    return NULL;
+  for (int i=0;i<pipelineDescriptor->getDataStreamDescriptorCount();i++)
+  {
+    if ((sourceModuleID == pipelineDescriptor->getDataStreamDescriptor(i)->sourceModuleID) 
+      && (destinationModuleID == pipelineDescriptor->getDataStreamDescriptor(i)->destinationModuleID) 
+      && (sourcePort == pipelineDescriptor->getDataStreamDescriptor(i)->sourcePort)
+      && (sourcePort == pipelineDescriptor->getDataStreamDescriptor(i)->sourcePort))
+      return pipelineDescriptor->getDataStreamDescriptor(i);
+  }
 }
 
 nuiFrameworkManagerErrorCode::err nuiFrameworkManager::deletePipeline(std::string &pipelineName)
 {
-//   if (pipelineName == "root")
-//     return NUI_FRAMEWORK_ROOT_ACCESS_DENIED;
-//   nuiModuleDescriptor* pipelineDescriptor = nuiFactory::getInstance().getDescriptor(pipelineName);
-//   if (pipelineDescriptor == NULL)
-//     return NUI_FRAMEWORK_OBJECT_NOT_EXIST;
-// 
-//   std::list<nuiPipelineModule*>* stack = new std::list<nuiPipelineModule*>();
-//   if (rootPipeline!=NULL)
-//     stack->push_back(rootPipeline);
-//   while (!stack->empty())
-//   {
-//     nuiPipelineModule* currentPipeline = stack->back();
-//     nuiModuleDescriptor* currentPipelineDescriptor = nuiFactory::getInstance().getDescriptor(currentPipeline->getName());
-//     stack->pop_back();
-//     if (currentPipeline->getName() == pipelineName)
-//     {		
-//       //deletes internal connection and outer outputs from this pipeline
-//       delete currentPipeline;
-//     }
-//     else
-//     {
-//       for (std::map<int,nuiModule*>::iterator iter = currentPipeline->modules.begin();  iter != currentPipeline->modules.end();iter++)
-//       {
-//         nuiModuleDescriptor* childDescriptor = nuiFactory::getInstance().getDescriptor("nui" + iter->second->getName() + "Module");
-//         if (childDescriptor->getChildModulesCount() > 0)
-//         {
-//           stack->push_back((nuiPipelineModule*)iter->second);
-//           if (childDescriptor->getName() == pipelineName)
-//           {
-//             //remove connections outside currentPipeline
-//             int pipelineModuleID = childDescriptor->property("id").asInteger();
-//             for (int i=0;i<currentPipelineDescriptor->getDataStreamDescriptorCount();i++)
-//             {
-//               nuiDataStreamDescriptor* connectionDescriptor = currentPipelineDescriptor->getDataStreamDescriptor(i);
-//               if (connectionDescriptor->destinationModuleID == pipelineModuleID)
-//               {
-//                 nuiModule* sourceModule = currentPipeline->modules[connectionDescriptor->sourceModuleID];
-//                 if (sourceModule == NULL)
-//                   continue;
-//                 nuiEndpoint* sourceEndpoint = sourceModule->getOutputEndpointCount() > connectionDescriptor->sourcePort ? sourceModule->getOutputEndpoint(connectionDescriptor->sourcePort) : NULL;
-//                 if (sourceEndpoint== NULL)
-//                   continue;
-//                 nuiModule* destinationModule = currentPipeline;
-//                 nuiEndpoint* destinationEndpoint = destinationModule->getInputEndpoint(connectionDescriptor->destinationPort);
-//                 if (destinationEndpoint == NULL)
-//                   continue;
-//                 sourceEndpoint->removeConnection(destinationEndpoint);
-//               }
-//             }
-//           }
-//         }
-//       }
-//     }
-//   }
-//   delete stack;
-// 
-//   for (std::map<std::string, nuiModuleDescriptor*>::iterator iter = nuiFactory::getInstance().pipelineDescriptors.begin(); iter != nuiFactory::getInstance().pipelineDescriptors.end(); iter++)
-//   {
-//     nuiModuleDescriptor *currentModuleDescriptor = iter->second;
-//     for (int i=currentModuleDescriptor->getChildModulesCount()-1;i>=0;i--)
-//     {
-//       if (currentModuleDescriptor->getChildModuleDescriptor(i)->getName() == pipelineName)
-//       {
-//         int childModuleID = currentModuleDescriptor->getChildModuleDescriptor(i)->property("id").asInteger();
-//         for (int j=currentModuleDescriptor->getDataStreamDescriptorCount()-1;j>=0;j--)
-//         {
-//           if ((currentModuleDescriptor->getDataStreamDescriptor(j)->destinationModuleID == childModuleID) ||
-//             (currentModuleDescriptor->getDataStreamDescriptor(j)->sourceModuleID == childModuleID))
-//           {
-//             currentModuleDescriptor->removeDataStreamDescriptor(currentModuleDescriptor->getDataStreamDescriptor(j));
-//           }
-//         }
-//         currentModuleDescriptor->removeChildModuleDescriptor(currentModuleDescriptor->getChildModuleDescriptor(i));
-//       }
-//     }
-//   }
-//   nuiFactory::getInstance().pipelineDescriptors.erase(pipelineName);
-//   return NUI_FRAMEWORK_MANAGER_OK;
+  nuiPluginManager& pm = nuiPluginManager::getInstance();
+  nuiFactory& factory = nuiFactory::getInstance();
+
+  if (pipelineName == "root")
+    return nuiFrameworkManagerErrorCode::RootDeletionDeprecated;
+  nuiModuleDescriptor* pipelineDescriptor = pm.getDescriptor(pipelineName);
+  if (pipelineDescriptor == NULL)
+    return nuiFrameworkManagerErrorCode::NonexistentModule;
+
+  std::list<nuiPipelineModule*>* stack = new std::list<nuiPipelineModule*>();
+  if (rootPipeline!=NULL)
+    stack->push_back(rootPipeline);
+  while (!stack->empty())
+  {
+    nuiPipelineModule* currentPipeline = stack->back();
+    nuiModuleDescriptor* currentPipelineDescriptor = pm.getDescriptor(currentPipeline->getName());
+    stack->pop_back();
+    if (currentPipeline->getName() == pipelineName)
+    {		
+      //deletes internal connection and outer outputs from this pipeline
+      delete currentPipeline;
+    }
+    else
+    {
+      for (std::map<int,nuiModule*>::iterator iter = currentPipeline->modules.begin();  iter != currentPipeline->modules.end();iter++)
+      {
+        nuiModuleDescriptor* childDescriptor = pm.getDescriptor("nui" + iter->second->getName() + "Module");
+        if (childDescriptor->getChildModulesCount() > 0)
+        {
+          stack->push_back((nuiPipelineModule*)iter->second);
+          if (childDescriptor->getName() == pipelineName)
+          {
+            //remove connections outside currentPipeline
+            int pipelineModuleID = childDescriptor->property("id").asInteger();
+            for (int i=0;i<currentPipelineDescriptor->getDataStreamDescriptorCount();i++)
+            {
+              nuiDataStreamDescriptor* connectionDescriptor = currentPipelineDescriptor->getDataStreamDescriptor(i);
+              if (connectionDescriptor->destinationModuleID == pipelineModuleID)
+              {
+                nuiModule* sourceModule = currentPipeline->modules[connectionDescriptor->sourceModuleID];
+                if (sourceModule == NULL)
+                  continue;
+                nuiEndpoint* sourceEndpoint = 
+                  (sourceModule->getOutputEndpointCount() > connectionDescriptor->sourcePort) ? 
+                  sourceModule->getOutputEndpoint(connectionDescriptor->sourcePort) : NULL;
+                if (sourceEndpoint== NULL)
+                  continue;
+                nuiModule* destinationModule = currentPipeline;
+                nuiEndpoint* destinationEndpoint = 
+                  destinationModule->getInputEndpoint(connectionDescriptor->destinationPort);
+                if (destinationEndpoint == NULL)
+                  continue;
+                sourceEndpoint->removeConnection(destinationEndpoint);
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+  delete stack;
+
+  for (std::vector<nuiModuleDescriptor*>::iterator iter = pm.getPipelineDescriptors().begin(); 
+    iter != pm.getPipelineDescriptors().end(); iter++)
+  {
+    nuiModuleDescriptor *currentModuleDescriptor = *iter;
+    for (int i = currentModuleDescriptor->getChildModulesCount() - 1 ; i>=0 ; i--)
+    {
+      if (currentModuleDescriptor->getChildModuleDescriptor(i)->getName() == pipelineName)
+      {
+        int childModuleID = 
+          currentModuleDescriptor->getChildModuleDescriptor(i)->property("id").asInteger();
+        for (int j=currentModuleDescriptor->getDataStreamDescriptorCount()-1 ; j>=0 ; j--)
+        {
+          if ((currentModuleDescriptor->getDataStreamDescriptor(j)->destinationModuleID == childModuleID) 
+            ||(currentModuleDescriptor->getDataStreamDescriptor(j)->sourceModuleID == childModuleID))
+          {
+            currentModuleDescriptor->removeDataStreamDescriptor(
+              currentModuleDescriptor->getDataStreamDescriptor(j));
+          }
+        }
+        currentModuleDescriptor->removeChildModuleDescriptor(
+          currentModuleDescriptor->getChildModuleDescriptor(i));
+      }
+    }
+  }
+  
+  std::vector<nuiModuleDescriptor*>& pipes = pm.getPipelineDescriptors();
+  for (int i = pipes.size()-1 ; i>=0 ; i--)
+  {
+    if(pipes[i]->getName() == pipelineName)
+      pipes.erase(pipes.begin()+i);
+  }
+
   return nuiFrameworkManagerErrorCode::Success;
 }
 
 nuiModuleDescriptor *nuiFrameworkManager::deleteModule(std::string &pipelineName,int moduleIndex)
 {
-//   nuiModuleDescriptor* pipelineDescriptor = nuiFactory::getInstance().getDescriptor(pipelineName);
-//   if (pipelineDescriptor == NULL)
-//     return NULL;
-//   std::list<nuiPipelineModule*>* stack = new std::list<nuiPipelineModule*>();
-//   if (rootPipeline!=NULL)
-//     stack->push_back(rootPipeline);
-//   while (!stack->empty())
-//   {
-//     nuiPipelineModule* currentPipeline = stack->back();
-//     nuiModuleDescriptor* currentPipelineDescriptor = nuiFactory::getInstance().getDescriptor(currentPipeline->getName());
-//     stack->pop_back();
-//     if (currentPipeline->getName() == pipelineName)
-//     {		
-//       nuiModule* deletedModule = currentPipeline->getChildModuleAtIndex(moduleIndex);
-//       if (deletedModule == NULL)
-//         continue;
-//       for (int i=0;i<pipelineDescriptor->getDataStreamDescriptorCount();i++)
-//       {
-//         nuiDataStreamDescriptor* dataStreamDescriptor = pipelineDescriptor->getDataStreamDescriptor(i);
-//         if (dataStreamDescriptor->destinationModuleID == moduleIndex)
-//         {
-//           nuiModule* sourceModule = currentPipeline->getChildModuleAtIndex(dataStreamDescriptor->sourceModuleID);
-//           if (sourceModule == NULL)
-//             continue;
-//           nuiEndpoint* sourceEndpoint = sourceModule->getOutputEndpoint(dataStreamDescriptor->sourcePort);
-//           nuiEndpoint* destinationEndpoint = deletedModule->getInputEndpoint(dataStreamDescriptor->destinationPort);
-//           sourceEndpoint->removeConnection(destinationEndpoint);
-//         }
-//       }
-//       delete deletedModule;
-//     }
-//     else
-//     {
-//       for (std::map<int,nuiModule*>::iterator iter = currentPipeline->modules.begin();  iter != currentPipeline->modules.end();iter++)
-//       {
-//         nuiModuleDescriptor* childDescriptor = nuiFactory::getInstance().getDescriptor(iter->second->getName());
-//         if (childDescriptor->getChildModulesCount() > 0)
-//         {
-//           stack->push_back((nuiPipelineModule*)iter->second);
-//         }
-//       }
-//     }
-//   }
-//   delete stack;
-// 
-//   for (int i = pipelineDescriptor->getDataStreamDescriptorCount()-1;i>=0;i--)
-//   {
-//     if ((pipelineDescriptor->getDataStreamDescriptor(i)->sourceModuleID == moduleIndex) ||(pipelineDescriptor->getDataStreamDescriptor(i)->destinationModuleID == moduleIndex))
-//     {
-//       pipelineDescriptor->removeDataStreamDescriptor(pipelineDescriptor->getDataStreamDescriptor(i));
-//     }
-//   }
-//   for (int i=0;i<pipelineDescriptor->getChildModulesCount();i++)
-//   {
-//     if (pipelineDescriptor->getChildModuleDescriptor(i)->property("id").asInteger() == moduleIndex)
-//     {
-//       pipelineDescriptor->removeChildModuleDescriptor(pipelineDescriptor->getChildModuleDescriptor(i));
-//     }
-//   }
-// 
-//   return pipelineDescriptor;
-  return NULL;
+  nuiPluginManager& pm = nuiPluginManager::getInstance();
+  nuiFactory& factory = nuiFactory::getInstance();
+
+  nuiModuleDescriptor* pipelineDescriptor = pm.getDescriptor(pipelineName);
+  if (pipelineDescriptor == NULL)
+    return NULL;
+  std::list<nuiPipelineModule*>* stack = new std::list<nuiPipelineModule*>();
+  if (rootPipeline!=NULL)
+    stack->push_back(rootPipeline);
+  while (!stack->empty())
+  {
+    nuiPipelineModule* currentPipeline = stack->back();
+    nuiModuleDescriptor* currentPipelineDescriptor = pm.getDescriptor(currentPipeline->getName());
+    stack->pop_back();
+    if (currentPipeline->getName() == pipelineName)
+    {		
+      nuiModule* deletedModule = currentPipeline->getChildModuleAtIndex(moduleIndex);
+      if (deletedModule == NULL)
+        continue;
+      for (int i=0;i<pipelineDescriptor->getDataStreamDescriptorCount();i++)
+      {
+        nuiDataStreamDescriptor* dataStreamDescriptor = pipelineDescriptor->getDataStreamDescriptor(i);
+        if (dataStreamDescriptor->destinationModuleID == moduleIndex)
+        {
+          nuiModule* sourceModule = currentPipeline->getChildModuleAtIndex(dataStreamDescriptor->sourceModuleID);
+          if (sourceModule == NULL)
+            continue;
+          nuiEndpoint* sourceEndpoint = sourceModule->getOutputEndpoint(dataStreamDescriptor->sourcePort);
+          nuiEndpoint* destinationEndpoint = deletedModule->getInputEndpoint(dataStreamDescriptor->destinationPort);
+          sourceEndpoint->removeConnection(destinationEndpoint);
+        }
+      }
+      delete deletedModule;
+    }
+    else
+    {
+      for (std::map<int,nuiModule*>::iterator iter = currentPipeline->modules.begin();  iter != currentPipeline->modules.end();iter++)
+      {
+        nuiModuleDescriptor* childDescriptor = pm.getDescriptor(iter->second->getName());
+        if (childDescriptor->getChildModulesCount() > 0)
+        {
+          stack->push_back((nuiPipelineModule*)iter->second);
+        }
+      }
+    }
+  }
+  delete stack;
+
+  for (int i = pipelineDescriptor->getDataStreamDescriptorCount()-1;i>=0;i--)
+  {
+    if ((pipelineDescriptor->getDataStreamDescriptor(i)->sourceModuleID == moduleIndex) ||(pipelineDescriptor->getDataStreamDescriptor(i)->destinationModuleID == moduleIndex))
+    {
+      pipelineDescriptor->removeDataStreamDescriptor(pipelineDescriptor->getDataStreamDescriptor(i));
+    }
+  }
+  for (int i=0;i<pipelineDescriptor->getChildModulesCount();i++)
+  {
+    if (pipelineDescriptor->getChildModuleDescriptor(i)->property("id").asInteger() == moduleIndex)
+    {
+      pipelineDescriptor->removeChildModuleDescriptor(pipelineDescriptor->getChildModuleDescriptor(i));
+    }
+  }
+
+  return pipelineDescriptor;
 }
-//object level not implemented
+
+//! \todo object level not implemented
 nuiModuleDescriptor *nuiFrameworkManager::deleteInputEndpoint(std::string &pipelineName,int index)
 {
-//   nuiModuleDescriptor* pipelineDescriptor = nuiFactory::getInstance().getDescriptor(pipelineName);
-//   if (pipelineDescriptor == NULL)
-//     return NULL;
-//   if (pipelineDescriptor->getInputEndpointsCount() <= index)
-//     return NULL;
-//   nuiEndpointDescriptor* endpointDescriptor = pipelineDescriptor->getInputEndpointDescriptor(index);
-//   if (endpointDescriptor == NULL)
-//     return NULL;
-// 
-//   for (std::map<std::string, nuiModuleDescriptor*>::iterator iter = nuiFactory::getInstance().pipelineDescriptors.begin(); iter != nuiFactory::getInstance().pipelineDescriptors.end(); iter++)
-//   {
-//     nuiModuleDescriptor *currentModuleDescriptor = iter->second;
-//     for (int i=currentModuleDescriptor->getChildModulesCount()-1;i>=0;i--)
-//     {
-//       if (currentModuleDescriptor->getChildModuleDescriptor(i)->getName() == pipelineName)
-//       {
-//         int id = currentModuleDescriptor->getChildModuleDescriptor(i)->property("id").asInteger();
-//         for (int j=currentModuleDescriptor->getDataStreamDescriptorCount()-1;i>=0;i--)
-//         {
-//           if (currentModuleDescriptor->getDataStreamDescriptor(j)->destinationModuleID == id) 
-//           {
-//             if (currentModuleDescriptor->getDataStreamDescriptor(j)->destinationPort == index)
-//             {
-//               currentModuleDescriptor->removeDataStreamDescriptor(currentModuleDescriptor->getDataStreamDescriptor(j));
-//               continue;
-//             }
-//             else
-//             {
-//               if (currentModuleDescriptor->getDataStreamDescriptor(j)->destinationPort > index)
-//                 currentModuleDescriptor->getDataStreamDescriptor(j)->destinationPort--;
-//             }
-//           }
-//         }
-//         currentModuleDescriptor->removeChildModuleDescriptor(currentModuleDescriptor->getChildModuleDescriptor(i));
-//       }
-//     }
-//   }
-// 
-// 
-//   pipelineDescriptor->removeInputEndpointDescriptor(endpointDescriptor);
-//   return pipelineDescriptor;
-  return NULL;
+  nuiPluginManager& pm = nuiPluginManager::getInstance();
+
+  nuiModuleDescriptor* pipelineDescriptor = pm.getDescriptor(pipelineName);
+  if (pipelineDescriptor == NULL)
+    return NULL;
+  if (pipelineDescriptor->getInputEndpointsCount() <= index)
+    return NULL;
+  nuiEndpointDescriptor* endpointDescriptor = pipelineDescriptor->getInputEndpointDescriptor(index);
+  if (endpointDescriptor == NULL)
+    return NULL;
+
+  for (std::vector<nuiModuleDescriptor*>::iterator iter = pm.getPipelineDescriptors().begin(); iter != pm.getPipelineDescriptors().end(); iter++)
+  {
+    nuiModuleDescriptor *currentModuleDescriptor = *iter;
+    for (int i=currentModuleDescriptor->getChildModulesCount() - 1 ; i>=0 ; i--)
+    {
+      if (currentModuleDescriptor->getChildModuleDescriptor(i)->getName() == pipelineName)
+      {
+        int id = currentModuleDescriptor->getChildModuleDescriptor(i)->property("id").asInteger();
+        for (int j=currentModuleDescriptor->getDataStreamDescriptorCount() - 1 ; i>=0 ; i--)
+        {
+          if (currentModuleDescriptor->getDataStreamDescriptor(j)->destinationModuleID == id) 
+          {
+            if (currentModuleDescriptor->getDataStreamDescriptor(j)->destinationPort == index)
+            {
+              currentModuleDescriptor->removeDataStreamDescriptor(currentModuleDescriptor->getDataStreamDescriptor(j));
+              continue;
+            }
+            else
+            {
+              if (currentModuleDescriptor->getDataStreamDescriptor(j)->destinationPort > index)
+                currentModuleDescriptor->getDataStreamDescriptor(j)->destinationPort--;
+            }
+          }
+        }
+        currentModuleDescriptor->removeChildModuleDescriptor(currentModuleDescriptor->getChildModuleDescriptor(i));
+      }
+    }
+  }
+
+  pipelineDescriptor->removeInputEndpointDescriptor(endpointDescriptor);
+  return pipelineDescriptor;
 }
 //object level not implemented
 nuiModuleDescriptor *nuiFrameworkManager::deleteOutputEndpoint(std::string &pipelineName,int index)
 {
-//   nuiModuleDescriptor* pipelineDescriptor = nuiFactory::getInstance().getDescriptor(pipelineName);
-//   if (pipelineDescriptor == NULL)
-//     return NULL;
-//   if (pipelineDescriptor->getOutputEndpointsCount() <= index)
-//     return NULL;
-//   nuiEndpointDescriptor* endpointDescriptor = pipelineDescriptor->getOutputEndpointDescriptor(index);
-//   if (endpointDescriptor == NULL)
-//     return NULL;
-// 
-//   for (std::map<std::string, nuiModuleDescriptor*>::iterator iter = nuiFactory::getInstance().pipelineDescriptors.begin(); iter != nuiFactory::getInstance().pipelineDescriptors.end(); iter++)
-//   {
-//     nuiModuleDescriptor *currentModuleDescriptor = iter->second;
-//     for (int i=currentModuleDescriptor->getChildModulesCount()-1;i>=0;i--)
-//     {
-//       if (currentModuleDescriptor->getChildModuleDescriptor(i)->getName() == pipelineName)
-//       {
-//         int id = currentModuleDescriptor->getChildModuleDescriptor(i)->property("id").asInteger();
-//         for (int j=currentModuleDescriptor->getDataStreamDescriptorCount()-1;i>=0;i--)
-//         {
-//           if (currentModuleDescriptor->getDataStreamDescriptor(j)->sourceModuleID == id) 
-//           {
-//             if (currentModuleDescriptor->getDataStreamDescriptor(j)->sourcePort == index)
-//             {
-//               currentModuleDescriptor->removeDataStreamDescriptor(currentModuleDescriptor->getDataStreamDescriptor(j));
-//               continue;
-//             }
-//             else
-//             {
-//               if (currentModuleDescriptor->getDataStreamDescriptor(j)->sourcePort > index)
-//                 currentModuleDescriptor->getDataStreamDescriptor(j)->sourcePort--;
-//             }
-//           }
-//         }
-//         currentModuleDescriptor->removeChildModuleDescriptor(currentModuleDescriptor->getChildModuleDescriptor(i));
-//       }
-//     }
-//   }
-// 
-//   pipelineDescriptor->removeOutputEndpointDescriptor(endpointDescriptor);
-//   return pipelineDescriptor;
-  return NULL;
+  nuiPluginManager& pm = nuiPluginManager::getInstance();
+  nuiModuleDescriptor* pipelineDescriptor = pm.getDescriptor(pipelineName);
+  if (pipelineDescriptor == NULL)
+    return NULL;
+  if (pipelineDescriptor->getOutputEndpointsCount() <= index)
+    return NULL;
+  nuiEndpointDescriptor* endpointDescriptor = pipelineDescriptor->getOutputEndpointDescriptor(index);
+  if (endpointDescriptor == NULL)
+    return NULL;
+
+  for (std::vector<nuiModuleDescriptor*>::iterator iter = pm.getPipelineDescriptors().begin(); iter != pm.getPipelineDescriptors().end(); iter++)
+  {
+    nuiModuleDescriptor *currentModuleDescriptor = *iter;
+    for (int i=currentModuleDescriptor->getChildModulesCount()-1;i>=0;i--)
+    {
+      if (currentModuleDescriptor->getChildModuleDescriptor(i)->getName() == pipelineName)
+      {
+        int id = currentModuleDescriptor->getChildModuleDescriptor(i)->property("id").asInteger();
+        for (int j=currentModuleDescriptor->getDataStreamDescriptorCount() - 1 ; i>=0 ; i--)
+        {
+          if (currentModuleDescriptor->getDataStreamDescriptor(j)->sourceModuleID == id) 
+          {
+            if (currentModuleDescriptor->getDataStreamDescriptor(j)->sourcePort == index)
+            {
+              currentModuleDescriptor->removeDataStreamDescriptor(currentModuleDescriptor->getDataStreamDescriptor(j));
+              continue;
+            }
+            else
+            {
+              if (currentModuleDescriptor->getDataStreamDescriptor(j)->sourcePort > index)
+                currentModuleDescriptor->getDataStreamDescriptor(j)->sourcePort--;
+            }
+          }
+        }
+        currentModuleDescriptor->removeChildModuleDescriptor(currentModuleDescriptor->getChildModuleDescriptor(i));
+      }
+    }
+  }
+
+  pipelineDescriptor->removeOutputEndpointDescriptor(endpointDescriptor);
+  return pipelineDescriptor;
 }
 
 nuiModuleDescriptor *nuiFrameworkManager::deleteConnection(std::string &pipelineName, int sourceModuleID, int destinationModuleID, int sourcePort, int destinationPort)
 {
-//   nuiModuleDescriptor* pipelineDescriptor = nuiFactory::getInstance().getDescriptor(pipelineName);
-//   if (pipelineDescriptor == NULL)
-//     return NULL;
-//   std::list<nuiPipelineModule*>* stack = new std::list<nuiPipelineModule*>();
-//   if (rootPipeline!=NULL)
-//     stack->push_back(rootPipeline);
-//   while (!stack->empty())
-//   {
-//     nuiPipelineModule* currentPipeline = stack->back();
-//     nuiModuleDescriptor* currentPipelineDescriptor = nuiFactory::getInstance().getDescriptor(currentPipeline->getName());
-//     stack->pop_back();
-//     if (currentPipeline->getName() == pipelineName)
-//     {	
-//       nuiModule* sourceModule = currentPipeline->getChildModuleAtIndex(sourceModuleID);
-//       if (sourceModule == NULL)
-//         continue;
-//       nuiEndpoint* sourceEndpoint = sourceModule->getOutputEndpoint(sourcePort);
-//       nuiModule* destinationModule = currentPipeline->getChildModuleAtIndex(destinationModuleID);
-//       if (destinationModule == NULL)
-//         continue;
-//       nuiEndpoint* destinationEndpoint = destinationModule->getInputEndpoint(destinationPort);
-//       sourceEndpoint->removeConnection(destinationEndpoint);
-//     }
-//     else
-//     {
-//       for (std::map<int,nuiModule*>::iterator iter = currentPipeline->modules.begin();  iter != currentPipeline->modules.end();iter++)
-//       {
-//         nuiModuleDescriptor* childDescriptor = nuiFactory::getInstance().getDescriptor(iter->second->getName());
-//         if (childDescriptor->getChildModulesCount() > 0)
-//         {
-//           stack->push_back((nuiPipelineModule*)iter->second);
-//         }
-//       }
-//     }
-//   }
-//   delete stack;
-// 
-// 
-//   for (int i = pipelineDescriptor->getDataStreamDescriptorCount()-1;i>=0;i--)
-//   {
-//     if ((pipelineDescriptor->getDataStreamDescriptor(i)->sourceModuleID == sourceModuleID) && (pipelineDescriptor->getDataStreamDescriptor(i)->destinationModuleID == destinationModuleID) &&
-//       (pipelineDescriptor->getDataStreamDescriptor(i)->sourcePort == sourcePort) && (pipelineDescriptor->getDataStreamDescriptor(i)->destinationPort == destinationPort))
-//     {
-//       pipelineDescriptor->removeDataStreamDescriptor(pipelineDescriptor->getDataStreamDescriptor(i));
-//     }
-//   }
-//   return pipelineDescriptor;
-  return NULL;
+  nuiPluginManager& pm = nuiPluginManager::getInstance();
+  nuiModuleDescriptor* pipelineDescriptor = pm.getDescriptor(pipelineName);
+  if (pipelineDescriptor == NULL)
+    return NULL;
+  std::list<nuiPipelineModule*>* stack = new std::list<nuiPipelineModule*>();
+  if (rootPipeline!=NULL)
+    stack->push_back(rootPipeline);
+  while (!stack->empty())
+  {
+    nuiPipelineModule* currentPipeline = stack->back();
+    nuiModuleDescriptor* currentPipelineDescriptor = pm.getDescriptor(currentPipeline->getName());
+    stack->pop_back();
+    if (currentPipeline->getName() == pipelineName)
+    {	
+      nuiModule* sourceModule = currentPipeline->getChildModuleAtIndex(sourceModuleID);
+      if (sourceModule == NULL)
+        continue;
+      nuiEndpoint* sourceEndpoint = sourceModule->getOutputEndpoint(sourcePort);
+      nuiModule* destinationModule = currentPipeline->getChildModuleAtIndex(destinationModuleID);
+      if (destinationModule == NULL)
+        continue;
+      nuiEndpoint* destinationEndpoint = destinationModule->getInputEndpoint(destinationPort);
+      sourceEndpoint->removeConnection(destinationEndpoint);
+    }
+    else
+    {
+      for (std::map<int,nuiModule*>::iterator iter = currentPipeline->modules.begin();  iter != currentPipeline->modules.end();iter++)
+      {
+        nuiModuleDescriptor* childDescriptor = pm.getDescriptor(iter->second->getName());
+        if (childDescriptor->getChildModulesCount() > 0)
+        {
+          stack->push_back((nuiPipelineModule*)iter->second);
+        }
+      }
+    }
+  }
+  delete stack;
+
+
+  for (int i = pipelineDescriptor->getDataStreamDescriptorCount()-1;i>=0;i--)
+  {
+    if ((pipelineDescriptor->getDataStreamDescriptor(i)->sourceModuleID == sourceModuleID) && (pipelineDescriptor->getDataStreamDescriptor(i)->destinationModuleID == destinationModuleID) &&
+      (pipelineDescriptor->getDataStreamDescriptor(i)->sourcePort == sourcePort) && (pipelineDescriptor->getDataStreamDescriptor(i)->destinationPort == destinationPort))
+    {
+      pipelineDescriptor->removeDataStreamDescriptor(pipelineDescriptor->getDataStreamDescriptor(i));
+    }
+  }
+  return pipelineDescriptor;
 }
 
 nuiModuleDescriptor *nuiFrameworkManager::updatePipeline(std::string &pipelineName, nuiModuleDescriptor* moduleDescriptor)
 {
-//   if (moduleDescriptor == NULL)
-//     return NULL;
-//   if (moduleDescriptor->getName() != pipelineName)
-//   {
-//     std::string newName = moduleDescriptor->getName();
-//     while ((nuiFactory::getInstance().pipelineDescriptors.find(newName)!=nuiFactory::getInstance().pipelineDescriptors.end()) || (nuiFactory::getInstance().moduleDescriptors.find(newName)!=nuiFactory::getInstance().moduleDescriptors.end()))
-//       newName+="_";
-//     for (std::map<std::string, nuiModuleDescriptor*>::iterator iter = nuiFactory::getInstance().pipelineDescriptors.begin(); iter != nuiFactory::getInstance().pipelineDescriptors.end(); iter++)
-//     {
-//       nuiModuleDescriptor *currentModuleDescriptor = iter->second;
-//       for (int i=currentModuleDescriptor->getChildModulesCount()-1;i>=0;i--)
-//       {
-//         if (currentModuleDescriptor->getChildModuleDescriptor(i)->getName() == pipelineName)
-//         {
-//           currentModuleDescriptor->getChildModuleDescriptor(i)->setName(newName);
-//         }
-//       }
-//     }
-//     std::list<nuiPipelineModule*>* stack = new std::list<nuiPipelineModule*>();
-//     if (rootPipeline!=NULL)
-//       stack->push_back(rootPipeline);
-//     while (!stack->empty())
-//     {
-//       nuiPipelineModule* currentPipeline = stack->back();
-//       stack->pop_back();
-//       if (currentPipeline->getName() == pipelineName)
-//       {	
-//         currentPipeline->setName(newName);
-//       }
-//       else
-//       {
-//         for (std::map<int,nuiModule*>::iterator iter = currentPipeline->modules.begin();  iter != currentPipeline->modules.end();iter++)
-//         {
-//           nuiModuleDescriptor* childDescriptor = nuiFactory::getInstance().getDescriptor(iter->second->getName());
-//           if (childDescriptor->getChildModulesCount() > 0)
-//           {
-//             stack->push_back((nuiPipelineModule*)iter->second);
-//           }
-//         }
-//       }
-//     }
-//     delete stack;
-//     nuiFactory::getInstance().pipelineDescriptors.erase(pipelineName);
-//   }
-//   nuiFactory::getInstance().pipelineDescriptors[moduleDescriptor->getName()] = moduleDescriptor;
-//   return moduleDescriptor;
-  return NULL;
+  if (moduleDescriptor == NULL)
+    return NULL;
+
+  nuiPluginManager& pm = nuiPluginManager::getInstance();
+
+  if (moduleDescriptor->getName() != pipelineName)
+  {
+    std::string newName = moduleDescriptor->getName();
+    while ( pm.getDescriptor(newName) != NULL)
+      newName += "_";
+    for (std::vector<nuiModuleDescriptor*>::iterator iter = pm.getPipelineDescriptors().begin(); 
+      iter != pm.getPipelineDescriptors().end(); iter++)
+    {
+      nuiModuleDescriptor *currentModuleDescriptor = *iter;
+      for (int i=currentModuleDescriptor->getChildModulesCount() - 1 ; i>=0 ; i--)
+      {
+        if (currentModuleDescriptor->getChildModuleDescriptor(i)->getName() == pipelineName)
+        {
+          currentModuleDescriptor->getChildModuleDescriptor(i)->setName(newName);
+        }
+      }
+    }
+    std::list<nuiPipelineModule*>* stack = new std::list<nuiPipelineModule*>();
+    if (rootPipeline!=NULL)
+      stack->push_back(rootPipeline);
+    while (!stack->empty())
+    {
+      nuiPipelineModule* currentPipeline = stack->back();
+      stack->pop_back();
+      if (currentPipeline->getName() == pipelineName)
+      {	
+        currentPipeline->setName(newName);
+      }
+      else
+      {
+        for (std::map<int,nuiModule*>::iterator iter = currentPipeline->modules.begin();  iter != currentPipeline->modules.end();iter++)
+        {
+          nuiModuleDescriptor* childDescriptor = pm.getDescriptor(iter->second->getName());
+          if (childDescriptor->getChildModulesCount() > 0)
+          {
+            stack->push_back((nuiPipelineModule*)iter->second);
+          }
+        }
+      }
+    }
+    delete stack;
+    //\todo refactor search
+    std::vector<nuiModuleDescriptor*>& pipelineDescriptors = pm.getPipelineDescriptors();
+    for (int i=pipelineDescriptors.size() - 1 ; i>=0 ; i--)
+    {
+      if(pipelineDescriptors[i]->getName() == pipelineName)
+        pipelineDescriptors.erase(pipelineDescriptors.begin() + i);
+    }
+  }
+  std::vector<nuiModuleDescriptor*>& pipelineDescriptors = pm.getPipelineDescriptors();
+  for (int i=pipelineDescriptors.size() - 1 ; i>=0 ; i--)
+  {
+    if(pipelineDescriptors[i]->getName() == pipelineName)
+      pipelineDescriptors[i] = moduleDescriptor;
+  }
+  return moduleDescriptor;
 }
 
 nuiModuleDescriptor *nuiFrameworkManager::updateModule(std::string &pipelineName, int index, nuiModuleDescriptor* moduleDescriptor)
 {
-//   if (moduleDescriptor == NULL)
-//     return NULL;
-//   nuiModuleDescriptor* pipelineDescriptor = nuiFactory::getInstance().getDescriptor(pipelineName);
-//   nuiModuleDescriptor* oldModuleDescriptor = NULL;
-//   for (int i = 0; i < pipelineDescriptor->getChildModulesCount();i++)
-//   {
-//     if (pipelineDescriptor->getChildModuleDescriptor(i)->property("id").asInteger() == index)
-//     {
-//       oldModuleDescriptor = pipelineDescriptor->getChildModuleDescriptor(i);
-//       break;
-//     }
-//   }
-//   if (oldModuleDescriptor == NULL)
-//     oldModuleDescriptor = createModule(pipelineName,moduleDescriptor->getName());
-//   if (oldModuleDescriptor == NULL)
-//     return NULL;
-//   for (std::map<std::string, nuiProperty*>::iterator iter = moduleDescriptor->getProperties().begin();iter!=moduleDescriptor->getProperties().end();iter++)
-//   {
-//     if (iter->first != "id")
-//       oldModuleDescriptor->property(iter->first).set(iter->second->asString()); // as int for other things!
-//   }
-//   std::list<nuiPipelineModule*>* stack = new std::list<nuiPipelineModule*>();
-//   if (rootPipeline!=NULL)
-//     stack->push_back(rootPipeline);
-//   while (!stack->empty())
-//   {
-//     nuiPipelineModule* currentPipeline = stack->back();
-//     stack->pop_back();
-//     if (currentPipeline->getName() == pipelineName)
-//     {		
-//       nuiModule* updatedModule = currentPipeline->getChildModuleAtIndex(index);
-//       if (updatedModule == NULL)
-//         continue;
-//       for (std::map<std::string, nuiProperty*>::iterator iter = moduleDescriptor->getProperties().begin();iter!=moduleDescriptor->getProperties().end();iter++)
-//       {
-//         if (iter->first != "id")
-//           updatedModule->property(iter->first).set(iter->second->asString());
-//       }
-//     }
-//     else
-//     {
-//       for (std::map<int,nuiModule*>::iterator iter = currentPipeline->modules.begin();  iter != currentPipeline->modules.end();iter++)
-//       {
-//         nuiModuleDescriptor* childDescriptor = nuiFactory::getInstance().getDescriptor(iter->second->getName());
-//         if (childDescriptor->getChildModulesCount() > 0)
-//         {
-//           stack->push_back((nuiPipelineModule*)iter->second);
-//         }
-//       }
-//     }
-//   }
-//   delete stack;
-//   return oldModuleDescriptor;
-  return NULL;
+  nuiPluginManager& pm = nuiPluginManager::getInstance();
+  if (moduleDescriptor == NULL)
+    return NULL;
+  nuiModuleDescriptor* pipelineDescriptor = pm.getDescriptor(pipelineName);
+  nuiModuleDescriptor* oldModuleDescriptor = NULL;
+  for (int i = 0; i < pipelineDescriptor->getChildModulesCount();i++)
+  {
+    if (pipelineDescriptor->getChildModuleDescriptor(i)->property("id").asInteger() == index)
+    {
+      oldModuleDescriptor = pipelineDescriptor->getChildModuleDescriptor(i);
+      break;
+    }
+  }
+  if (oldModuleDescriptor == NULL)
+    oldModuleDescriptor = createModule(pipelineName,moduleDescriptor->getName());
+  if (oldModuleDescriptor == NULL)
+    return NULL;
+  for (std::map<std::string, nuiProperty*>::iterator iter = moduleDescriptor->getProperties().begin();iter!=moduleDescriptor->getProperties().end();iter++)
+  {
+    if (iter->first != "id")
+      oldModuleDescriptor->property(iter->first).set(iter->second->asString()); // as int for other things!
+  }
+  std::list<nuiPipelineModule*>* stack = new std::list<nuiPipelineModule*>();
+  if (rootPipeline!=NULL)
+    stack->push_back(rootPipeline);
+  while (!stack->empty())
+  {
+    nuiPipelineModule* currentPipeline = stack->back();
+    stack->pop_back();
+    if (currentPipeline->getName() == pipelineName)
+    {		
+      nuiModule* updatedModule = currentPipeline->getChildModuleAtIndex(index);
+      if (updatedModule == NULL)
+        continue;
+      for (std::map<std::string, nuiProperty*>::iterator iter = moduleDescriptor->getProperties().begin();iter!=moduleDescriptor->getProperties().end();iter++)
+      {
+        if (iter->first != "id")
+          updatedModule->property(iter->first).set(iter->second->asString());
+      }
+    }
+    else
+    {
+      for (std::map<int,nuiModule*>::iterator iter = currentPipeline->modules.begin();  iter != currentPipeline->modules.end();iter++)
+      {
+        nuiModuleDescriptor* childDescriptor = pm.getDescriptor(iter->second->getName());
+        if (childDescriptor->getChildModulesCount() > 0)
+        {
+          stack->push_back((nuiPipelineModule*)iter->second);
+        }
+      }
+    }
+  }
+  delete stack;
+  return oldModuleDescriptor;
 }
 
 //object level not implemented
-//!note Changing name of endpoint descriptor type can cause deleting of iner and outer connection between modules.
+//Changing name of endpoint descriptor type can cause deleting of iner and outer connection between modules.
 nuiEndpointDescriptor *nuiFrameworkManager::updateInputEndpoint(std::string &pipelineName,int index, nuiEndpointDescriptor* endpointDescriptor)
 {
-//   nuiModuleDescriptor* pipelineDescriptor = nuiFactory::getInstance().getDescriptor(pipelineName);
-//   if (pipelineDescriptor == NULL)
-//     return NULL;
-//   nuiEndpointDescriptor *oldEnpointDescriptor = getInputEndpoint(pipelineName, index);
-//   if (oldEnpointDescriptor == NULL)
-//     return NULL;
-//   if (oldEnpointDescriptor->getDescriptor() == endpointDescriptor->getDescriptor())
-//     return oldEnpointDescriptor;
-// 
-//   //check inside pipeline
-//   std::vector<nuiDataStreamDescriptor*> connectionsToBeDeleted;
-//   bool isChangeAccepted = true;
-//   for (int i=pipelineDescriptor->getDataStreamDescriptorCount()-1;i!=0;i--)
-//   {
-//     if ((pipelineDescriptor->getDataStreamDescriptor(i)->sourceModuleID == PIPELINE_ID) && (pipelineDescriptor->getDataStreamDescriptor(i)->sourcePort == index))
-//     {
-//       nuiModuleDescriptor* destinationModule = getModule(pipelineName,pipelineDescriptor->getDataStreamDescriptor(i)->destinationModuleID);
-//       if (destinationModule == NULL)
-//       {
-//         connectionsToBeDeleted.push_back(pipelineDescriptor->getDataStreamDescriptor(i));
-//         continue;
-//       }
-//       nuiEndpointDescriptor* destinationEndpointDescriptor = destinationModule->getInputEndpointDescriptor(pipelineDescriptor->getDataStreamDescriptor(i)->destinationPort);
-//       if (destinationEndpointDescriptor->getDescriptor() != endpointDescriptor->getDescriptor())
-//       {
-//         connectionsToBeDeleted.push_back(pipelineDescriptor->getDataStreamDescriptor(i));
-//       }
-//     }
-//   }
-//   for (int i=0;i<connectionsToBeDeleted.size();i++)
-//   {
-//     deleteConnection(pipelineName,connectionsToBeDeleted[i]->sourceModuleID,connectionsToBeDeleted[i]->destinationModuleID,
-//       connectionsToBeDeleted[i]->sourcePort,connectionsToBeDeleted[i]->destinationPort);
-//   }
-// 
-//   //check outside pipeline	
-//   std::vector<std::string>* pipelineNames = nuiFactory::getInstance().listPipelineNames();
-//   for (int i = 0;i<pipelineNames->size();i++)
-//   {
-//     nuiModuleDescriptor* currentPipelineDescriptor = nuiFactory::getInstance().getDescriptor((*pipelineNames)[i]);
-//     if (currentPipelineDescriptor == NULL)
-//       continue;
-//     connectionsToBeDeleted.clear();
-//     for (int j=0;j<currentPipelineDescriptor->getChildModulesCount();j++)
-//     {
-//       if (currentPipelineDescriptor->getChildModuleDescriptor(j)->getName() == pipelineName)
-//       {
-//         int currentID = currentPipelineDescriptor->getChildModuleDescriptor(j)->property("id").asInteger();
-//         for (int k=0;k<currentPipelineDescriptor->getDataStreamDescriptorCount();k++)
-//         {
-//           if (currentPipelineDescriptor->getDataStreamDescriptor(k)->destinationModuleID == currentID)
-//           {
-//             nuiModuleDescriptor* sourceModule = NULL;
-//             for (int l=0;l<currentPipelineDescriptor->getChildModulesCount();l++)
-//             {
-//               if (currentPipelineDescriptor->getChildModuleDescriptor(l)->property("id").asInteger() == currentPipelineDescriptor->getDataStreamDescriptor(k)->sourceModuleID)
-//               {
-//                 sourceModule = nuiFactory::getInstance().getDescriptor(currentPipelineDescriptor->getChildModuleDescriptor(l)->getName());
-//                 break;
-//               }
-//             }
-//             if (sourceModule == NULL)
-//               continue;
-//             if (sourceModule->getOutputEndpointDescriptor(currentPipelineDescriptor->getDataStreamDescriptor(k)->destinationPort)->getDescriptor() != endpointDescriptor->getDescriptor())
-//             {
-//               connectionsToBeDeleted.push_back(currentPipelineDescriptor->getDataStreamDescriptor(k));
-//             }
-//           }
-//         }
-//       }
-//     }
-//     for (int j=0;j<connectionsToBeDeleted.size();j++)
-//     {
-//       deleteConnection((*pipelineNames)[i],connectionsToBeDeleted[j]->sourceModuleID,connectionsToBeDeleted[j]->destinationModuleID,
-//         connectionsToBeDeleted[j]->sourcePort,connectionsToBeDeleted[j]->destinationPort);
-//     }
-//   }
-//   oldEnpointDescriptor->setDescriptor(endpointDescriptor->getDescriptor());
-//   return oldEnpointDescriptor;
-  return NULL;
+  nuiPluginManager& pm = nuiPluginManager::getInstance();
+
+  nuiModuleDescriptor* pipelineDescriptor = pm.getDescriptor(pipelineName);
+  if (pipelineDescriptor == NULL)
+    return NULL;
+  nuiEndpointDescriptor *oldEnpointDescriptor = getInputEndpoint(pipelineName, index);
+  if (oldEnpointDescriptor == NULL)
+    return NULL;
+  if (oldEnpointDescriptor->getDescriptor() == endpointDescriptor->getDescriptor())
+    return oldEnpointDescriptor;
+
+  //check inside pipeline
+  std::vector<nuiDataStreamDescriptor*> connectionsToBeDeleted;
+  bool isChangeAccepted = true;
+  for (int i=pipelineDescriptor->getDataStreamDescriptorCount()-1;i!=0;i--)
+  {
+    if ((pipelineDescriptor->getDataStreamDescriptor(i)->sourceModuleID == PIPELINE_ID) && (pipelineDescriptor->getDataStreamDescriptor(i)->sourcePort == index))
+    {
+      nuiModuleDescriptor* destinationModule = getModule(pipelineName,pipelineDescriptor->getDataStreamDescriptor(i)->destinationModuleID);
+      if (destinationModule == NULL)
+      {
+        connectionsToBeDeleted.push_back(pipelineDescriptor->getDataStreamDescriptor(i));
+        continue;
+      }
+      nuiEndpointDescriptor* destinationEndpointDescriptor = destinationModule->getInputEndpointDescriptor(pipelineDescriptor->getDataStreamDescriptor(i)->destinationPort);
+      if (destinationEndpointDescriptor->getDescriptor() != endpointDescriptor->getDescriptor())
+      {
+        connectionsToBeDeleted.push_back(pipelineDescriptor->getDataStreamDescriptor(i));
+      }
+    }
+  }
+  for (int i=0;i<connectionsToBeDeleted.size();i++)
+  {
+    deleteConnection(pipelineName,connectionsToBeDeleted[i]->sourceModuleID,connectionsToBeDeleted[i]->destinationModuleID,
+      connectionsToBeDeleted[i]->sourcePort,connectionsToBeDeleted[i]->destinationPort);
+  }
+
+  //check outside pipeline	
+  std::vector<std::string>& pipelineNames = pm.listLoadedPipelines();
+  for (int i = 0;i<pipelineNames.size();i++)
+  {
+    nuiModuleDescriptor* currentPipelineDescriptor = pm.getDescriptor(pipelineNames[i]);
+    if (currentPipelineDescriptor == NULL)
+      continue;
+    connectionsToBeDeleted.clear();
+    for (int j=0;j<currentPipelineDescriptor->getChildModulesCount();j++)
+    {
+      if (currentPipelineDescriptor->getChildModuleDescriptor(j)->getName() == pipelineName)
+      {
+        int currentID = currentPipelineDescriptor->getChildModuleDescriptor(j)->property("id").asInteger();
+        for (int k=0;k<currentPipelineDescriptor->getDataStreamDescriptorCount();k++)
+        {
+          if (currentPipelineDescriptor->getDataStreamDescriptor(k)->destinationModuleID == currentID)
+          {
+            nuiModuleDescriptor* sourceModule = NULL;
+            for (int l=0;l<currentPipelineDescriptor->getChildModulesCount();l++)
+            {
+              if (currentPipelineDescriptor->getChildModuleDescriptor(l)->property("id").asInteger() == currentPipelineDescriptor->getDataStreamDescriptor(k)->sourceModuleID)
+              {
+                sourceModule = pm.getDescriptor(currentPipelineDescriptor->getChildModuleDescriptor(l)->getName());
+                break;
+              }
+            }
+            if (sourceModule == NULL)
+              continue;
+            if (sourceModule->getOutputEndpointDescriptor(currentPipelineDescriptor->getDataStreamDescriptor(k)->destinationPort)->getDescriptor() != endpointDescriptor->getDescriptor())
+            {
+              connectionsToBeDeleted.push_back(currentPipelineDescriptor->getDataStreamDescriptor(k));
+            }
+          }
+        }
+      }
+    }
+    for (int j=0;j<connectionsToBeDeleted.size();j++)
+    {
+      deleteConnection(pipelineNames[i],connectionsToBeDeleted[j]->sourceModuleID,connectionsToBeDeleted[j]->destinationModuleID,
+        connectionsToBeDeleted[j]->sourcePort,connectionsToBeDeleted[j]->destinationPort);
+    }
+  }
+  oldEnpointDescriptor->setDescriptor(endpointDescriptor->getDescriptor());
+  return oldEnpointDescriptor;
 }
 
 //object level not implemented
 //need to check it again
 nuiEndpointDescriptor *nuiFrameworkManager::updateOutputEndpoint(std::string &pipelineName,int index, nuiEndpointDescriptor* endpointDescriptor)
 {
-//   nuiModuleDescriptor* pipelineDescriptor = nuiFactory::getInstance().getDescriptor(pipelineName);
-//   if (pipelineDescriptor == NULL)
-//     return NULL;
-//   nuiEndpointDescriptor *oldEnpointDescriptor = getInputEndpoint(pipelineName, index);
-//   if (oldEnpointDescriptor == NULL)
-//     return NULL;
-//   if (oldEnpointDescriptor->getDescriptor() == endpointDescriptor->getDescriptor())
-//     return oldEnpointDescriptor;
-// 
-//   //check inside pipeline
-//   std::vector<nuiDataStreamDescriptor*> connectionsToBeDeleted;
-//   bool isChangeAccepted = true;
-//   for (int i=pipelineDescriptor->getDataStreamDescriptorCount()-1;i!=0;i--)
-//   {
-//     if ((pipelineDescriptor->getDataStreamDescriptor(i)->destinationModuleID == PIPELINE_ID) && (pipelineDescriptor->getDataStreamDescriptor(i)->destinationPort == index))
-//     {
-//       nuiModuleDescriptor* sourceModule = getModule(pipelineName,pipelineDescriptor->getDataStreamDescriptor(i)->sourceModuleID);
-//       if (sourceModule == NULL)
-//       {
-//         connectionsToBeDeleted.push_back(pipelineDescriptor->getDataStreamDescriptor(i));
-//         continue;
-//       }
-//       nuiEndpointDescriptor* sourceEndpointDescriptor = sourceModule->getOutputEndpointDescriptor(pipelineDescriptor->getDataStreamDescriptor(i)->destinationPort);
-//       if (sourceEndpointDescriptor->getDescriptor() != endpointDescriptor->getDescriptor())
-//       {
-//         connectionsToBeDeleted.push_back(pipelineDescriptor->getDataStreamDescriptor(i));
-//       }
-//     }
-//   }
-//   for (int i=0;i<connectionsToBeDeleted.size();i++)
-//   {
-//     deleteConnection(pipelineName,connectionsToBeDeleted[i]->sourceModuleID,connectionsToBeDeleted[i]->destinationModuleID,
-//       connectionsToBeDeleted[i]->sourcePort,connectionsToBeDeleted[i]->destinationPort);
-//   }
-// 
-//   //check outside pipeline	
-//   std::vector<std::string>* pipelineNames = nuiFactory::getInstance().listPipelineNames();
-//   for (int i = 0;i<pipelineNames->size();i++)
-//   {
-//     nuiModuleDescriptor* currentPipelineDescriptor = nuiFactory::getInstance().getDescriptor((*pipelineNames)[i]);
-//     if (currentPipelineDescriptor == NULL)
-//       continue;
-//     connectionsToBeDeleted.clear();
-//     for (int j=0;j<currentPipelineDescriptor->getChildModulesCount();j++)
-//     {
-//       if (currentPipelineDescriptor->getChildModuleDescriptor(j)->getName() == pipelineName)
-//       {
-//         int currentID = currentPipelineDescriptor->getChildModuleDescriptor(j)->property("id").asInteger();
-//         for (int k=0;k<currentPipelineDescriptor->getDataStreamDescriptorCount();k++)
-//         {
-//           if (currentPipelineDescriptor->getDataStreamDescriptor(k)->destinationModuleID == currentID)
-//           {
-//             nuiModuleDescriptor* sourceModule = NULL;
-//             for (int l=0;l<currentPipelineDescriptor->getChildModulesCount();l++)
-//             {
-//               if (currentPipelineDescriptor->getChildModuleDescriptor(l)->property("id").asInteger() == currentPipelineDescriptor->getDataStreamDescriptor(k)->sourceModuleID)
-//               {
-//                 sourceModule = nuiFactory::getInstance().getDescriptor(currentPipelineDescriptor->getChildModuleDescriptor(l)->getName());
-//                 break;
-//               }
-//             }
-//             if (sourceModule == NULL)
-//               continue;
-//             if (sourceModule->getOutputEndpointDescriptor(currentPipelineDescriptor->getDataStreamDescriptor(k)->destinationPort)->getDescriptor() != endpointDescriptor->getDescriptor())
-//             {
-//               connectionsToBeDeleted.push_back(currentPipelineDescriptor->getDataStreamDescriptor(k));
-//             }
-//           }
-//         }
-//       }
-//     }
-//     for (int j=0;j<connectionsToBeDeleted.size();j++)
-//     {
-//       deleteConnection((*pipelineNames)[i],connectionsToBeDeleted[j]->sourceModuleID,connectionsToBeDeleted[j]->destinationModuleID,
-//         connectionsToBeDeleted[j]->sourcePort,connectionsToBeDeleted[j]->destinationPort);
-//     }
-//   }
-//   oldEnpointDescriptor->setDescriptor(endpointDescriptor->getDescriptor());
-//   return oldEnpointDescriptor;
-  return NULL;
+  nuiPluginManager& pm = nuiPluginManager::getInstance();
+  nuiModuleDescriptor* pipelineDescriptor = pm.getDescriptor(pipelineName);
+  if (pipelineDescriptor == NULL)
+    return NULL;
+  nuiEndpointDescriptor *oldEnpointDescriptor = getInputEndpoint(pipelineName, index);
+  if (oldEnpointDescriptor == NULL)
+    return NULL;
+  if (oldEnpointDescriptor->getDescriptor() == endpointDescriptor->getDescriptor())
+    return oldEnpointDescriptor;
+
+  //check inside pipeline
+  std::vector<nuiDataStreamDescriptor*> connectionsToBeDeleted;
+  bool isChangeAccepted = true;
+  for (int i=pipelineDescriptor->getDataStreamDescriptorCount()-1;i!=0;i--)
+  {
+    if ((pipelineDescriptor->getDataStreamDescriptor(i)->destinationModuleID == PIPELINE_ID) && (pipelineDescriptor->getDataStreamDescriptor(i)->destinationPort == index))
+    {
+      nuiModuleDescriptor* sourceModule = getModule(pipelineName,pipelineDescriptor->getDataStreamDescriptor(i)->sourceModuleID);
+      if (sourceModule == NULL)
+      {
+        connectionsToBeDeleted.push_back(pipelineDescriptor->getDataStreamDescriptor(i));
+        continue;
+      }
+      nuiEndpointDescriptor* sourceEndpointDescriptor = sourceModule->getOutputEndpointDescriptor(pipelineDescriptor->getDataStreamDescriptor(i)->destinationPort);
+      if (sourceEndpointDescriptor->getDescriptor() != endpointDescriptor->getDescriptor())
+      {
+        connectionsToBeDeleted.push_back(pipelineDescriptor->getDataStreamDescriptor(i));
+      }
+    }
+  }
+  for (int i=0;i<connectionsToBeDeleted.size();i++)
+  {
+    deleteConnection(pipelineName,connectionsToBeDeleted[i]->sourceModuleID,connectionsToBeDeleted[i]->destinationModuleID,
+      connectionsToBeDeleted[i]->sourcePort,connectionsToBeDeleted[i]->destinationPort);
+  }
+
+  //check outside pipeline	
+  std::vector<std::string>& pipelineNames = pm.listLoadedPipelines();
+  for (int i=0; i<pipelineNames.size(); i++)
+  {
+    nuiModuleDescriptor* currentPipelineDescriptor = pm.getDescriptor(pipelineNames[i]);
+    if (currentPipelineDescriptor == NULL)
+      continue;
+    connectionsToBeDeleted.clear();
+    for (int j=0;j<currentPipelineDescriptor->getChildModulesCount();j++)
+    {
+      if (currentPipelineDescriptor->getChildModuleDescriptor(j)->getName() == pipelineName)
+      {
+        int currentID = currentPipelineDescriptor->getChildModuleDescriptor(j)->property("id").asInteger();
+        for (int k=0;k<currentPipelineDescriptor->getDataStreamDescriptorCount();k++)
+        {
+          if (currentPipelineDescriptor->getDataStreamDescriptor(k)->destinationModuleID == currentID)
+          {
+            nuiModuleDescriptor* sourceModule = NULL;
+            for (int l=0;l<currentPipelineDescriptor->getChildModulesCount();l++)
+            {
+              if (currentPipelineDescriptor->getChildModuleDescriptor(l)->property("id").asInteger() == currentPipelineDescriptor->getDataStreamDescriptor(k)->sourceModuleID)
+              {
+                sourceModule = pm.getDescriptor(currentPipelineDescriptor->getChildModuleDescriptor(l)->getName());
+                break;
+              }
+            }
+            if (sourceModule == NULL)
+              continue;
+            if (sourceModule->getOutputEndpointDescriptor(currentPipelineDescriptor->getDataStreamDescriptor(k)->destinationPort)->getDescriptor() != endpointDescriptor->getDescriptor())
+            {
+              connectionsToBeDeleted.push_back(currentPipelineDescriptor->getDataStreamDescriptor(k));
+            }
+          }
+        }
+      }
+    }
+    for (int j=0;j<connectionsToBeDeleted.size();j++)
+    {
+      deleteConnection(pipelineNames[i],connectionsToBeDeleted[j]->sourceModuleID,connectionsToBeDeleted[j]->destinationModuleID,
+        connectionsToBeDeleted[j]->sourcePort,connectionsToBeDeleted[j]->destinationPort);
+    }
+  }
+  oldEnpointDescriptor->setDescriptor(endpointDescriptor->getDescriptor());
+  return oldEnpointDescriptor;
 }
 
 nuiDataStreamDescriptor *nuiFrameworkManager::updateConnection(std::string &pipelineName, int sourceModuleID, int destinationModuleID,int sourcePort, int destinationPort, nuiDataStreamDescriptor *connectionDescriptor)
 {
-//   nuiModuleDescriptor* pipelineDescriptor = nuiFactory::getInstance().getDescriptor(pipelineName);
-//   if (pipelineDescriptor == NULL)
-//     return NULL;
-//   nuiDataStreamDescriptor* oldConnectionDescriptor = NULL;
-//   for (int i=0;i<pipelineDescriptor->getDataStreamDescriptorCount();i++)
-//   {
-//     if ((sourceModuleID == pipelineDescriptor->getDataStreamDescriptor(i)->sourceModuleID)
-//       && (destinationModuleID == pipelineDescriptor->getDataStreamDescriptor(i)->destinationModuleID) 
-//       && (destinationPort == pipelineDescriptor->getDataStreamDescriptor(i)->destinationPort) 
-//       && (sourcePort == pipelineDescriptor->getDataStreamDescriptor(i)->sourcePort))
-//     {
-//       oldConnectionDescriptor = pipelineDescriptor->getDataStreamDescriptor(i);
-//       break;
-//     }	
-//   }
-//   if (oldConnectionDescriptor == NULL)
-//     oldConnectionDescriptor = createConnection(pipelineName,sourceModuleID,destinationModuleID, sourcePort, destinationPort);
-//   if (oldConnectionDescriptor == NULL)
-//     return NULL;
-//   oldConnectionDescriptor->asyncMode = connectionDescriptor->asyncMode;
-//   oldConnectionDescriptor->buffered = connectionDescriptor->buffered;
-//   oldConnectionDescriptor->deepCopy = connectionDescriptor->deepCopy;
-//   oldConnectionDescriptor->bufferSize = connectionDescriptor->bufferSize;
-//   oldConnectionDescriptor->lastPacket = connectionDescriptor->lastPacket;
-//   oldConnectionDescriptor->overflow = connectionDescriptor->overflow;
-// 
-//   std::list<nuiPipelineModule*>* stack = new std::list<nuiPipelineModule*>();
-//   if (rootPipeline!=NULL)
-//     stack->push_back(rootPipeline);
-//   while (!stack->empty())
-//   {
-//     nuiPipelineModule* currentPipeline = stack->back();
-//     stack->pop_back();
-//     if (currentPipeline->getName() == pipelineName)
-//     {		
-//       nuiModule*  sourceModule = (sourceModuleID == PIPELINE_ID) ? currentPipeline : currentPipeline->getChildModuleAtIndex(sourceModuleID);
-//       nuiModule*  destinationModule = (destinationModuleID == PIPELINE_ID) ? currentPipeline : currentPipeline->getChildModuleAtIndex(destinationModuleID);
-//       if ((sourceModule!=NULL) && (destinationModule != NULL))
-//       {
-//         nuiEndpoint* sourceEndpoint = sourceModule == currentPipeline ? currentPipeline->inputInternalEndpoints[sourcePort] : sourceModule->getOutputEndpoint(sourcePort);
-//         nuiEndpoint* destinationEndpoint = destinationModule == currentPipeline ? currentPipeline->inputInternalEndpoints[destinationPort] : destinationModule->getInputEndpoint(destinationPort);
-//         if ((sourceEndpoint != NULL) && (destinationEndpoint != NULL))
-//         {
-//           nuiDataStream *dataStream = sourceEndpoint->getDataStreamForEndpoint(destinationEndpoint);
-//           dataStream->setAsyncMode(connectionDescriptor->asyncMode);
-//           dataStream->setBufferedMode(connectionDescriptor->buffered);
-//           dataStream->setDeepCopy(connectionDescriptor->deepCopy);
-//           dataStream->setBufferSize(connectionDescriptor->bufferSize);
-//           dataStream->setLastPacketPriority(connectionDescriptor->lastPacket);
-//           dataStream->setIsOverflow(connectionDescriptor->overflow);
-//         }
-//       }
-//     }
-//     else
-//     {
-//       for (std::map<int,nuiModule*>::iterator iter = currentPipeline->modules.begin();  iter != currentPipeline->modules.end();iter++)
-//       {
-//         nuiModuleDescriptor* childDescriptor = nuiFactory::getInstance().getDescriptor(iter->second->getName());
-//         if (childDescriptor->getChildModulesCount() > 0)
-//         {
-//           stack->push_back((nuiPipelineModule*)iter->second);
-//         }
-//       }
-//     }
-//   }
-//   delete stack;
-// 
-//   return oldConnectionDescriptor;
-  return NULL;
+  nuiPluginManager& pm = nuiPluginManager::getInstance();
+  nuiModuleDescriptor* pipelineDescriptor = pm.getDescriptor(pipelineName);
+  if (pipelineDescriptor == NULL)
+    return NULL;
+  nuiDataStreamDescriptor* oldConnectionDescriptor = NULL;
+  for (int i=0;i<pipelineDescriptor->getDataStreamDescriptorCount();i++)
+  {
+    if ((sourceModuleID == pipelineDescriptor->getDataStreamDescriptor(i)->sourceModuleID)
+      && (destinationModuleID == pipelineDescriptor->getDataStreamDescriptor(i)->destinationModuleID) 
+      && (destinationPort == pipelineDescriptor->getDataStreamDescriptor(i)->destinationPort) 
+      && (sourcePort == pipelineDescriptor->getDataStreamDescriptor(i)->sourcePort))
+    {
+      oldConnectionDescriptor = pipelineDescriptor->getDataStreamDescriptor(i);
+      break;
+    }	
+  }
+  if (oldConnectionDescriptor == NULL)
+    oldConnectionDescriptor = createConnection(pipelineName,sourceModuleID,destinationModuleID, sourcePort, destinationPort);
+  if (oldConnectionDescriptor == NULL)
+    return NULL;
+  oldConnectionDescriptor->asyncMode = connectionDescriptor->asyncMode;
+  oldConnectionDescriptor->buffered = connectionDescriptor->buffered;
+  oldConnectionDescriptor->deepCopy = connectionDescriptor->deepCopy;
+  oldConnectionDescriptor->bufferSize = connectionDescriptor->bufferSize;
+  oldConnectionDescriptor->lastPacket = connectionDescriptor->lastPacket;
+  oldConnectionDescriptor->overflow = connectionDescriptor->overflow;
+
+  std::list<nuiPipelineModule*>* stack = new std::list<nuiPipelineModule*>();
+  if (rootPipeline!=NULL)
+    stack->push_back(rootPipeline);
+  while (!stack->empty())
+  {
+    nuiPipelineModule* currentPipeline = stack->back();
+    stack->pop_back();
+    if (currentPipeline->getName() == pipelineName)
+    {		
+      nuiModule*  sourceModule = (sourceModuleID == PIPELINE_ID) ? currentPipeline : currentPipeline->getChildModuleAtIndex(sourceModuleID);
+      nuiModule*  destinationModule = (destinationModuleID == PIPELINE_ID) ? currentPipeline : currentPipeline->getChildModuleAtIndex(destinationModuleID);
+      if ((sourceModule!=NULL) && (destinationModule != NULL))
+      {
+        nuiEndpoint* sourceEndpoint = sourceModule == currentPipeline ? currentPipeline->inputInternalEndpoints[sourcePort] : sourceModule->getOutputEndpoint(sourcePort);
+        nuiEndpoint* destinationEndpoint = destinationModule == currentPipeline ? currentPipeline->inputInternalEndpoints[destinationPort] : destinationModule->getInputEndpoint(destinationPort);
+        if ((sourceEndpoint != NULL) && (destinationEndpoint != NULL))
+        {
+          nuiDataStream *dataStream = sourceEndpoint->getDataStreamForEndpoint(destinationEndpoint);
+          dataStream->setAsyncMode(connectionDescriptor->asyncMode);
+          dataStream->setBufferedMode(connectionDescriptor->buffered);
+          dataStream->setDeepCopy(connectionDescriptor->deepCopy);
+          dataStream->setBufferSize(connectionDescriptor->bufferSize);
+          dataStream->setLastPacketPriority(connectionDescriptor->lastPacket);
+          dataStream->setIsOverflow(connectionDescriptor->overflow);
+        }
+      }
+    }
+    else
+    {
+      for (std::map<int,nuiModule*>::iterator iter = currentPipeline->modules.begin();  iter != currentPipeline->modules.end();iter++)
+      {
+        nuiModuleDescriptor* childDescriptor = pm.getDescriptor(iter->second->getName());
+        if (childDescriptor->getChildModulesCount() > 0)
+        {
+          stack->push_back((nuiPipelineModule*)iter->second);
+        }
+      }
+    }
+  }
+  delete stack;
+
+  return oldConnectionDescriptor;
 }
 
 nuiModuleDescriptor *nuiFrameworkManager::navigatePush( int moduleIndex )
 {
-//   nuiModule* newModule = getCurrent()->getChildModuleAtIndex(moduleIndex);
-//   if(newModule == NULL)
-//     return NULL;
-//   nuiPipelineModule* newCurrent = dynamic_cast<nuiPipelineModule*>(newModule);
-//   if(newCurrent == NULL)
-//     return NULL;
-//   pathToCurrent.push_back(moduleIndex);
-//   return nuiFactory::getInstance().getDescriptor(newCurrent->getName());
-  return NULL;
+  nuiModule* newModule = getCurrent()->getChildModuleAtIndex(moduleIndex);
+  if(newModule == NULL)
+    return NULL;
+  nuiPipelineModule* newCurrent = dynamic_cast<nuiPipelineModule*>(newModule);
+  if(newCurrent == NULL)
+    return NULL;
+  pathToCurrent.push_back(moduleIndex);
+  return nuiPluginManager::getInstance().getDescriptor(newCurrent->getName());
 }
 
 nuiModuleDescriptor *nuiFrameworkManager::navigatePop( )
 {
-//   if(pathToCurrent.empty())
-//     return NULL;
-//   pathToCurrent.pop_back();
-//   return nuiFactory::getInstance().getDescriptor(getCurrent()->getName());
-  return NULL;
+  if(pathToCurrent.empty())
+    return NULL;
+  pathToCurrent.pop_back();
+  return nuiPluginManager::getInstance().getDescriptor(getCurrent()->getName());
 }
 
 nuiPipelineModule *nuiFrameworkManager::getCurrent()

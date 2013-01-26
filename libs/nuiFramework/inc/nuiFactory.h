@@ -36,9 +36,6 @@ public:
     //! lists available module names
     std::vector<std::string>& listModules();
 
-    //! gets descriptor for a module or pipeline with specified name
-    nuiModuleDescriptor* getDescriptor(const std::string& name);
-
     //! Creates pipeline or module with specified name
     nuiModule* create(const std::string& moduleName);
     
@@ -53,8 +50,6 @@ private:
     nuiModule* createPipeline(nuiModuleDescriptor* descriptor);
     //! Creates module given module descriptor
     nuiModule* createModule(nuiModuleLoaded* module);
-
-    // friend class nuiFrameworkManager;
 };
 
 #endif //NUI_FACTORY_H
