@@ -17,7 +17,6 @@
     <ClInclude Include="..\inc\nuiFrameworkManager.h" />
     <ClInclude Include="..\inc\nuiJsonRpcApi.h" />
     <ClInclude Include="..\inc\nuiPipeline.h" />
-    <ClInclude Include="..\inc\nuiPluginEntity.h" />
     <ClInclude Include="..\inc\nuiPluginManager.h" />
   </ItemGroup>
   <ItemGroup>
@@ -26,7 +25,6 @@
     <ClCompile Include="..\src\nuiFrameworkManager.cpp" />
     <ClCompile Include="..\src\nuiJsonRpcApi.cpp" />
     <ClCompile Include="..\src\nuiPipeline.cpp" />
-    <ClCompile Include="..\src\nuiPluginEntity.cpp" />
     <ClCompile Include="..\src\nuiPluginManager.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">

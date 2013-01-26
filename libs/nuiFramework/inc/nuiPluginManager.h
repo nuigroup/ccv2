@@ -9,7 +9,6 @@
 #define NUI_PLUGIN_MANAGER_H
 
 #include "nuiPlugin.h"
-#include "nuiPluginEntity.h"
 #include "nuiDynamicLibrary.h"
 #include "nuiModule.h"
 

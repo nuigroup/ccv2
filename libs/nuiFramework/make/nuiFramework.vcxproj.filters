@@ -11,9 +11,6 @@
     <ClCompile Include="..\src\nuiPluginManager.cpp">
       <Filter>Plugins</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\nuiPluginEntity.cpp">
-      <Filter>Plugins</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\inc\nuiDynamicLibrary.h" />
@@ -25,9 +22,6 @@
       <Filter>Adapters</Filter>
     </ClInclude>
     <ClInclude Include="..\inc\nuiPluginManager.h">
-      <Filter>Plugins</Filter>
-    </ClInclude>
-    <ClInclude Include="..\inc\nuiPluginEntity.h">
       <Filter>Plugins</Filter>
     </ClInclude>
   </ItemGroup>
