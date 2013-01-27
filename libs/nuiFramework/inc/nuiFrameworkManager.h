@@ -27,6 +27,7 @@
 #include "nuiDebugLogger.h"
 #include "nuiJsonRpcApi.h"
 #include "json\json.h"
+#include "nuiPlugin.h"
 
 class nuiModule;
 class nuiModuleDescriptor;
@@ -68,18 +69,18 @@ public:
   //! \todo what does init should mean for framework manager?
   nuiFrameworkManagerErrorCode::err init();
 
-  //============================================================================
+  //LIST METHODS ===============================================================
 
   // ++ reviewed
   //! lists modules obtained from Plugins
-  std::vector<std::string>& listModules();
+  std::vector<std::string>* listModules();
 
   // ++ reviewed
   //! \todo require method to obtain pipelines allowed to be created on current level
   //! lists all the pipelines
-  std::vector<std::string>& listPipelines();
+  std::vector<std::string>* listPipelines();
 
-  //============================================================================
+  //WORKFLOW CONTROL METHODS ===================================================
   // ++ reviewed
   //! starts the current pipeline (instance chosen by navigate) workflow
   nuiFrameworkManagerErrorCode::err workflowStart();
@@ -96,7 +97,7 @@ public:
   //! starts module index workflow at the current pipeline
   nuiFrameworkManagerErrorCode::err workflowStop(int moduleIndex);
 
-  //============================================================================
+  //CREATE METHODS =============================================================
   // ++ reviewed
   //! creates pipeline instance at the specified level
   nuiModuleDescriptor* create(const std::string &pipelineName);
@@ -121,7 +122,7 @@ public:
   //! sets new output endpoint count on specified pipeline
   int setOutputEndpointCount(std::string &pipelineName, int count);
 
-  //============================================================================
+  //GET METHODS ================================================================
 
   // ++ reviewed
   nuiModuleDescriptor *getCurrentPipeline();
@@ -141,7 +142,7 @@ public:
   nuiDataStreamDescriptor *getConnection(std::string &pipelineName, 
     int sourceModuleID, int destinationModuleID,int sourcePort, int destinationPort);
 
-  //============================================================================
+  //DELETE METHODS =============================================================
 
   //! \todo needs better revision; instance level not implemented?
   nuiFrameworkManagerErrorCode::err deletePipeline(std::string &pipelineName);
@@ -154,7 +155,8 @@ public:
   //! \todo needs better revision; instance level not implemented?
   nuiModuleDescriptor *deleteConnection(std::string &pipelineName, int sourceModuleID, int destinationModuleID, int sourcePort, int destinationPort);
 
-  //============================================================================
+  //UPDATE METHODS =============================================================
+  
   //! \todo needs better revision
   nuiModuleDescriptor *updatePipeline(std::string &pipelineName, nuiModuleDescriptor* moduleDescriptor);
   //! \todo needs better revision
@@ -166,7 +168,7 @@ public:
   //! \todo needs better revision
   nuiDataStreamDescriptor *updateConnection(std::string &pipelineName, int sourceModuleID, int destinationModuleID,int sourcePort, int destinationPort, nuiDataStreamDescriptor *connectionDescriptor);
 
-  //============================================================================
+  //NAVIGATE METHODS ===========================================================
 
   /** dives into moduleIndex pipeline of the currect pipeline
   *  \returns new current pipeline descriptor, NULL if action failed
@@ -177,6 +179,10 @@ public:
   *  \return new current pipeline descriptor, NULL if action failed
   */
   nuiModuleDescriptor *navigatePop( );
+
+  //OTHER ======================================================================
+  //! force nuiPluginManager load default settings and plugins
+  nuiPluginFrameworkErrorCode::err loadDefaultSettings();
 
 private:
   nuiFrameworkManager();

@@ -51,12 +51,9 @@ descriptor->addOutputEndpointDescriptor(outputDescriptor,0);
 descriptor->property("use_thread").set(false);
 END_IMPLEMENT_DESCRIPTOR(nuiEdgeFilterModule)	
 
-START_MODULE_EXIT()
-END_MODULE_EXIT()
-
-START_MODULE_REGISTRATION()	  
-REGISTER_PLUGIN(nuiEdgeFilterModule,"nuiEdgeFilterModule",1,0)
-END_MODULE_REGISTRATION()
+START_EXPORT_MODULES()	  
+REGISTER_MODULE(nuiEdgeFilterModule,"nuiEdgeFilterModule",1,0)
+END_EXPORT_MODULES()
 
 #endif
 

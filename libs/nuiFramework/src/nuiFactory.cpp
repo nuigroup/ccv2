@@ -34,13 +34,13 @@ nuiFactory& nuiFactory::getInstance()
   return instance;
 };
 
-std::vector<std::string>& nuiFactory::listPipelines()
+std::vector<std::string>* nuiFactory::listPipelines()
 {
   nuiPluginManager& pm = nuiPluginManager::getInstance();
   return pm.listLoadedPipelines();
 };
 
-std::vector<std::string>& nuiFactory::listModules()
+std::vector<std::string>* nuiFactory::listModules()
 {
   nuiPluginManager& pm = nuiPluginManager::getInstance();
   return pm.listLoadedModules();
@@ -212,15 +212,15 @@ void nuiFactory::applyDescriptorProps(nuiModule* module, nuiModuleDescriptor* de
 nuiModule* nuiFactory::create( const std::string& moduleName )
 {
   nuiPluginManager& pm = nuiPluginManager::getInstance();
-  std::vector<std::string>& modules = pm.listLoadedModules();
-  for (std::vector<std::string>::iterator it = modules.begin() ; it != modules.end(); it++)
+  std::vector<std::string>* modules = pm.listLoadedModules();
+  for (std::vector<std::string>::iterator it = modules->begin() ; it != modules->end(); it++)
   {
     if((*it) == moduleName)
       return createModule(pm.getLoadedModule(moduleName));
   }
 
-  std::vector<std::string>& pipelines = pm.listLoadedPipelines();
-  for (std::vector<std::string>::iterator it = pipelines.begin() ; it != pipelines.end(); it++)
+  std::vector<std::string>* pipelines = pm.listLoadedPipelines();
+  for (std::vector<std::string>::iterator it = pipelines->begin() ; it != pipelines->end(); it++)
   {
     if((*it) == moduleName)
       return createPipeline(pm.getDescriptor(moduleName));

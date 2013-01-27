@@ -28,15 +28,17 @@ int main(int argc, char **argv)
   /// Initialize Debug
   nuiDebugLogger::init(config_syslog);
 
-  /// Initialize JSON Configuration
-  nuiFrameworkManagerErrorCode loadCode = nuiFrameworkManager::getInstance().loadSettingsFromJson("data/default_config.json");
-  if(loadCode != NUI_FRAMEWORK_MANAGER_OK)
+  nuiFrameworkManager& manager = nuiFrameworkManager::getInstance();
+
+  /// Load defaults
+  nuiPluginFrameworkErrorCode::err loadCode = manager.loadDefaultSettings();
+  if(loadCode != nuiPluginFrameworkErrorCode::Success)
   {
-    LOG(NUI_CRITICAL, "Failed to Initialize Configuration"); 
+    LOG(NUI_CRITICAL, "Failed to load defaults"); 
     return loadCode;
   }
 
-  /// Initialize JSON RPC 
+  /// Initialize API
   if(!nuiJsonRpcApi::getInstance()->init("127.0.0.1", 7500)) 
   {
     LOG(NUI_CRITICAL, "Failed to Initialize JSON RPC");
@@ -47,16 +49,15 @@ int main(int argc, char **argv)
 
 
   /// Initialize Framework
-  nuiFrameworkManagerErrorCode frameworkInitStatus = nuiFrameworkManager::getInstance().initializeFrameworkManager();
-  if(frameworkInitStatus != NUI_FRAMEWORK_MANAGER_OK) 
+  nuiFrameworkManagerErrorCode::err frameworkInitStatus = manager.init();
+  if(frameworkInitStatus != nuiFrameworkManagerErrorCode::Success) 
   {
-    if(frameworkInitStatus == NUI_FRAMEWORK_ROOT_INITIALIZATION_FAILED) 
-      LOG(NUI_CRITICAL, "Failed to Initialize framework root");
-  } 
+    LOG(NUI_CRITICAL, "Failed to initialize framework manager");
+  }
   else 
     nuiFrameworkManager::getInstance().workflowStart();
 
-  /// Update cycle 
+  /// Update cycle
   do 
   {
     SLEEP(g_config_delay);
@@ -65,8 +66,7 @@ int main(int argc, char **argv)
 
 
   /// Stop Framework
-  nuiFrameworkManager::getInstance().workflowStop();
-  nuiFrameworkManager::getInstance().workflowQuit();
+  manager.workflowStop();
 
 exit_standard:
   /// No cleanup required - Thread is done.

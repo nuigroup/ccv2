@@ -54,7 +54,7 @@ descriptor->property("use_thread").set(false);
 END_IMPLEMENT_DESCRIPTOR(nuiGaussianBlurFilter)	
 
 START_EXPORT_MODULES()	  
-REGISTER_MODULE(nuiGaussianBlurFilter,"nuiGaussianBlurFilter", 1, 0, "EF5C8522-3208-4DD8-A52A-9f6E9EAF552D\0")
+REGISTER_MODULE(nuiGaussianBlurFilter,"nuiGaussianBlurFilter", 1, 0)
 END_EXPORT_MODULES()
 
 #endif

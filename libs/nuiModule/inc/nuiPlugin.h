@@ -24,24 +24,7 @@ struct nuiPluginFrameworkErrorCode
     EntryPointNotFound,
     IncompatibleVersion,
     RepeatingModule,
-    DefaultSettingsCorrupted,
-    nuiPluginRegistrationFailed,
-    nuiPluginNotRegistered,
-    nuiPluginObjectQueryingFailed,
-    nuiPluginObjectCastingFailed,
-    nuiPluginAlreadyRegistered,
-    nuiPluginNonCompatibleVersion,
-    nuiPluginCreationError,
-    nuiPluginReleaseError,
-    nuiPluginServiceNotFound,
-    nuiPluginServiceWrongObjectParams,
-    nuiPluginDescriptionAlreadyRemoved,
-    nuiPluginIstancesAlreadyRemoved,
-    nuiDynamicLibraryLoadingFailed,
-    nuiDynamicLibraryAlreadyLoaded,
-    nuiDynamicLibraryAlreadyUnloaded,
-    nuiDynamicLibraryEntryPointLoadingFailed,
-    nuiDynamicLibraryExitPointLoadingFailed
+    DefaultSettingsCorrupted
   };
 };
 
@@ -153,7 +136,7 @@ nuiPluginFrameworkErrorCode::err nuiLibraryLoad(const nuiPluginFrameworkService 
   registerParams->allocateFunc = allocate##type##; \
   registerParams->deallocateFunc = deallocate##type##; \
   registerParams->getDescriptorFunc = get##type##Descriptor; \
-  registerParams->name = ##type##; \
+  registerParams->name = #type; \
   error = params->registerModule(registerParams); \
   if (error != nuiPluginFrameworkErrorCode::Success) \
     return error; \

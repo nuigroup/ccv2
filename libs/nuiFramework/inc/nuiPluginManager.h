@@ -181,22 +181,22 @@ public:
   nuiPluginFrameworkErrorCode::err loadDefaultConfiguration();
 
   //! loads specified pipelines. Currently only json is supported.
-  nuiPluginFrameworkErrorCode::err loadPipelines(Json::Value& root);
+  nuiPluginFrameworkErrorCode::err loadPipelines(Json::Value* root);
 
   //! loads specified pipelines from file. Currently only json is supported.
-  nuiModuleDescriptor* loadPipeline(Json::Value& root);
+  nuiModuleDescriptor* loadPipeline(Json::Value* root);
 
   //! unloads specified pipeline from dictionary
   nuiPluginFrameworkErrorCode::err unloadPipeline(const std::string& name);
 
   //! lists names of loaded modules
-  std::vector<std::string>& listLoadedModules();
+  std::vector<std::string>* listLoadedModules();
 
   //! lists names of loaded pipelines
-  std::vector<std::string>& listLoadedPipelines();
+  std::vector<std::string>* listLoadedPipelines();
 
   //! get pipeline descriptors
-  std::vector<nuiModuleDescriptor*>& getPipelineDescriptors();
+  std::vector<nuiModuleDescriptor*>* getPipelineDescriptors();
 
   //! registers newly created descriptor
   nuiPluginFrameworkErrorCode::err registerPipeline(nuiModuleDescriptor* descr);
@@ -226,7 +226,7 @@ private:
 
   /** loads settings to module Descriptor from json
    */
-  void parseDescriptor(nuiModuleDescriptor &moduleDescriptor, const Json::Value& root);
+  void parseDescriptor(nuiModuleDescriptor* descriptor, Json::Value* root);
 
   nuiPluginFrameworkService pluginFrameworkService;
   //! loaded shared libraries

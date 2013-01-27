@@ -189,17 +189,18 @@ nuiPluginFrameworkErrorCode::err nuiPluginManager::loadDefaultConfiguration()
     this->loadLibrary(path);
   }
   
-  this->loadPipelines(root.get("pipelines", NULL));
+  Json::Value pipelines = root.get("pipelines", NULL);
+  this->loadPipelines(&pipelines);
 
   return nuiPluginFrameworkErrorCode::Success;
 };
 
-nuiPluginFrameworkErrorCode::err nuiPluginManager::loadPipelines( Json::Value& pipelines )
+nuiPluginFrameworkErrorCode::err nuiPluginManager::loadPipelines( Json::Value* pipelines )
 {
-  for(Json::Value::iterator i = pipelines.begin(); i != pipelines.end(); i++) 
+  for(Json::Value::iterator i = pipelines->begin(); i != pipelines->end(); i++) 
   {
     //! \todo maybe should continue loading if has error?
-    nuiModuleDescriptor* pipelineDescr = loadPipeline(*i);
+    nuiModuleDescriptor* pipelineDescr = loadPipeline(&*i);
     if(!pipelineDescr)
       return nuiPluginFrameworkErrorCode::UnexpectedError;
     // check for NULL-ness
@@ -209,7 +210,7 @@ nuiPluginFrameworkErrorCode::err nuiPluginManager::loadPipelines( Json::Value& p
       if(pipelineDescr->getName() == modulesLoaded[i]->name)
         return nuiPluginFrameworkErrorCode::RepeatingModule;
     }
-    for (int i=0 ; i<pipelines.size() ; i++)
+    for (int i=0 ; i<pipelinesLoaded.size() ; i++)
     {
       if(pipelineDescr->getName() == pipelinesLoaded[i]->getName())
         return nuiPluginFrameworkErrorCode::RepeatingModule;
@@ -222,12 +223,12 @@ nuiPluginFrameworkErrorCode::err nuiPluginManager::loadPipelines( Json::Value& p
   return nuiPluginFrameworkErrorCode::Success;
 };
 
-nuiModuleDescriptor* nuiPluginManager::loadPipeline(Json::Value& root)
+nuiModuleDescriptor* nuiPluginManager::loadPipeline(Json::Value* root)
 {
   nuiModuleDescriptor* moduleDescriptor = new nuiModuleDescriptor();
-  moduleDescriptor->setName(root.get("type", NULL).asString());
-  moduleDescriptor->setAuthor(root.get("author", NULL).asString());
-  moduleDescriptor->setDescription(root.get("description", NULL).asString());
+  moduleDescriptor->setName(root->get("type", NULL).asString());
+  moduleDescriptor->setAuthor(root->get("author", NULL).asString());
+  moduleDescriptor->setDescription(root->get("description", NULL).asString());
   
   //! \todo what for? why 0x0FFFFFFF not 0xFFFFFFFF?! wtf?!
   const int PIPELINE_ID = 0x0FFFFFFF;
@@ -235,10 +236,10 @@ nuiModuleDescriptor* nuiPluginManager::loadPipeline(Json::Value& root)
   moduleDescriptor->property("id") = *(new nuiProperty(PIPELINE_ID));
   // setting this strange id
 
-  parseDescriptor(*moduleDescriptor, root);
+  parseDescriptor(moduleDescriptor, root);
   // parsing other properties
   
-  Json::Value submodules = root.get("modules", NULL);
+  Json::Value submodules = root->get("modules", NULL);
   if(submodules.isArray()) {
     for (Json::Value::iterator i = submodules.begin(); i!=submodules.end(); i++)
     {
@@ -246,13 +247,13 @@ nuiModuleDescriptor* nuiPluginManager::loadPipeline(Json::Value& root)
       childDescriptor->setName((*i).get("type", NULL).asString());
       int id = (*i).get("id", PIPELINE_ID).asInt();
       childDescriptor->property("id") = *(new nuiProperty(id));
-      parseDescriptor(*childDescriptor, *i);
+      parseDescriptor(childDescriptor, &*i);
       moduleDescriptor->addChildModuleDescriptor(childDescriptor);
     }
   }
   // extracting child module descriptor settings
   
-  Json::Value endpoints = root.get("endpoints", new Json::Value);
+  Json::Value endpoints = root->get("endpoints", new Json::Value);
 
   Json::Value inputs = endpoints.get("input", new Json::Value);
   for (Json::Value::iterator i = inputs.begin(); i!=inputs.end(); i++)
@@ -271,7 +272,7 @@ nuiModuleDescriptor* nuiPluginManager::loadPipeline(Json::Value& root)
   }
   // get output endpoints
 
-  Json::Value connections = root.get("connections", new Json::Value);
+  Json::Value connections = root->get("connections", new Json::Value);
   for (Json::Value::iterator i = connections.begin(); i!=connections.end(); i++)
   {
     nuiDataStreamDescriptor *datastreamDescriptor = new nuiDataStreamDescriptor();
@@ -308,9 +309,9 @@ nuiPluginFrameworkErrorCode::err nuiPluginManager::unloadPipeline( const std::st
   return nuiPluginFrameworkErrorCode::Success;
 };
 
-void nuiPluginManager::parseDescriptor( nuiModuleDescriptor &moduleDescriptor, const Json::Value& root )
+void nuiPluginManager::parseDescriptor( nuiModuleDescriptor* moduleDescriptor, Json::Value* root )
 {
-  Json::Value properties = root.get("properties", new Json::Value);
+  Json::Value properties = root->get("properties", new Json::Value);
   // extracting props from "properties" json value
   
   Json::Value::Members propertyNames = properties.getMemberNames();
@@ -325,15 +326,15 @@ void nuiPluginManager::parseDescriptor( nuiModuleDescriptor &moduleDescriptor, c
 
     if ((value != "none") && (propertyID != "none")) // if both are present
     {
-      if (moduleDescriptor.getProperties().find(propertyID) == 
-        moduleDescriptor.getProperties().end()) // if not found property
+      if (moduleDescriptor->getProperties().find(propertyID) == 
+        moduleDescriptor->getProperties().end()) // if not found property
       {
         if(value.isInt())
-          moduleDescriptor.property(propertyID).set(value.asInt());
+          moduleDescriptor->property(propertyID).set(value.asInt());
         else 
         {
           if(value.isString()) 
-            moduleDescriptor.property(propertyID).set(value.asString());
+            moduleDescriptor->property(propertyID).set(value.asString());
         }
         // save the property to descriptor's property list
       }
@@ -341,19 +342,19 @@ void nuiPluginManager::parseDescriptor( nuiModuleDescriptor &moduleDescriptor, c
   }
 };
 
-std::vector<std::string>& nuiPluginManager::listLoadedModules()
+std::vector<std::string>* nuiPluginManager::listLoadedModules()
 {
-  std::vector<std::string> modules;
+  std::vector<std::string>* modules = new std::vector<std::string>();
   for(int i = 0 ; i<this->modulesLoaded.size() ; i++)
-    modules.push_back(this->modulesLoaded[i]->name);
+    modules->push_back(this->modulesLoaded[i]->name);
   return modules;
 }
 
-std::vector<std::string>& nuiPluginManager::listLoadedPipelines()
+std::vector<std::string>* nuiPluginManager::listLoadedPipelines()
 {
-  std::vector<std::string> pipelines;
+  std::vector<std::string>* pipelines = new std::vector<std::string>();
   for(int i = 0 ; i<this->pipelinesLoaded.size() ; i++)
-    pipelines.push_back(this->pipelinesLoaded[i]->getName());
+    pipelines->push_back(this->pipelinesLoaded[i]->getName());
   return pipelines;
 }
 
@@ -400,7 +401,7 @@ nuiModuleLoaded* nuiPluginManager::getLoadedModule( const std::string name )
   return NULL;
 }
 
-std::vector<nuiModuleDescriptor*>& nuiPluginManager::getPipelineDescriptors()
+std::vector<nuiModuleDescriptor*>* nuiPluginManager::getPipelineDescriptors()
 {
-  return pipelinesLoaded;
+  return &pipelinesLoaded;
 }

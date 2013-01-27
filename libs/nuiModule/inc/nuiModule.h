@@ -44,13 +44,13 @@ typedef nuiModule* (*nuiFactoryCreateCallback)();
 #define MODULE_INIT() \
 	this->properties["id"] = new nuiProperty(nuiUtils::getRandomNumber()); \
 	LOG(NUI_DEBUG, "create object <" << module_name << "> with id <" \
-			   << this->property("id").asString() << ">");
+			   << this->property("id").asString() << ">"); \
 
-#define MODULE_INTERNALS() 					\
-	public:									\
-	virtual std::string getName(); 			\
-	virtual std::string getDescription(); 	\
-	virtual std::string getAuthor();
+#define MODULE_INTERNALS() \
+	public: \
+	virtual std::string getName(); \
+	virtual std::string getDescription(); \
+	virtual std::string getAuthor(); \
 
 class nuiEndpointDescriptor;
 

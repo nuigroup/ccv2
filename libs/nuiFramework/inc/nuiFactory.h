@@ -32,9 +32,9 @@ public:
     static void applyDescriptorProps(nuiModule* module, nuiModuleDescriptor* descriptor);
 
     //! lists available pipeline names
-    std::vector<std::string>& listPipelines();
+    std::vector<std::string>* listPipelines();
     //! lists available module names
-    std::vector<std::string>& listModules();
+    std::vector<std::string>* listModules();
 
     //! Creates pipeline or module with specified name
     nuiModule* create(const std::string& moduleName);

@@ -1,4 +1,5 @@
 #include "nuiJsonRpcApi.h"
+#include "nuiFrameworkManager.h"
 
 LOG_DECLARE("RPC");
 
@@ -163,11 +164,11 @@ nuiJsonRpcApi::nuiJsonRpcApi() : pt::thread(false)
 bool nuiJsonRpcApi::nui_list_dynamic( const Json::Value& root, Json::Value& response )
 {
 	response["id"] = root["id"];
-	std::vector<std::string>& list = nuiFrameworkManager::getInstance().listModules();
+	std::vector<std::string>* list = nuiFrameworkManager::getInstance().listModules();
 
 	Json::Value* jModules = new Json::Value();
 	std::vector<std::string>::iterator it;
-	for(it = list.begin() ; it!=list.end();it++)
+	for(it = list->begin() ; it!=list->end();it++)
 		jModules->append(*it);
 
 	setSuccess(response);
@@ -241,7 +242,9 @@ bool nuiJsonRpcApi::nui_create_pipeline( const Json::Value& root, Json::Value& r
 	response["id"] = root["id"];
 	std::string pipeline = root["params"]["pipeline"].asString();
 
-	nuiModuleDescriptor* descriptor = nuiFrameworkManager::getInstance().create(pipeline);
+  nuiFrameworkManager& manager = nuiFrameworkManager::getInstance();
+
+	nuiModuleDescriptor* descriptor = manager.createNewPipelineTemplate(pipeline);
 
 	if(descriptor == NULL)
 	{

@@ -27,7 +27,7 @@ public:
 	void start();
 
 private:
-    nuiEndpoint* input;
+  nuiEndpoint* input;
 
 	IplImage *dispFrame;
     
@@ -45,12 +45,9 @@ descriptor->addInputEndpointDescriptor(inputDescriptor,0);
 descriptor->property("use_thread").set(true);
 END_IMPLEMENT_DESCRIPTOR(nuiDebugVideoSink)	
 
-START_MODULE_EXIT()
-END_MODULE_EXIT()
-
-START_MODULE_REGISTRATION()	  
-REGISTER_PLUGIN(nuiDebugVideoSink,"nuiDebugVideoSink",1,0)
-END_MODULE_REGISTRATION()
+START_EXPORT_MODULES()	  
+REGISTER_MODULE(nuiDebugVideoSink,"nuiDebugVideoSink",1,0)
+END_EXPORT_MODULES()
 
 #endif
 

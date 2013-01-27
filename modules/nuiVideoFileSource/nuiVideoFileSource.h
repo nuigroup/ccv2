@@ -48,11 +48,8 @@ descriptor->addOutputEndpointDescriptor(outputDescriptor, 0);
 //descriptor->property("oscillator_wait").set(50);
 END_IMPLEMENT_DESCRIPTOR(nuiVideoFileSource)
 
-START_MODULE_EXIT()
-END_MODULE_EXIT()
-
-START_MODULE_REGISTRATION()	  
-REGISTER_PLUGIN(nuiVideoFileSource,"nuiVideoFileSource", 1, 0)
-END_MODULE_REGISTRATION()
+START_EXPORT_MODULES()	  
+REGISTER_MODULE(nuiVideoFileSource,"nuiVideoFileSource", 1, 0)
+END_EXPORT_MODULES()
 
 #endif
