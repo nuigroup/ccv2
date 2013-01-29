@@ -1,8 +1,10 @@
-/////////////////////////////////////////////////////////////////////////////
-// Name:        nui/nuiModule.cpp
-// Author:      Scott Halstvedt
-// Copyright:   (c) 2011 NUI Group
-/////////////////////////////////////////////////////////////////////////////
+/** 
+ * \file      nuiModule.cpp
+ * \author    Anatoly Churikov
+ * \author    Anatoly Lushnikov
+ * \date      2012-2013
+ * \copyright Copyright 2011 NUI Group. All rights reserved.
+ */
 
 #include <stdlib.h>
 #include <assert.h>

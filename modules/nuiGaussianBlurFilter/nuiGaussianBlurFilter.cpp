@@ -1,10 +1,3 @@
-/////////////////////////////////////////////////////////////////////////////
-// Name:        modules/nuiGaussianBlurFilter.cpp
-// Purpose:     Module to filter edges
-// Author:      Scott Halstvedt
-// Copyright:   (c) 2012 NUI Group
-/////////////////////////////////////////////////////////////////////////////
-
 #include "nuiGaussianBlurFilter.h"
 
 nuiGaussianBlurFilterDataPacket::~nuiGaussianBlurFilterDataPacket()
@@ -12,20 +5,20 @@ nuiGaussianBlurFilterDataPacket::~nuiGaussianBlurFilterDataPacket()
 		cvReleaseImage(&data);
 };
 
-nuiDataPacketError nuiGaussianBlurFilterDataPacket::packData(const void *_data)
+nuiDataPacketError::err nuiGaussianBlurFilterDataPacket::packData(const void *_data)
 {
 	this->setLocalCopy(false);
 	this->data = (IplImage*)_data;
-	return NUI_DATAPACKET_OK;
+	return nuiDataPacketError::NoError;
 };
 
-nuiDataPacketError nuiGaussianBlurFilterDataPacket::unpackData(void* &_data)
+nuiDataPacketError::err nuiGaussianBlurFilterDataPacket::unpackData(void* &_data)
 {
 	_data = (void*)this->data;
-	return NUI_DATAPACKET_OK;
+	return nuiDataPacketError::NoError;
 };
 
-nuiDataPacket* nuiGaussianBlurFilterDataPacket::copyPacketData(nuiDataPacketError &errorCode)
+nuiDataPacket* nuiGaussianBlurFilterDataPacket::copyPacketData(nuiDataPacketError::err &errorCode)
 {
 	nuiGaussianBlurFilterDataPacket* newDataPacket = new nuiGaussianBlurFilterDataPacket();
 
@@ -35,7 +28,7 @@ nuiDataPacket* nuiGaussianBlurFilterDataPacket::copyPacketData(nuiDataPacketErro
 	newDataPacket->packData(newData);
 	newDataPacket->setLocalCopy(true);
 
-	errorCode = NUI_DATAPACKET_OK;
+	errorCode = nuiDataPacketError::NoError;
 	return newDataPacket;
 };
 

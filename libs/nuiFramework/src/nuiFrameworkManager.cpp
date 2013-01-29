@@ -1,3 +1,12 @@
+/** 
+* \file      nuiFrameworkManager.h
+* \author    Anatoly Lushnikov
+* \author    Scott Halstvedt
+* \author    Anatoly Churikov
+* \date      2012-2013
+* \copyright Copyright 2012 NUI Group. All rights reserved.
+*/
+
 #include "nuiFrameworkManager.h"
 #include "nuiModule.h"
 #include "nuiPipeline.h"
@@ -29,16 +38,26 @@ nuiFrameworkManager& nuiFrameworkManager::getInstance()
 nuiFrameworkManagerErrorCode::err nuiFrameworkManager::init()
 {
   nuiFactory& factory = nuiFactory::getInstance();
-  this->rootPipeline = (nuiPipelineModule*)(factory.create("root"));
-  if(rootPipeline != NULL) {
-    nuiTreeNode<int, nuiModule*> *temp = new nuiTreeNode<int, nuiModule*>(rootPipeline->property("id").asInteger(), rootPipeline);
-    for (int i=0; i<rootPipeline->getChildModuleCount(); i++) {
-      temp->addChildNode(new nuiTreeNode<int, nuiModule*>(rootPipeline->getChildModuleAtIndex(i)->property("id").asInteger(), rootPipeline->getChildModuleAtIndex(i)));
+  rootPipeline = (nuiPipelineModule*)(factory.create("root"));
+  if(rootPipeline != NULL) 
+  {
+    nuiTreeNode<int, nuiModule*> *temp = 
+      new nuiTreeNode<int, nuiModule*>(rootPipeline->property("id").asInteger(), 
+      rootPipeline);
+    for (int i=0; i<rootPipeline->getChildModuleCount(); i++) 
+    {
+      temp->addChildNode(
+        new nuiTreeNode<int, nuiModule*>(
+        rootPipeline->getChildModuleAtIndex(i)->property("id").asInteger(), 
+        rootPipeline->getChildModuleAtIndex(i)));
     }
     dataObjectTree = new nuiTree<int, nuiModule*>(temp);
+    return nuiFrameworkManagerErrorCode::Success;
   }
-  return (rootPipeline != NULL) ? 
-    nuiFrameworkManagerErrorCode::Success : nuiFrameworkManagerErrorCode::InitFailed;
+  else
+  {
+    return nuiFrameworkManagerErrorCode::InitFailed;
+  }
 };
 
 std::vector<std::string>* nuiFrameworkManager::listModules()

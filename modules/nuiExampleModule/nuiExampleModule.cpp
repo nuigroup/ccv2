@@ -1,10 +1,3 @@
-/////////////////////////////////////////////////////////////////////////////
-// Name:        modules/nuiExampleModule.cpp
-// Purpose:     Example Module to be used for developments.
-// Author:      Christian Moore
-// Copyright:   (c) 2012 NUI Group
-/////////////////////////////////////////////////////////////////////////////
-
 #include "nuiExampleModule.h"
 
 nuiExampleModuleDataPacket::~nuiExampleModuleDataPacket()
@@ -12,20 +5,20 @@ nuiExampleModuleDataPacket::~nuiExampleModuleDataPacket()
 		cvReleaseImage(&data);
 };
 
-nuiDataPacketError nuiExampleModuleDataPacket::packData(const void *_data)
+nuiDataPacketError::err nuiExampleModuleDataPacket::packData(const void *_data)
 {
 	this->setLocalCopy(false);
 	this->data = (IplImage*)_data;
-	return NUI_DATAPACKET_OK;
+	return nuiDataPacketError::NoError;
 };
 
-nuiDataPacketError nuiExampleModuleDataPacket::unpackData(void* &_data)
+nuiDataPacketError::err nuiExampleModuleDataPacket::unpackData(void* &_data)
 {
 	_data = (void*)this->data;
-	return NUI_DATAPACKET_OK;
+	return nuiDataPacketError::NoError;
 };
 
-nuiDataPacket* nuiExampleModuleDataPacket::copyPacketData(nuiDataPacketError &errorCode)
+nuiDataPacket* nuiExampleModuleDataPacket::copyPacketData(nuiDataPacketError::err &errorCode)
 {
 	nuiExampleModuleDataPacket* newDataPacket = new nuiExampleModuleDataPacket();
 
@@ -35,7 +28,7 @@ nuiDataPacket* nuiExampleModuleDataPacket::copyPacketData(nuiDataPacketError &er
 	newDataPacket->packData(newData);
 	newDataPacket->setLocalCopy(true);
 
-	errorCode = NUI_DATAPACKET_OK;
+	errorCode = nuiDataPacketError::NoError;
 	return newDataPacket;
 };
 

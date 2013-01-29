@@ -1,10 +1,3 @@
-//////////////////////////////////////////////////////////////////////////
-// Name:		modules/nuiVideoFileSource
-// Purpose:		Get video from a file source
-// Author:		Scott Halstvedt
-// Copyright:	(c) 2012 NUI Group
-//////////////////////////////////////////////////////////////////////////
-
 #include "nuiVideoFileSource.h"
 
 nuiVideoFileSourceDataPacket::~nuiVideoFileSourceDataPacket()
@@ -12,20 +5,20 @@ nuiVideoFileSourceDataPacket::~nuiVideoFileSourceDataPacket()
 	if(this->isLocalCopy()) cvReleaseImage(&data);
 };
 
-nuiDataPacketError nuiVideoFileSourceDataPacket::packData(const void *_data)
+nuiDataPacketError::err nuiVideoFileSourceDataPacket::packData(const void *_data)
 {
 	this->setLocalCopy(false);
 	this->data = (IplImage*)_data;
-	return NUI_DATAPACKET_OK;
+	return nuiDataPacketError::NoError;
 };
 
-nuiDataPacketError nuiVideoFileSourceDataPacket::unpackData(void* &_data)
+nuiDataPacketError::err nuiVideoFileSourceDataPacket::unpackData(void* &_data)
 {
 	_data = (void*)this->data;
-	return NUI_DATAPACKET_OK;
+	return nuiDataPacketError::NoError;
 };
 
-nuiDataPacket* nuiVideoFileSourceDataPacket::copyPacketData(nuiDataPacketError &errorCode)
+nuiDataPacket* nuiVideoFileSourceDataPacket::copyPacketData(nuiDataPacketError::err &errorCode)
 {
 	nuiVideoFileSourceDataPacket* newDataPacket = new nuiVideoFileSourceDataPacket();
 
@@ -35,7 +28,7 @@ nuiDataPacket* nuiVideoFileSourceDataPacket::copyPacketData(nuiDataPacketError &
 	newDataPacket->packData(newData);
 	newDataPacket->setLocalCopy(true);
 
-	errorCode = NUI_DATAPACKET_OK;
+	errorCode = nuiDataPacketError::NoError;
 	return newDataPacket;
 };
 

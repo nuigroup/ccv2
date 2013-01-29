@@ -1,3 +1,11 @@
+/** 
+ * \file      nuiPlugin.h
+ * \author    Anatoly Lushnikov
+ * \author    Anatoly Churikov 
+ * \date      2012-2013
+ * \copyright Copyright 2012 NUI Group. All rights reserved.
+ */
+
 #ifndef NUI_PLUGIN_H
 #define NUI_PLUGIN_H
 

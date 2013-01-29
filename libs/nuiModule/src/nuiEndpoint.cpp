@@ -1,3 +1,11 @@
+/** 
+ * \file      nuiEndpoint.cpp
+ * \author    Anatoly Churikov
+ * \author    Anatoly Lushnikov
+ * \date      2012-2013
+ * \copyright Copyright 2011 NUI Group. All rights reserved.
+ */
+
 #include "nuiEndpoint.h"
 #include "nuiModule.h"
 
@@ -14,12 +22,12 @@ nuiEndpoint::~nuiEndpoint()
 	delete mtx;
 }
 
-nuiDataStreamErrorCode nuiEndpoint::writeData(nuiDataPacket* dataPacket)
+nuiDatastreamError::err nuiEndpoint::writeData(nuiDataPacket* dataPacket)
 {
 	this->dataPacket = dataPacket;
 	if (moduleHoster != NULL)
 		moduleHoster->notifyDataReceived(this);
-	return NUI_DATASTREAM_OK;
+	return nuiDatastreamError::Success;
 }
 
 nuiEndpoint *nuiEndpoint::getConnectedEndpointOnIndex(int index)
@@ -58,15 +66,15 @@ nuiDataStream *nuiEndpoint::addConnection(nuiEndpoint *endpoint)
 	return dataStreams[endpoint];
 }
 
-nuiDataStreamErrorCode nuiEndpoint::removeConnection(nuiEndpoint *endpoint)
+nuiDatastreamError::err nuiEndpoint::removeConnection(nuiEndpoint *endpoint)
 {		
 	std::map<nuiEndpoint*,nuiDataStream*>::iterator iter = dataStreams.find(endpoint);
 	if (iter == dataStreams.end())
-		return NUI_DATASTREAM_ENDPOINT_ERROR_NOT_EXIST;
+		return nuiDatastreamError::NonexistentEndpoint;
 	iter->second->stopStream();
 	delete iter->second;
 	dataStreams.erase(iter);
-	return NUI_DATASTREAM_OK;
+	return nuiDatastreamError::Success;
 }
 
 void nuiEndpoint::removeConnections()

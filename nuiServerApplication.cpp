@@ -1,3 +1,12 @@
+/** 
+ * \file      nuiServerApplication.cpp
+ * \author    Anatoly Churikov
+ * \author    Anatoly Lushnikov
+ * \author    Scott Halstvedt
+ * \date      2012-2013
+ * \copyright Copyright 2012 NUI Group. All rights reserved.
+ */
+
 #include "nuiServerApplication.h"
 
 LOG_DECLARE("CCV");

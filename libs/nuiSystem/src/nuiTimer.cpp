@@ -1,3 +1,10 @@
+/** 
+ * \file      nuiTimer.cpp
+ * \author    Anatoly Churikov
+ * \date      2012-2013
+ * \copyright Copyright 2012 NUI Group. All rights reserved.
+ */
+
 #include "nuiTimer.h"
 #include <assert.h>
 

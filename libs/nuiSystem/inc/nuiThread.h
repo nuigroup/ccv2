@@ -1,17 +1,18 @@
-/////////////////////////////////////////////////////////////////////////////
-// Name:        ccx/ccxThread.h
-// Author:      Scott Halstvedt
-// Purpose:     Basic abstraction of thread/semaphore for WIN32 and Posix
-// Copyright:   (c) 2011 NUI Group
-/////////////////////////////////////////////////////////////////////////////
-
-
-/***********************************************************************
- ** Some parts Copyright (C) 2010 Movid Authors.  All rights reserved.
- **
- ** This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
- ** WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
- **********************************************************************/
+/** 
+ * \file      nuiThread.h
+ *            
+ * Basic abstraction of thread/semaphore for WIN32 and Posix
+ *            
+ * Some parts Copyright (C) 2010 Movid Authors.  All rights reserved.
+ *
+ * This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+ * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+ * 
+ * \author    Scott Halstvedt
+ * \author    Anatoly Lushnikov
+ * \date      2011-2013
+ * \copyright Copyright 2012 NUI Group. All rights reserved.
+ */
 
 #ifndef NUI_THREAD_H
 #define NUI_THREAD_H
@@ -38,18 +39,6 @@ private:
     pt::trigger *thread_trigger;
     void *userdata;
     bool want_quit;
-};
-
-class nuiMultithreadable
-{
-public:
-    nuiMultithreadable();
-    virtual ~nuiMultithreadable();
-    virtual void lock();
-    virtual void unlock();
-protected:
-    thread_process_t threaded_func;
-    pt::mutex *mtx;
 };
 
 #endif

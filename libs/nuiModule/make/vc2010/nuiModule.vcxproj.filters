@@ -41,8 +41,5 @@
     <ClCompile Include="..\..\src\nuiEndpoint.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\nuiDataPacket.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
   </ItemGroup>
 </Project>

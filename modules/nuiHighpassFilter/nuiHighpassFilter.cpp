@@ -1,10 +1,3 @@
-/////////////////////////////////////////////////////////////////////////////
-// Name:        modules/nuiHighpassFilter.cpp
-// Purpose:     Highpass filter
-// Author:      Scott Halstvedt
-// Copyright:   (c) 2012 NUI Group
-/////////////////////////////////////////////////////////////////////////////
-
 #include "nuiHighpassFilter.h"
 
 nuiHighpassFilterDataPacket::~nuiHighpassFilterDataPacket()
@@ -12,20 +5,20 @@ nuiHighpassFilterDataPacket::~nuiHighpassFilterDataPacket()
 		cvReleaseImage(&data);
 };
 
-nuiDataPacketError nuiHighpassFilterDataPacket::packData(const void *_data)
+nuiDataPacketError::err nuiHighpassFilterDataPacket::packData(const void *_data)
 {
 	this->setLocalCopy(false);
 	this->data = (IplImage*)_data;
-	return NUI_DATAPACKET_OK;
+	return nuiDataPacketError::NoError;
 };
 
-nuiDataPacketError nuiHighpassFilterDataPacket::unpackData(void* &_data)
+nuiDataPacketError::err nuiHighpassFilterDataPacket::unpackData(void* &_data)
 {
 	_data = (void*)this->data;
-	return NUI_DATAPACKET_OK;
+	return nuiDataPacketError::NoError;
 };
 
-nuiDataPacket* nuiHighpassFilterDataPacket::copyPacketData(nuiDataPacketError &errorCode)
+nuiDataPacket* nuiHighpassFilterDataPacket::copyPacketData(nuiDataPacketError::err &errorCode)
 {
 	nuiHighpassFilterDataPacket* newDataPacket = new nuiHighpassFilterDataPacket();
 
@@ -35,7 +28,7 @@ nuiDataPacket* nuiHighpassFilterDataPacket::copyPacketData(nuiDataPacketError &e
 	newDataPacket->packData(newData);
 	newDataPacket->setLocalCopy(true);
 
-	errorCode = NUI_DATAPACKET_OK;
+	errorCode = nuiDataPacketError::NoError;
 	return newDataPacket;
 };
 

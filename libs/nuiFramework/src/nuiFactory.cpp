@@ -1,16 +1,17 @@
-/////////////////////////////////////////////////////////////////////////////
-// Name:        ccx/ccxFactory.cpp
-// Author:      Scott Halstvedt
-// Copyright:   (c) 2011 NUI Group
-/////////////////////////////////////////////////////////////////////////////
-
-
-/***********************************************************************
-** Some parts Copyright (C) 2010 Movid Authors.  All rights reserved.
-**
-** This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-** WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
-*** *******************************************************************/
+/** 
+ * \file      nuiFactory.cpp
+ * 
+ * Some parts Copyright (C) 2010 Movid Authors.  All rights reserved.
+ * 
+ * This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+ * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+ * 
+ * \author    Scott Halstvedt
+ * \author    Anatoly Lushnikov
+ * \author    Anatoly Churikov
+ * \date      2012-2013
+ * \copyright Copyright 2011 NUI Group. All rights reserved.
+ */
 
 #include "nuiFactory.h"
 #include "nuiPipeline.h"

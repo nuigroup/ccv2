@@ -1,11 +1,13 @@
-/////////////////////////////////////////////////////////////////////////////
-// Name:        nuiEndpoint.h
-// Author:      Anatoly Churikov
-// Copyright:   (c) 2012 NUI Group
-/////////////////////////////////////////////////////////////////////////////
+/** 
+ * \file      nuiEndpoint.h
+ * \author    Anatoly Churikov
+ * \author    Anatoly Lushnikov
+ * \date      2012-2013
+ * \copyright Copyright 2011 NUI Group. All rights reserved.
+ */
 
-#ifndef _NUI_ENDPOINT_H_
-#define _NUI_ENDPOINT_H_
+#ifndef NUI_ENDPOINT_H
+#define NUI_ENDPOINT_H
 
 #include <string>
 #include <vector>
@@ -46,7 +48,7 @@ public:
 
 	void transmitData();
 	nuiDataStream *addConnection(nuiEndpoint *endpoint);
-	nuiDataStreamErrorCode removeConnection(nuiEndpoint *endpoint);
+	nuiDatastreamError::err removeConnection(nuiEndpoint *endpoint);
 	void removeConnections();
 	nuiDataStream *getDataStreamForEndpoint(nuiEndpoint *endpoint);
 	unsigned int getConnectionCount();
@@ -64,7 +66,7 @@ public:
 private:
 	bool canBePairedWithEndpoint(nuiEndpoint *endpoint);
 	bool canBeSettedData(nuiDataPacket *dataPacket);
-	nuiDataStreamErrorCode writeData(nuiDataPacket *dataPacket);
+	nuiDatastreamError::err writeData(nuiDataPacket *dataPacket);
 
 	std::map<nuiEndpoint*,nuiDataStream*> dataStreams;
 	pt::mutex *mtx;
@@ -74,4 +76,4 @@ private:
 	friend class nuiDataStream;
 };
 
-#endif//_NUI_ENDPOINT_H_
+#endif//NUI_ENDPOINT_H

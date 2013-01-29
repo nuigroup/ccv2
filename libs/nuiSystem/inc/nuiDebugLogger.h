@@ -1,21 +1,17 @@
-/* nuiDebugLogger.h
-*
-*  Created on 02/01/12.
-*  Copyright 2012 NUI Group. All rights reserved.
-*  Community Core Fusion
-*  Author: Anatoly Churikov
-*
-*/
+/** 
+ * \file      nuiDebugLogger.h
+ * Some parts Copyright (C) 2010 Movid Authors.  All rights reserved.
+ *
+ * This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+ * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+ * 
+ * \author    Scott Halstvedt
+ * \date      2012-2013
+ * \copyright Copyright 2012 NUI Group. All rights reserved.
+ */
 
-/***********************************************************************
- ** Some parts Copyright (C) 2010 Movid Authors.  All rights reserved.
- **
- ** This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
- ** WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
- **********************************************************************/
-
-#ifndef _NUI_DEBUG_LOGGER_
-#define _NUI_DEBUG_LOGGER_
+#ifndef NUI_DEBUG_LOGGER
+#define NUI_DEBUG_LOGGER
 
 #include <sstream>
 #include <iostream>
@@ -87,4 +83,4 @@ private:
     std::ostringstream os;
     int level;
 };
-#endif//_NUI_DEBUG_LOGGER_
+#endif//NUI_DEBUG_LOGGER

@@ -1,9 +1,10 @@
-/////////////////////////////////////////////////////////////////////////////
-// Name:        nuiModule.h
-// Author:      Anatoly Churikov
-// Copyright:   (c) 2011 NUI Group
-/////////////////////////////////////////////////////////////////////////////
-
+/** 
+ * \file      nuiModule.h
+ * \author    Anatoly Churikov
+ * \author    Anatoly Lushnikov
+ * \date      2012-2013
+ * \copyright Copyright 2011 NUI Group. All rights reserved.
+ */
 
 #ifndef NUI_MODULE_H
 #define NUI_MODULE_H
@@ -12,12 +13,6 @@
 #include <map>
 #include "nuiProperty.h"
 #include "pasync.h"
-
-#ifdef WIN32
-#include <Rpc.h>
-#else
-#include <uuid/uuid.h>
-#endif
 
 #include "nuiTimer.h"
 #include "nuiThread.h"

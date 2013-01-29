@@ -1,45 +1,56 @@
-////////////////////////////////////////////////////////////////////////////
-// Name:        nuiDataPacket.h
-// Author:      Anatoly Churikov
-// Copyright:   (c) 2012 NUI Group
-/////////////////////////////////////////////////////////////////////////////
+/** 
+ * \file      nuiDataPacket.h
+ * \author    Anatoly Churikov
+ * \author    Anatoly Lushnikov
+ * \date      2012-2013
+ * \copyright Copyright 2011 NUI Group. All rights reserved.
+ */
 
-#ifndef _NUI_DATA_PACKET_
-#define _NUI_DATA_PACKET_
+#ifndef NUI_DATA_PACKET
+#define NUI_DATA_PACKET
 
-typedef enum nuiDataPacketError
+//! namespaced enum for errors that Datapacket can produce
+struct nuiDataPacketError
 {
-  NUI_DATAPACKET_OK		= 0x00000000,
-  NUI_DATAPACKET_ERROR	= 0x00000001,
+  enum err
+  {
+    NoError,
+    Error,
+  };
 };
 
+//! macro for default datapacket skeleton implementation
 #define NUI_DATAPACKET_DEFAULT_IMPLEMENTATION(moduleName, datatype) \
 class nui##moduleName##DataPacket : public nuiDataPacket \
 { \
 public: \
   ~nui##moduleName##DataPacket(); \
-  nuiDataPacketError packData(const void *data); \
-  nuiDataPacketError unpackData(void* &data); \
-  nuiDataPacket*     copyPacketData(nuiDataPacketError &errorCode); \
-  char*              getDataPacketType(); \
+  nuiDataPacketError::err packData(const void *data); \
+  nuiDataPacketError::err unpackData(void* &data); \
+  nuiDataPacket* copyPacketData(nuiDataPacketError::err &errorCode); \
+  char* getDataPacketType(); \
 private: \
   datatype## data; \
-  }; \
+}; \
 
+//! \class datapacket interface. 
+//! DataPacket is data wrapper used to transfer data from one module to another
 class nuiDataPacket
 {
 public:
-  virtual ~nuiDataPacket() = 0;
-  virtual nuiDataPacketError  packData(const void *data) = 0;
-  virtual nuiDataPacketError  unpackData(void* &data) = 0;
-  virtual nuiDataPacket*      copyPacketData(nuiDataPacketError &errorCode) = 0;
+  virtual ~nuiDataPacket() { };
+  virtual nuiDataPacketError::err packData(const void *data) = 0;
+  virtual nuiDataPacketError::err unpackData(void* &data) = 0;
+  virtual nuiDataPacket* copyPacketData(nuiDataPacketError::err &errorCode) = 0;
 
-  virtual char*               getDataPacketType() = 0;
+  virtual char* getDataPacketType() = 0;
 
-  virtual bool                isLocalCopy(){ return localCopy; };
-  virtual void                setLocalCopy(bool value){ localCopy = value; };
+  //! checks whether data from one module should be copied or passed by reference
+  virtual bool isLocalCopy(){ return localCopy; };
+
+  virtual void setLocalCopy(bool value){ localCopy = value; };
 private:
   bool localCopy;
 }; 
 
-#endif//_NUI_DATA_PACKET_
+#endif// NUI_DATA_PACKET

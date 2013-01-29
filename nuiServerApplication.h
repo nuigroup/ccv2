@@ -1,5 +1,5 @@
 /** 
- * \file      nuiFactory.h
+ * \file      nuiServerApplication.h
  * \author    Anatoly Churikov
  * \author    Anatoly Lushnikov
  * \author    Scott Halstvedt

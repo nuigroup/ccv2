@@ -1,3 +1,11 @@
+/** 
+ * \file      nuiVideoFileSource.h 
+ *            Provide sample video input
+ * \author    Scott Halstvedt
+ * \date      2012-2013
+ * \copyright Copyright 2012 NUI Group. All rights reserved.
+ */
+
 #ifndef NUI_VIDEOFILESOURCE_H
 #define NUI_VIDEOFILESOURCE_H
 

@@ -1,11 +1,9 @@
-/* nuiTimer.h
-*
-*  Created on 01/01/12.
-*  Copyright 2012 NUI Group. All rights reserved.
-*  Community Core Fusion
-*  Author: Anatoly Churikov
-*
-*/
+/** 
+ * \file      nuiTimer.h 
+ * \author    Anatoly Churikov
+ * \date      2012-2013
+ * \copyright Copyright 2012 NUI Group. All rights reserved.
+ */
 
 #ifndef NUI_TIMER_H
 #define NUI_TIMER_H

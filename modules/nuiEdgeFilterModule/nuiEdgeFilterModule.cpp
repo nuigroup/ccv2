@@ -1,10 +1,3 @@
-/////////////////////////////////////////////////////////////////////////////
-// Name:        modules/nuiEdgeFilterModule.cpp
-// Purpose:     Module to filter edges
-// Author:      Scott Halstvedt
-// Copyright:   (c) 2012 NUI Group
-/////////////////////////////////////////////////////////////////////////////
-
 #include "nuiEdgeFilterModule.h"
 
 nuiEdgeFilterModuleDataPacket::~nuiEdgeFilterModuleDataPacket()
@@ -12,20 +5,20 @@ nuiEdgeFilterModuleDataPacket::~nuiEdgeFilterModuleDataPacket()
 		cvReleaseImage(&data);
 };
 
-nuiDataPacketError nuiEdgeFilterModuleDataPacket::packData(const void *_data)
+nuiDataPacketError::err nuiEdgeFilterModuleDataPacket::packData(const void *_data)
 {
 	this->setLocalCopy(false);
 	this->data = (IplImage*)_data;
-	return NUI_DATAPACKET_OK;
+	return nuiDataPacketError::NoError;
 };
 
-nuiDataPacketError nuiEdgeFilterModuleDataPacket::unpackData(void* &_data)
+nuiDataPacketError::err nuiEdgeFilterModuleDataPacket::unpackData(void* &_data)
 {
 	_data = (void*)this->data;
-	return NUI_DATAPACKET_OK;
+	return nuiDataPacketError::NoError;
 };
 
-nuiDataPacket* nuiEdgeFilterModuleDataPacket::copyPacketData(nuiDataPacketError &errorCode)
+nuiDataPacket* nuiEdgeFilterModuleDataPacket::copyPacketData(nuiDataPacketError::err &errorCode)
 {
 	nuiEdgeFilterModuleDataPacket* newDataPacket = new nuiEdgeFilterModuleDataPacket();
 
@@ -35,7 +28,7 @@ nuiDataPacket* nuiEdgeFilterModuleDataPacket::copyPacketData(nuiDataPacketError 
 	newDataPacket->packData(newData);
 	newDataPacket->setLocalCopy(true);
 
-	errorCode = NUI_DATAPACKET_OK;
+	errorCode = nuiDataPacketError::NoError;
 	return newDataPacket;
 };
 

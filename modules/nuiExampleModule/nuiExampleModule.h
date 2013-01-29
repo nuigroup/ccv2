@@ -1,10 +1,10 @@
-/////////////////////////////////////////////////////////////////////////////
-// Name:        modules/nuiExampleModule.h
-// Purpose:     Example Module to be used for developments.
-// Author:      Christian Moore
-// Copyright:   (c) 2012 NUI Group
-/////////////////////////////////////////////////////////////////////////////
-
+/** 
+ * \file      nuiExampleModule.h
+ *            Example Module to be used for developments.
+ * \author    Christian Moore
+ * \date      2012-2013
+ * \copyright Copyright 2012 NUI Group. All rights reserved.
+ */
 
 #ifndef NUI_EXAMPLE_MODULE_H
 #define NUI_EXAMPLE_MODULE_H

@@ -1,10 +1,12 @@
 /** 
  * \file      nuiFactory.h
- * \author    Anatoly Churikov
+ * \author    Scott Halstvedt
  * \author    Anatoly Lushnikov
+ * \author    Anatoly Churikov
  * \date      2012-2013
- * \copyright Copyright 2012 NUI Group. All rights reserved.
+ * \copyright Copyright 2011 NUI Group. All rights reserved.
  */
+
 #ifndef NUI_FACTORY_H
 #define NUI_FACTORY_H
 

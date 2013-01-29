@@ -1,9 +1,10 @@
-//////////////////////////////////////////////////////////////////////////
-// Name:		modules/nuiPS3Module
-// Purpose:		Capture video from PS3 camera using PS3Eye SDK from Code Laboratories
-// Author:		Anatoly Lushnikov
-// Copyright:	(c) 2012 NUI Group
-//////////////////////////////////////////////////////////////////////////
+/** 
+ * \file      nuiPS3Module.h
+ *            Capture video from PS3 camera using PS3Eye SDK from Code Laboratories
+ * \author    Anatoly Lushnikov
+ * \date      2012-2013
+ * \copyright Copyright 2012 NUI Group. All rights reserved.
+ */
 
 //! \todo : Singleton?
 //! \todo : Params to module instance ???

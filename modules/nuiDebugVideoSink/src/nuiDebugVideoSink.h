@@ -1,11 +1,10 @@
-/////////////////////////////////////////////////////////////////////////////
-// Name:        modules/nuiDebugVideoSink.h
-// Purpose:     Sink to display video
-// Author:      Scott Halstvedt
-// Copyright:   (c) 2012 NUI Group
-/////////////////////////////////////////////////////////////////////////////
-
-
+/** 
+ * \file      nuiPluginManager.h
+ *            Sink to display video
+ * \author    Scott Halstvedt
+ * \date      2012-2013
+ * \copyright Copyright 2012 NUI Group. All rights reserved.
+ */
 #ifndef NUI_DEBUG_VIDEO_SINK_H
 #define NUI_DEBUG_VIDEO_SINK_H
 

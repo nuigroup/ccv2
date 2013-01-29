@@ -1,5 +1,12 @@
-#ifndef _NUI_TREE_
-#define _NUI_TREE_
+/** 
+ * \file      nuiTree.h 
+ * \author    Anatoly Churikov
+ * \date      2012-2013
+ * \copyright Copyright 2012 NUI Group. All rights reserved.
+ */
+
+#ifndef NUI_TREE
+#define NUI_TREE
 
 #include <iterator>
 #include <list>
@@ -187,4 +194,4 @@ private:
     nuiTreeDFSIterator<TKey,TValue>* endIterator;
 };
 
-#endif//_NUI_TREE_
+#endif//NUI_TREE

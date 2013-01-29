@@ -1,10 +1,3 @@
-/////////////////////////////////////////////////////////////////////////////
-// Name:        modules/nuiBackgroundSubtractModule.cpp
-// Purpose:     Module to subtract the background
-// Author:      Scott Halstvedt
-// Copyright:   (c) 2012 NUI Group
-/////////////////////////////////////////////////////////////////////////////
-
 #include "nuiBackgroundSubtractModule.h"
 
 nuiBackgroundSubtractModuleDataPacket::~nuiBackgroundSubtractModuleDataPacket()
@@ -12,20 +5,20 @@ nuiBackgroundSubtractModuleDataPacket::~nuiBackgroundSubtractModuleDataPacket()
 		cvReleaseImage(&data);
 };
 
-nuiDataPacketError nuiBackgroundSubtractModuleDataPacket::packData(const void *_data)
+nuiDataPacketError::err nuiBackgroundSubtractModuleDataPacket::packData(const void *_data)
 {
 	this->setLocalCopy(false);
 	this->data = (IplImage*)_data;
-	return NUI_DATAPACKET_OK;
+	return nuiDataPacketError::NoError;
 };
 
-nuiDataPacketError nuiBackgroundSubtractModuleDataPacket::unpackData(void* &_data)
+nuiDataPacketError::err nuiBackgroundSubtractModuleDataPacket::unpackData(void* &_data)
 {
 	_data = (void*)this->data;
-	return NUI_DATAPACKET_OK;
+	return nuiDataPacketError::NoError;
 };
 
-nuiDataPacket* nuiBackgroundSubtractModuleDataPacket::copyPacketData(nuiDataPacketError &errorCode)
+nuiDataPacket* nuiBackgroundSubtractModuleDataPacket::copyPacketData(nuiDataPacketError::err &errorCode)
 {
 	nuiBackgroundSubtractModuleDataPacket* newDataPacket = new nuiBackgroundSubtractModuleDataPacket();
 
@@ -35,7 +28,7 @@ nuiDataPacket* nuiBackgroundSubtractModuleDataPacket::copyPacketData(nuiDataPack
 	newDataPacket->packData(newData);
 	newDataPacket->setLocalCopy(true);
 
-	errorCode = NUI_DATAPACKET_OK;
+	errorCode = nuiDataPacketError::NoError;
 	return newDataPacket;
 };
 

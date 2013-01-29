@@ -1,3 +1,12 @@
+/** 
+ * \file      nuiJsonRpcApi.cpp 
+ * \author    Anatoly Churikov
+ * \author    Anatoly Lushnikov
+ * \author    Scott Halstvedt
+ * \date      2012-2013
+ * \copyright Copyright 2012 NUI Group. All rights reserved.
+ */
+
 #include "nuiJsonRpcApi.h"
 #include "nuiFrameworkManager.h"
 

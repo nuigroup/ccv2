@@ -1,10 +1,10 @@
-/////////////////////////////////////////////////////////////////////////////
-// Name:        modules/nuiBackgroundSubtractModule.h
-// Purpose:     Filter to detect edges
-// Author:      Scott Halstvedt
-// Copyright:   (c) 2012 NUI Group
-/////////////////////////////////////////////////////////////////////////////
-
+/** 
+ * \file      nuiPluginManager.h
+ *            Filter to detect edges
+ * \author    Scott Halstvedt
+ * \date      2012-2013
+ * \copyright Copyright 2012 NUI Group. All rights reserved.
+ */
 
 #ifndef NUI_BACKGROUND_SUBTRACT_MODULE_H
 #define NUI_BACKGROUND_SUBTRACT_MODULE_H

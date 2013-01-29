@@ -1,10 +1,10 @@
-/////////////////////////////////////////////////////////////////////////////
-// Name:        modules/nuiGaussianBlurFilter.h
-// Purpose:     Filter to gaussian blur
-// Author:      Scott Halstvedt
-// Copyright:   (c) 2012 NUI Group
-/////////////////////////////////////////////////////////////////////////////
-
+/** 
+ * \file      nuiGaussianBlurFilter.h 
+ *            Filter to gaussian blur
+ * \author    Scott Halstvedt
+ * \date      2012-2013
+ * \copyright Copyright 2012 NUI Group. All rights reserved.
+ */
 
 #ifndef NUI_GAUSSIAN_BLUR_FILTER_H
 #define NUI_GAUSSIAN_BLUR_FILTER_H

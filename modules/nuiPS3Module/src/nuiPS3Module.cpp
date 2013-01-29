@@ -1,10 +1,3 @@
-//////////////////////////////////////////////////////////////////////////
-// Name:		modules/nuiPS3Module
-// Purpose:		Capture video from PS3 camera using PS3Eye SDK from Code Laboratories
-// Author:		Anatoly Lushnikov
-// Copyright:	(c) 2012 NUI Group
-//////////////////////////////////////////////////////////////////////////
-
 #include "nuiPS3Module.h"
 
 #include <opencv\cv.h>
@@ -17,20 +10,20 @@ nuiPSModuleDataPacket::~nuiPSModuleDataPacket()
 	cvReleaseImage(&data);
 };
 
-nuiDataPacketError nuiPSModuleDataPacket::packData(const void *_data)
+nuiDataPacketError::err nuiPSModuleDataPacket::packData(const void *_data)
 {
 	this->setLocalCopy(false);
 	this->data = (IplImage*)_data;
-	return NUI_DATAPACKET_OK;
+	return nuiDataPacketError::NoError;
 };
 
-nuiDataPacketError nuiPSModuleDataPacket::unpackData(void* &_data)
+nuiDataPacketError::err nuiPSModuleDataPacket::unpackData(void* &_data)
 {
 	_data = (void*)this->data;
-	return NUI_DATAPACKET_OK;
+	return nuiDataPacketError::NoError;
 };
 
-nuiDataPacket* nuiPSModuleDataPacket::copyPacketData(nuiDataPacketError &errorCode)
+nuiDataPacket* nuiPSModuleDataPacket::copyPacketData(nuiDataPacketError::err &errorCode)
 {
 	nuiPSModuleDataPacket* newDataPacket = new nuiPSModuleDataPacket();
 
@@ -40,7 +33,7 @@ nuiDataPacket* nuiPSModuleDataPacket::copyPacketData(nuiDataPacketError &errorCo
 	newDataPacket->packData(newData);
 	newDataPacket->setLocalCopy(true);
 
-	errorCode = NUI_DATAPACKET_OK;
+	errorCode = nuiDataPacketError::NoError;
 	return newDataPacket;
 };
 
