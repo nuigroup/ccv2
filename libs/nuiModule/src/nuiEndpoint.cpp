@@ -30,10 +30,11 @@ nuiDatastreamError::err nuiEndpoint::writeData(nuiDataPacket* dataPacket)
 	return nuiDatastreamError::Success;
 }
 
-nuiEndpoint *nuiEndpoint::getConnectedEndpointOnIndex(int index)
+nuiEndpoint* nuiEndpoint::getConnectedEndpointOnIndex(int index)
 {
 	int i = 0;
-	for (std::map<nuiEndpoint*,nuiDataStream*>::iterator iter = dataStreams.begin();iter != dataStreams.end(); iter++,i++)
+	for (std::map<nuiEndpoint*, nuiDataStream*>::iterator iter = dataStreams.begin();
+    iter != dataStreams.end(); iter++,i++)
 	{
 		if (i == index)
 			return iter->first;
@@ -45,24 +46,29 @@ nuiEndpoint *nuiEndpoint::getConnectedEndpointOnIndex(int index)
 void nuiEndpoint::transmitData()
 {
 	mtx->lock();
-	for (std::map<nuiEndpoint*,nuiDataStream*>::iterator iter = dataStreams.begin();iter != dataStreams.end(); iter++)
+	for (std::map<nuiEndpoint*,nuiDataStream*>::iterator iter = dataStreams.begin();
+    iter != dataStreams.end(); iter++)
 	{
 		if (!iter->second->isRunning())
 			iter->second->startStream();
+
 		iter->second->sendData(dataPacket);
 	}
 	mtx->unlock();
 }
 
-nuiDataStream *nuiEndpoint::addConnection(nuiEndpoint *endpoint) 
+nuiDataStream* nuiEndpoint::addConnection(nuiEndpoint *endpoint) 
 {
 	if ((endpoint == NULL) ||  (!canBePairedWithEndpoint(endpoint)))
 		return NULL;
-	std::map<nuiEndpoint*,nuiDataStream*>::iterator iter = dataStreams.find(endpoint);
+	
+  std::map<nuiEndpoint*,nuiDataStream*>::iterator iter = dataStreams.find(endpoint);
 	if (iter != dataStreams.end())
 		return NULL;
-	dataStreams[endpoint] = new nuiDataStream();
+	
+  dataStreams[endpoint] = new nuiDataStream();
 	dataStreams[endpoint]->setReceiver(*endpoint);
+
 	return dataStreams[endpoint];
 }
 
@@ -88,9 +94,9 @@ void nuiEndpoint::removeConnections()
 	}
 }
 
-nuiDataStream *nuiEndpoint::getDataStreamForEndpoint(nuiEndpoint *endpoint)
+nuiDataStream* nuiEndpoint::getDataStreamForEndpoint(nuiEndpoint *endpoint)
 {
-	std::map<nuiEndpoint*,nuiDataStream*>::iterator iter = dataStreams.find(endpoint);
+	std::map<nuiEndpoint*, nuiDataStream*>::iterator iter = dataStreams.find(endpoint);
 	if (iter == dataStreams.end())
 		return NULL;
 	return iter->second;
@@ -135,9 +141,13 @@ bool nuiEndpoint::canBePairedWithEndpoint(nuiEndpoint *endpoint)
 
 bool nuiEndpoint::canBeSettedData(nuiDataPacket *dataPacket)
 {
-	if ((dataPacket == NULL) || (dataPacket->getDataPacketType() == NULL) || (dataPacket->getDataPacketType() == "*"))
+  //! \todo (dataPacket->getDataPacketType() == NULL) should rise error?
+	if((dataPacket == NULL) || (dataPacket->getDataPacketType() == NULL) || 
+    (dataPacket->getDataPacketType() == "*"))
 		return true;
-	return nuiUtils::inList(std::string(dataPacket->getDataPacketType()), this->getTypeDescriptor(), ",");
+
+	return nuiUtils::inList(std::string(dataPacket->getDataPacketType()), 
+    this->getTypeDescriptor(), ",");
 }
 
 void nuiEndpoint::lock()
@@ -155,7 +165,7 @@ void nuiEndpoint::clear()
 	setData(NULL);
 }
 
-void nuiEndpoint::setModuleHoster(nuiModule *moduleHoster)
+void nuiEndpoint::setModuleHoster(nuiModule* moduleHoster)
 {
 	this->moduleHoster = moduleHoster;
 }

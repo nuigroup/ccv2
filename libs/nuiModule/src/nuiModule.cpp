@@ -23,37 +23,42 @@
 
 LOG_DECLARE("Module");
 
+//==============================================================================
+// nuiModule methods
+//==============================================================================
+
 nuiModule::nuiModule() 
 {
-	this->is_started				= false;
-	this->thread					= NULL;
-	this->use_thread				= false;
-	this->need_update				= false;
-	this->timer						= new nuiTimer();
-	this->properties["use_thread"]	= new nuiProperty(false);
-	this->inputEndpoints			= NULL;
-	this->outputEndpoints			= NULL;
-	this->inputDataReceived			= NULL;
-	this->inputEndpointCount		= 0;
-	this->outputEndpointCount		= 0;
-	this->ocsillatorWait			= 15;
-	this->mtx						= new pt::mutex();
+	this->is_started                = false;
+	this->thread                    = NULL;
+	this->use_thread                = false;
+	this->need_update	              = false;
+	this->timer                     = new nuiTimer();
+	this->properties["use_thread"]  = new nuiProperty(false);
+	this->inputEndpoints            = NULL;
+	this->outputEndpoints           = NULL;
+	this->inputDataReceived         = NULL;
+	this->inputEndpointCount        = 0;
+	this->outputEndpointCount       = 0;
+	this->ocsillatorWait            = 15;
+	this->mtx	                      = new pt::mutex();
 }
 
 nuiModule::~nuiModule()
 {
 	this->stop();
+
 	mtx->lock();
 	for (int i = 0; i<inputEndpointCount; i++)
 	{
 		delete inputEndpoints[i];
 	}
-	if (inputEndpoints!=NULL)
+	if (inputEndpoints != NULL)
 	{
 		free(inputEndpoints);
 		inputEndpoints = NULL;
 	}
-	if (inputDataReceived!=NULL)
+	if (inputDataReceived != NULL)
 	{
 		free(inputDataReceived);
 		inputDataReceived = NULL;
@@ -63,7 +68,7 @@ nuiModule::~nuiModule()
 	{
 		delete outputEndpoints[i];
 	}
-	if (outputEndpoints!=NULL)
+	if (outputEndpoints != NULL)
 	{
 		free(outputEndpoints);
 		outputEndpoints = NULL;
@@ -79,52 +84,64 @@ nuiModule::~nuiModule()
 		}
 	}
 	mtx->unlock();
+
 	delete mtx;
 }
 
-bool nuiModule::needUpdate(bool isAsyncMode)
+bool nuiModule::needUpdate(/*bool isAsyncMode*/)
 {
-	if (this->isOscillatorMode())
+	if (this->isOscillatorMode()) // if constant periodic updates
 	{
-		if (isAsyncMode)
-			this->thread->post();
-		return true;
+// 		if (isAsyncMode)
+// 			this->thread->post(); // anyway allow update
+    this->need_update = false;
+		return true; // okay, we need update
 	}
-	if (this->need_update) 
+	else if (this->need_update) // in any other case if we have flag need_update set to true
 	{
-		this->need_update = false;
-		return true;
-	} 
-	else if (isAsyncMode == false)
-		return false;
-	if (isAsyncMode)
+		this->need_update = false; // uncheck it
+		return true; // okay, we need update
+	}
+// 	else if ( !isAsyncMode) // otherwise no need to update in non-async mode
+//   {
+// 		return false;
+//   }
+// 	else if ( isAsyncMode) // if in async mode then wait until something will unlock thread
+//   {
 		this->thread->wait();
-	if ( this->need_update ) 
-	{
-		this->need_update = false;
-		return true;
-	}
+    if ( this->need_update ) // if after wait will have need_update flag set
+    {
+      this->need_update = false;
+      return true;
+    }
+//  }
+
 	return false;
 }
 
+//==============================================================================
+// THREAD PROCS
+//==============================================================================
 void nuiModule::thread_process(nuiThread *thread)
 {
 	nuiModule *module = (nuiModule *)thread->getUserData();
+  // extract module from thread data
+
 	module->timer->Start();
-	while ( !thread->wantQuit() ) 
+	while ( !thread->wantQuit()) 
 	{
-		if (!module->needUpdate(true))
+		if (!module->needUpdate(/*true*/))
 			continue;
-		module->timer->Wait();
+		module->timer->Wait(); // start stopwatch
 		module->update();
-		module->timer->Process();
+		module->timer->Process(); // measure results
 	}
 }
 
 void nuiModule::internal_oscillator(nuiThread *thread)
 {
-	nuiModule *module = (nuiModule *)thread->getUserData();
-	while ( !thread->wantQuit() ) 
+	nuiModule *module = (nuiModule*)thread->getUserData();
+	while ( !thread->wantQuit())
 	{
 		module->trigger();
 		pt::psleep(module->ocsillatorWait);
@@ -139,15 +156,19 @@ void nuiModule::start()
 	this->is_synced_input = this->property("synced_input").asBool();
 	timer->Start();
 	if (( this->use_thread ) || ( this->oscillator_mode))
+  // if uses oscillator or should be run in a separate thread
 	{
 		LOGM(NUI_TRACE, "start thread");
 		this->thread = new nuiThread(this->oscillator_mode ? internal_oscillator : thread_process, this);
-		if ( this->thread == NULL ) 
+    // create thread based on property selected
+
+		if ( this->thread == NULL )
 		{
+      //! \todo then how the update will be called?
 			this->oscillator_mode = false;
 			this->use_thread = false;
-		} 
-		else 
+		}
+		else
 		{
 			this->thread->start();
 		}
@@ -158,7 +179,7 @@ void nuiModule::start()
 
 void nuiModule::stop() 
 {
-	if ((this->use_thread || this->oscillator_mode)  &&  this->thread != NULL ) 
+	if ((this->use_thread || this->oscillator_mode) && (this->thread != NULL)) 
 	{
 		this->thread->stop();
 		this->thread->post();
@@ -172,10 +193,13 @@ void nuiModule::stop()
 	this->is_started = false;
 	timer->Reset();
 	mtx->unlock();
-	for(int i = 0; i < this->getOutputEndpointCount(); i++) {
+	for(int i = 0; i < this->getOutputEndpointCount(); i++) 
+  {
 		nuiEndpoint* cur = this->getOutputEndpoint(i);
-		for(int j = 0; j < cur->getConnectionCount(); j++) {
-			nuiDataStream* curStream = cur->getDataStreamForEndpoint(cur->getConnectedEndpointOnIndex(j));
+		for(int j = 0; j < cur->getConnectionCount(); j++) 
+    {
+			nuiDataStream* curStream = 
+        cur->getDataStreamForEndpoint(cur->getConnectedEndpointOnIndex(j));
 			curStream->stopStream();
 		}
 	}
@@ -186,13 +210,16 @@ void nuiModule::trigger()
 {
 	if (!this->isStarted())
 		return;
+  
 	this->need_update = true;
-	if ( this->use_thread)
+
+	if ( this->use_thread) // if use thread - allow thread do all the work
 	{
 		this->thread->post();
 		return;
-	}
-	if (this->needUpdate(true))
+  }
+
+	if (this->needUpdate(/*true*/))
 	{
 		timer->Wait();
 		this->update();
@@ -215,9 +242,9 @@ void nuiModule::notifyDataReceived(nuiEndpoint *endpoint)
 		}
 		if (receivedCount != getInputEndpointCount())
 			return;
-		memset(inputDataReceived,0x00,receivedCount * sizeof(char));
+		memset(inputDataReceived, 0, receivedCount * sizeof(char));
 	}
-	trigger();
+	this->trigger();
 }
 
 nuiProperty &nuiModule::property(std::string str)
@@ -377,6 +404,10 @@ bool nuiModule::isSyncedInput()
 {
 	return is_synced_input;
 }
+
+//==============================================================================
+// nuiModuleDescriptor methods
+//==============================================================================
 
 void nuiModuleDescriptor::addChildModuleDescriptor(nuiModuleDescriptor* moduleDescriptor)
 {

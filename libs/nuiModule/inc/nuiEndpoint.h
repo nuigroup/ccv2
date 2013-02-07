@@ -19,7 +19,6 @@
 #include "nuiDataStream.h"
 #include "nuiDataPacket.h"
 
-
 class nuiModule;
 class nuiModuleDescriptor;
 
@@ -40,39 +39,56 @@ private:
 	int index;
 };
 
+//! endpoint class, used to hold input and output data for module.
 class nuiEndpoint
 {
 public:
 	nuiEndpoint(nuiModule *hostModule);
 	virtual ~nuiEndpoint();
 
+  //! lock data and send it to all outgoing streams
 	void transmitData();
-	nuiDataStream *addConnection(nuiEndpoint *endpoint);
-	nuiDatastreamError::err removeConnection(nuiEndpoint *endpoint);
-	void removeConnections();
-	nuiDataStream *getDataStreamForEndpoint(nuiEndpoint *endpoint);
-	unsigned int getConnectionCount();
 
+	nuiDataStream* addConnection(nuiEndpoint *endpoint);
+	nuiDatastreamError::err removeConnection(nuiEndpoint *endpoint);
+
+  //! erase all connections at once
+	void removeConnections();
+
+	nuiDataStream* getDataStreamForEndpoint(nuiEndpoint *endpoint);
+	unsigned int getConnectionCount();
+  
+  //! \todo setTypeDescriptor marked as public?
 	void setTypeDescriptor(std::string typeDescriptor);
+
+  //! set endpoint to hold provided data
 	void setData(nuiDataPacket *dataPacket);
+  //! obtain stored data
+	nuiDataPacket* getData();
+
+  //! assign parent module
 	void setModuleHoster(nuiModule *moduleHoster);
-	nuiModule *getModuleHoster();
-	nuiDataPacket *getData();
-	nuiEndpoint *getConnectedEndpointOnIndex(int index);
+  //! get parent module
+	nuiModule* getModuleHoster();
+
+	nuiEndpoint* getConnectedEndpointOnIndex(int index);
 	inline std::string getTypeDescriptor();
 	void lock();
 	void unlock();
 	void clear();
+
 private:
 	bool canBePairedWithEndpoint(nuiEndpoint *endpoint);
 	bool canBeSettedData(nuiDataPacket *dataPacket);
 	nuiDatastreamError::err writeData(nuiDataPacket *dataPacket);
 
+  //! add endpoint and datastream, that connects this and that endpoints
 	std::map<nuiEndpoint*,nuiDataStream*> dataStreams;
 	pt::mutex *mtx;
 	std::string typeDescriptor;
 	nuiDataPacket *dataPacket;
 	nuiModule* moduleHoster;
+
 	friend class nuiDataStream;
 };
 

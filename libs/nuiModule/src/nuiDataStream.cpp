@@ -1,10 +1,10 @@
 /** 
- * \file      nuiDataStream.cpp
- * \author    Anatoly Churikov
- * \author    Anatoly Lushnikov
- * \date      2012-2013
- * \copyright Copyright 2011 NUI Group. All rights reserved.
- */
+* \file      nuiDataStream.cpp
+* \author    Anatoly Churikov
+* \author    Anatoly Lushnikov
+* \date      2012-2013
+* \copyright Copyright 2011 NUI Group. All rights reserved.
+*/
 
 #include <assert.h>
 
@@ -17,13 +17,17 @@ nuiDataStream::nuiDataStream(bool asyncMode, nuiDataSendCallback defaultCallback
   bool deepCopy, bool bufferedMode, int bufferSize, bool lastPacketProprity)
 {
   running = false;
+
   setAsyncMode(asyncMode);
-  this->defaultCallback = defaultCallback;
   setDeepCopy(deepCopy);
   setBufferedMode(bufferedMode);
   setLastPacketPriority(lastPacketProprity);
   setBufferSize(bufferSize);
+
+  this->defaultCallback = defaultCallback;
+
   mtx = new pt::mutex();
+
   asyncThread = NULL;
   semaphore = NULL;
 }
@@ -139,24 +143,28 @@ void nuiDataStream::startStream()
   running = true;
   if (isAsyncMode())
   {
-    if (asyncThread == NULL)
+    if (asyncThread == NULL) // if selected async mode then create new process
       asyncThread = new nuiThread(nuiDataStream::thread_process, this);
-      asyncThread->start();
+    asyncThread->start(); // and start it
   }
 }
 
 void nuiDataStream::stopStream()
 {
-  mtx->lock(); //maybe cause null pointers?
+  mtx->lock();
+
   running = false;
   cleanStream();
+
   mtx->unlock();
 }
 
 void nuiDataStream::initStream()
 {
   mtx->lock();
+
   cleanStream();
+
   if (isAsyncMode())
   {
     asyncThread = new nuiThread(nuiDataStream::thread_process, this);
@@ -164,30 +172,31 @@ void nuiDataStream::initStream()
       setAsyncMode(false);
   }
   semaphore = new pt::semaphore(isBuffered() ? getBufferSize() : 1);
+
   mtx->unlock();
 }
 
 void nuiDataStream::cleanStream()
 {
-  if (asyncThread!=NULL)
+  if (asyncThread != NULL) // kill async thread
   {
-    asyncThread->stop();
-    asyncThread->post();
+    asyncThread->stop(); // set wantquit on thread
+    asyncThread->post(); // let thread process take place
     asyncThread->waitfor();
     delete asyncThread;
     asyncThread = NULL;
   }
-  while (!callbackQueue.empty())
+  while ( !callbackQueue.empty()) // clear callback stack
   {
     callbackQueue.pop();
   }
-  while (!packetData.empty())
+  while ( !packetData.empty()) // clear transfered data
   {
     if (isDeepCopy())
       free(packetData.front());
     packetData.pop();
   }
-  if (semaphore!=NULL)
+  if (semaphore != NULL)
   {
     delete semaphore;
     semaphore = NULL;
@@ -196,12 +205,13 @@ void nuiDataStream::cleanStream()
 
 //timelimit - ?
 //callback - ?
-void nuiDataStream::sendData(nuiDataPacket *dataPacket, nuiDataSendCallback callback, int timelimit)
+void nuiDataStream::sendData(nuiDataPacket *dataPacket, 
+  nuiDataSendCallback callback, int timelimit)
 {
   mtx->lock();
 
   nuiDataPacket *addingData = dataPacket;
-  if (isDeepCopy())
+  if (isDeepCopy()) // try to copy datapacket to addingData
   {
     nuiDataPacketError::err errorCode;
     addingData = dataPacket->copyPacketData(errorCode);
@@ -214,12 +224,13 @@ void nuiDataStream::sendData(nuiDataPacket *dataPacket, nuiDataSendCallback call
 
   if (isBuffered())
   {
-    semaphore->wait();
+    // semaphore is released in processData, when we are taking data away
+    semaphore->wait(); 
 
     packetData.push(addingData);
     callbackQueue.push(callback);
 
-    if (isOverflow())
+    if (isOverflow()) // can overflow buffer become greater than 1 element?
     {
       void *dataToBeDeleted = packetData.front();
       if (isDeepCopy())
@@ -228,29 +239,40 @@ void nuiDataStream::sendData(nuiDataPacket *dataPacket, nuiDataSendCallback call
       callbackQueue.pop();
       packetData.push(addingData);
       callbackQueue.push(callback);
-      semaphore->post();
+
+      semaphore->post(); // release immediately
     }
 
+    if (isAsyncMode())
+    {							
+      if (asyncThread != NULL)
+        asyncThread->post(); // what for?
+    }
+  }
+  else if (isLastPacketPriority())
+  {
+    while (!packetData.empty())
+    {
+      if (isDeepCopy())
+        delete packetData.front();
+      packetData.pop();
+    }
+    while (!callbackQueue.empty())
+    {
+      callbackQueue.pop();
+    }
+    packetData.push(addingData);
+    callbackQueue.push(callback);
     if (isAsyncMode())			
     {							
-      if (asyncThread!=NULL)	
+      if (asyncThread != NULL)
         asyncThread->post();
     }	
-  }
+  } // what case? ever triggered?
   else
   {
-    if (isLastPacketPriority())
+    if (packetData.empty())
     {
-      while (!packetData.empty())
-      {
-        if (isDeepCopy())
-          delete packetData.front();
-        packetData.pop();
-      }
-      while (!callbackQueue.empty())
-      {
-        callbackQueue.pop();
-      }
       packetData.push(addingData);
       callbackQueue.push(callback);
       if (isAsyncMode())			
@@ -258,40 +280,28 @@ void nuiDataStream::sendData(nuiDataPacket *dataPacket, nuiDataSendCallback call
         if (asyncThread!=NULL)	
           asyncThread->post();
       }	
+      return;
     }
-    else
-    {
-      if (packetData.empty())
-      {
-        packetData.push(addingData);
-        callbackQueue.push(callback);
-        if (isAsyncMode())			
-        {							
-          if (asyncThread!=NULL)	
-            asyncThread->post();
-        }	
-        return;
-      }
-      if (isDeepCopy())
-        delete addingData;
-    }
+    if (isDeepCopy())
+      delete addingData;
   }
   mtx->unlock();
 
-  if (hasDataToSent() &&  (!isAsyncMode()))			
+  if (hasDataToSend() &&  (!isAsyncMode()))			
     processData();
 }
 
-bool nuiDataStream::hasDataToSent(bool isAsyncMode)
+bool nuiDataStream::hasDataToSend(bool isAsyncMode)
 {
   if (!packetData.empty())
     return true;
   if (isAsyncMode)
   {
-    if (asyncThread!=NULL)
+    if (asyncThread != NULL)
       asyncThread->wait();
     return (!packetData.empty());
   }
+
   return false;
 }
 
@@ -299,29 +309,30 @@ void nuiDataStream::processData()
 {
   if (!packetData.empty())
   {
-    nuiDataPacket *dataToSent = NULL;
+    nuiDataPacket *dataToSend = NULL;
     nuiDataSendCallback callback = NULL;
 
     //mtx->lock(); //this should be here but doesn't work
-    dataToSent = packetData.front();
+    dataToSend = packetData.front();
     callback = callbackQueue.front();
     packetData.pop();
     callbackQueue.pop();
+
     if (callback == NULL)
       callback = defaultCallback;
     //???????
-    if (isBuffered() && (!isOverflow()) && (isAsyncMode()))
+    if (isBuffered() && !isOverflow() && isAsyncMode())
       semaphore->post();
-    mtx->unlock();
+    //mtx->unlock();
 
     if (receiver == NULL)
     {
       if (callback != NULL)
-        callback(nuiDatastreamError::EndpointError, dataToSent); //potential memory leak
+        callback(nuiDatastreamError::EndpointError, dataToSend); // potential memory leak
     }
     else
     {
-      nuiDatastreamError::err returnCode = receiver->writeData(dataToSent);// receiver->writeData(dataToSent);
+      nuiDatastreamError::err returnCode = receiver->writeData(dataToSend);
       if (callback != NULL)
         callback(returnCode, NULL);
     }
@@ -333,7 +344,7 @@ void nuiDataStream::thread_process(nuiThread *thread)
   nuiDataStream* dataStream = (nuiDataStream*)thread->getUserData();
   while ( !thread->wantQuit()) 
   {
-    if (!dataStream->hasDataToSent(true))
+    if (!dataStream->hasDataToSend(true))
       continue;
     dataStream->processData();
   }

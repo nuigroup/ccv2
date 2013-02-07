@@ -112,24 +112,38 @@ private:
 	bool isPipeline;
 };
 
+//! common interface for modules
 class nuiModule
 {
-public:	
+public:
+  //! basic constructor, creates module with basic properties
 	nuiModule();
+
+  //! destructor
 	virtual ~nuiModule();
 
+  //! create thread based on properties and start it
 	virtual void start();
+  //! stop and delete worker thread, stop all associated datastreams
 	virtual void stop();
+
+  //! module update function (data processing)
 	virtual void update() = 0;
+
+  //! forced update triggered by internal_oscillator thread or notifyDataReceived
+  //! sets need_update flag
 	void trigger();
+
+  //! notify that endpoint received some data. Force trigger.
 	virtual void notifyDataReceived(nuiEndpoint *endpoint);
-	bool needUpdate(bool isAsyncMode = false);
+
+  //! check whether module requires update. If requires - uncheck need_update
+	bool needUpdate(/*bool isAsyncMode = false*/);
 
 	virtual void setInputEndpointCount(int n);
 	virtual void setOutputEndpointCount(int n);
   virtual void setInputEndpoint(int n, nuiEndpoint *endpoint);
   virtual void setOutputEndpoint(int n, nuiEndpoint *endpoint);
-
 
 	int getInputEndpointCount();
 	int getOutputEndpointCount();
@@ -147,22 +161,47 @@ public:
 	virtual std::string getName() = 0;
 	virtual std::string getDescription() = 0;
 	virtual std::string getAuthor() = 0;
+
 private:
 	static void thread_process(nuiThread *thread);
 	static void internal_oscillator(nuiThread *thread);
+
 protected:
-	bool is_started, use_thread, need_update, oscillator_mode, is_synced_input;
+  //! module properties
+  std::map<std::string, nuiProperty*> properties;
+
+  //! started
+	bool is_started;
+  //! update should be called
+  bool need_update;
+  
+  //! update type : should run in separate thread and update only on input received
+  bool use_thread;
+  //! update type : should provide constant periodical updates
+  bool oscillator_mode;
+  //! update type : update should happen only when all endpoints are filled with data
+  bool is_synced_input;
+
+  //! to calculate module processing time fps
 	nuiTimer *timer;
+
+  //! worker thread
 	nuiThread *thread;
+
 	pt::mutex *mtx;
-	std::map<std::string, nuiProperty*> properties;
-	int inputEndpointCount,outputEndpointCount;
+
+	int inputEndpointCount;
+  nuiEndpoint **inputEndpoints;
+  
+  int outputEndpointCount;
+  nuiEndpoint **outputEndpoints;
+
+  //! update period for oscillator_mode
 	int ocsillatorWait;
-	nuiEndpoint **inputEndpoints;
-	char *inputDataReceived;
-	nuiEndpoint **outputEndpoints;
-	friend class nuiDataStream;
-	friend class nuiEndpoint;
+	
+  //! array, used to check whether all endpoints received data (when using is_synced_input).
+  //! endpoint will have non-zero value when is filled with data.
+	char* inputDataReceived;
 };
 
 #endif

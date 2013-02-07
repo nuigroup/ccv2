@@ -47,7 +47,7 @@
                     "properties": {
                         "use_thread": "true",
                         "oscillator_mode": "false",
-                        "synced_input": "false"
+                        "synced_input": "true"
                     }
                 }
             ],

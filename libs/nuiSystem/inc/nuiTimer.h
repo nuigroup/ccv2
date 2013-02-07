@@ -10,14 +10,22 @@
 
 #include "nuiUtils.h"
 
+//! Stopwatch, to be more precise. Used to measure running time and processing speed.
 class nuiTimer
 {
 public:
     nuiTimer();
     void Start();
+
+    //! prepares timer for measurement, should be called before measured block
     void Wait();
+
+    //! if elapsed time > 1sec. then calculates average fps for the measured period.
     void Process();
+
+    //! resets timer stats
     void Reset();
+
     double getAverageFPS();
     double getAverageWaitTime();
     double getAverageProcessTime();

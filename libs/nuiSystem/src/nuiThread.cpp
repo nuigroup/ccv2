@@ -63,23 +63,3 @@ void nuiThread::post()
 {
 	this->thread_trigger->post();
 }
-
-// void nuiMultithreadable::lock()
-// {
-// 	mtx->lock();
-// }
-// 
-// void nuiMultithreadable::unlock()
-// {
-// 	mtx->unlock();
-// }
-// 
-// nuiMultithreadable::nuiMultithreadable()
-// {
-// 	mtx = new pt::mutex();
-// }
-// 
-// nuiMultithreadable::~nuiMultithreadable()
-// {
-// 	delete mtx;
-// }

@@ -23,7 +23,8 @@ class nuiThread;
 
 typedef void (*thread_process_t)(nuiThread *thread);
 
-class nuiThread : public pt::thread {
+class nuiThread : public pt::thread 
+{
 public:
     nuiThread(thread_process_t _process, void *_userdata);
     virtual ~nuiThread();

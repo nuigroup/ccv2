@@ -20,6 +20,7 @@
 
 class nuiEndpoint;
 
+//! namespaced enum of datastream errors
 struct nuiDatastreamError
 {
   enum err
@@ -30,16 +31,17 @@ struct nuiDatastreamError
   };
 };
 
+//! namespaced enum of datastream running modes
 struct nuiDatastreamMode
 {
   enum m
   {
-    None = 0x00000000,
-    Async = 0x00000001,
-    Buffered = 0x00000002,
-    DeepCopy = 0x00000004,
-    LastPacketPriority = 0x00000008,
-    Overflow = 0x00000010,
+    None                = 0x00000000,
+    Async               = 0x00000001,
+    Buffered            = 0x00000002,
+    DeepCopy            = 0x00000004,
+    LastPacketPriority  = 0x00000008,
+    Overflow            = 0x00000010,
   };
 };
 
@@ -65,7 +67,10 @@ public:
 class nuiDataStream
 {
 public:
-	nuiDataStream(bool asyncMode = false, nuiDataSendCallback defaultCallback = NULL, bool deepCopy = true,  bool bufferedMode = false, int bufferSize = MIN_NUI_STREAM_BUFFER_SIZE, bool lastPacketProprity = true);
+	nuiDataStream(bool asyncMode = false, nuiDataSendCallback defaultCallback = NULL, 
+    bool deepCopy = true,  bool bufferedMode = false, 
+    int bufferSize = MIN_NUI_STREAM_BUFFER_SIZE, bool lastPacketProprity = true);
+
 	~nuiDataStream();
   
   inline bool isRunning();
@@ -98,15 +103,17 @@ private:
 
 	void initStream();
 	void cleanStream();
-	bool hasDataToSent(bool isAsyncMode = false);
+	bool hasDataToSend(bool isAsyncMode = false);
 	void processData();
 
 	nuiThread* asyncThread;
+  pt::mutex *mtx;
+  pt::semaphore *semaphore;
+
 	nuiDataSendCallback defaultCallback;
 	std::queue<nuiDataSendCallback> callbackQueue;
 	std::queue<nuiDataPacket*> packetData;
-	pt::mutex *mtx;
-	pt::semaphore *semaphore;
+	
 	nuiDatastreamMode::m streamMetadata;
 	int bufferSize;
 	bool running;
