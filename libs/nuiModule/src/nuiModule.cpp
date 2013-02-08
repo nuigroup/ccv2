@@ -193,14 +193,15 @@ void nuiModule::stop()
 	this->is_started = false;
 	timer->Reset();
 	mtx->unlock();
+  //! \todo shouldn't we stop input datastreams?
 	for(int i = 0; i < this->getOutputEndpointCount(); i++) 
   {
-		nuiEndpoint* cur = this->getOutputEndpoint(i);
-		for(int j = 0; j < cur->getConnectionCount(); j++) 
+		nuiEndpoint* endpoint = this->getOutputEndpoint(i);
+		for(int j = 0; j < endpoint->getConnectionCount(); j++) 
     {
-			nuiDataStream* curStream = 
-        cur->getDataStreamForEndpoint(cur->getConnectedEndpointOnIndex(j));
-			curStream->stopStream();
+			nuiDataStream* stream = 
+        endpoint->getDataStreamForEndpoint(endpoint->getConnectedEndpointAtIndex(j));
+			stream->stopStream();
 		}
 	}
 	LOG(NUI_DEBUG, "stop <" << this->property("id").asString() << ">");

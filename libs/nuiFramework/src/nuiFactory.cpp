@@ -206,7 +206,8 @@ void nuiFactory::applyDescriptorProps(nuiModule* module, nuiModuleDescriptor* de
 {
   for (std::map<std::string, nuiProperty*>::iterator iter = descriptor->getProperties().begin();iter!= descriptor->getProperties().end();iter++)
   {
-    module->property(iter->first).set(iter->second->asString());
+    std::string val = iter->second->asString();
+    module->property(iter->first).set(val);
   }
 };
 

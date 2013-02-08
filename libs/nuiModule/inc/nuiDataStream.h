@@ -47,6 +47,7 @@ struct nuiDatastreamMode
 
 typedef void (*nuiDataSendCallback)(nuiDatastreamError::err returnCode, void *attachedData);
 
+//! datastream descriptor
 struct nuiDataStreamDescriptor
 {
 public:
@@ -64,11 +65,11 @@ public:
 	int bufferSize;
 };
 
+//! datastream class, used to transfer data from one endpoint to another
 class nuiDataStream
 {
 public:
-	nuiDataStream(bool asyncMode = false, nuiDataSendCallback defaultCallback = NULL, 
-    bool deepCopy = true,  bool bufferedMode = false, 
+	nuiDataStream(bool asyncMode = false, bool deepCopy = true, bool bufferedMode = false, 
     int bufferSize = MIN_NUI_STREAM_BUFFER_SIZE, bool lastPacketProprity = true);
 
 	~nuiDataStream();
@@ -96,7 +97,7 @@ public:
   // stream control
 	void startStream();
 	void stopStream();
-	void sendData(nuiDataPacket *dataPacket, nuiDataSendCallback callback = NULL, int timelimit = 0);
+	void sendData(nuiDataPacket *dataPacket);
 
 private:
   static void thread_process(nuiThread *thread);
@@ -110,8 +111,6 @@ private:
   pt::mutex *mtx;
   pt::semaphore *semaphore;
 
-	nuiDataSendCallback defaultCallback;
-	std::queue<nuiDataSendCallback> callbackQueue;
 	std::queue<nuiDataPacket*> packetData;
 	
 	nuiDatastreamMode::m streamMetadata;

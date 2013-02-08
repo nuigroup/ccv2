@@ -22,15 +22,16 @@ nuiEndpoint::~nuiEndpoint()
 	delete mtx;
 }
 
-nuiDatastreamError::err nuiEndpoint::writeData(nuiDataPacket* dataPacket)
+void nuiEndpoint::writeData(nuiDataPacket* dataPacket)
 {
+  mtx->lock();
 	this->dataPacket = dataPacket;
 	if (moduleHoster != NULL)
 		moduleHoster->notifyDataReceived(this);
-	return nuiDatastreamError::Success;
+  mtx->unlock();
 }
 
-nuiEndpoint* nuiEndpoint::getConnectedEndpointOnIndex(int index)
+nuiEndpoint* nuiEndpoint::getConnectedEndpointAtIndex(int index)
 {
 	int i = 0;
 	for (std::map<nuiEndpoint*, nuiDataStream*>::iterator iter = dataStreams.begin();

@@ -341,8 +341,11 @@ void nuiPluginManager::parseDescriptor( nuiModuleDescriptor* moduleDescriptor, J
           moduleDescriptor->property(propertyID).set(value.asInt());
         else 
         {
-          if(value.isString()) 
-            moduleDescriptor->property(propertyID).set(value.asString());
+          if(value.isString())
+          {
+            std::string val = value.asString();
+            moduleDescriptor->property(propertyID).set(val);
+          }
         }
         // save the property to descriptor's property list
       }

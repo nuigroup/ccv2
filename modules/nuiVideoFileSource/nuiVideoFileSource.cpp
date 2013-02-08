@@ -64,7 +64,8 @@ void nuiVideoFileSource::update()
   if(frame == NULL) {
     cvReleaseCapture(&cap);
     cvReleaseImage(&frame);
-    cap = cvCaptureFromAVI(this->property("path").asString().c_str());
+    std::string path = this->property("path").asString();
+    cap = cvCaptureFromAVI(path.c_str());
     frame = cvQueryFrame(cap);
   }
   CvFont font;
@@ -86,7 +87,8 @@ void nuiVideoFileSource::update()
 
 void nuiVideoFileSource::start()
 {
-  cap = cvCaptureFromAVI(this->property("path").asString().c_str());
+  std::string path = this->property("path").asString();
+  cap = cvCaptureFromAVI(path.c_str());
   nuiModule::start();
 };
 

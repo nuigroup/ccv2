@@ -22,6 +22,7 @@
 class nuiModule;
 class nuiModuleDescriptor;
 
+//! endpoint descriptor
 class nuiEndpointDescriptor
 {
 public:
@@ -71,7 +72,10 @@ public:
   //! get parent module
 	nuiModule* getModuleHoster();
 
-	nuiEndpoint* getConnectedEndpointOnIndex(int index);
+  //! set endpoint to hold dataPacket and notify hoster module
+  void writeData(nuiDataPacket *dataPacket);
+
+	nuiEndpoint* getConnectedEndpointAtIndex(int index);
 	inline std::string getTypeDescriptor();
 	void lock();
 	void unlock();
@@ -80,7 +84,6 @@ public:
 private:
 	bool canBePairedWithEndpoint(nuiEndpoint *endpoint);
 	bool canBeSettedData(nuiDataPacket *dataPacket);
-	nuiDatastreamError::err writeData(nuiDataPacket *dataPacket);
 
   //! add endpoint and datastream, that connects this and that endpoints
 	std::map<nuiEndpoint*,nuiDataStream*> dataStreams;
@@ -89,7 +92,7 @@ private:
 	nuiDataPacket *dataPacket;
 	nuiModule* moduleHoster;
 
-	friend class nuiDataStream;
+	//friend class nuiDataStream;
 };
 
 #endif//NUI_ENDPOINT_H
