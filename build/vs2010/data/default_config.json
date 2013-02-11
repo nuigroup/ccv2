@@ -38,7 +38,7 @@
                         "use_thread": "false",
                         "oscillator_mode": "true",
                         "path": "out.avi",
-                        "oscillator_wait": 40
+                        "oscillator_wait": 34
                     }
                 },
                 {

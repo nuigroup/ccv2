@@ -200,6 +200,7 @@ void nuiDataStream::cleanStream()
 
 void nuiDataStream::sendData(nuiDataPacket *dataPacket)
 {
+  //! \todo may leave method without unlocking mutex. consider using scopelock.
   mtx->lock();
 
   nuiDataPacket *addingData = dataPacket;
@@ -214,6 +215,7 @@ void nuiDataStream::sendData(nuiDataPacket *dataPacket)
     }
   }
 
+  //! \todo check this
   if (isBuffered())
   {
     // semaphore is released in processData, when we are taking data away
@@ -221,7 +223,7 @@ void nuiDataStream::sendData(nuiDataPacket *dataPacket)
 
     packetData.push(addingData);
 
-    if (isOverflow()) // can overflow buffer become greater than 1 element?
+    if (isOverflow())
     {
       void *dataToBeDeleted = packetData.front();
       if (isDeepCopy())
@@ -258,11 +260,12 @@ void nuiDataStream::sendData(nuiDataPacket *dataPacket)
     if (packetData.empty())
     {
       packetData.push(addingData);
-      if (isAsyncMode())			
+      if (isAsyncMode())
       {							
-        if (asyncThread!=NULL)	
+        if (asyncThread != NULL)	
           asyncThread->post();
-      }	
+      }
+      mtx->unlock();
       return;
     }
   }
@@ -275,31 +278,34 @@ void nuiDataStream::sendData(nuiDataPacket *dataPacket)
 bool nuiDataStream::hasDataToSend(bool isAsyncMode)
 {
   if (!packetData.empty())
+  {
     return true;
-  if (isAsyncMode)
+  }
+  else if (isAsyncMode)
   {
     if (asyncThread != NULL)
       asyncThread->wait();
     return (!packetData.empty());
   }
-
-  return false;
+  else
+  {
+    return false;
+  }
 }
 
 void nuiDataStream::processData()
 {
   if (!packetData.empty())
   {
-    nuiDataPacket *dataToSend = NULL;
+    nuiDataPacket* dataToSend = NULL;
 
-    //mtx->lock(); //this should be here but doesn't work
+    mtx->lock(); //this should be here but doesn't work
     dataToSend = packetData.front();
     packetData.pop();
 
-    //???????
     if (isBuffered() && !isOverflow() && isAsyncMode())
       semaphore->post();
-    //mtx->unlock();
+    mtx->unlock();
 
     if (receiver == NULL)
     {

@@ -21,6 +21,7 @@ nuiDebugVideoSink::~nuiDebugVideoSink()
 
 void nuiDebugVideoSink::update() 
 {
+  this->input->lock();
   void* data;
   nuiDataPacket* packet = this->input->getData();
   if(packet == NULL) 
@@ -43,6 +44,7 @@ void nuiDebugVideoSink::update()
   cv::waitKey(1);
   cvReleaseImage(&dispFrame);
   delete packet;
+  this->input->unlock();
 }
 
 void nuiDebugVideoSink::start() 
