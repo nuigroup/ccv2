@@ -32,4 +32,4 @@ Links
 ------------
  - http://nuigroup.com - NUI Group Community Homepage
  - http://ccv.nuigroup.com - CCV 1.* Homepage
- - http://gsoc.nuigc.com/about/projects - GSoC Projects
+ - http://nuigroup.com/gsoc - GSoC Projects
